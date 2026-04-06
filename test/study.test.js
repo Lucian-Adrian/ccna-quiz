@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { test } from "node:test";
 import { buildCheckpointLibrary } from "../src/checkpoints.js";
+import { buildCollectionFocus, buildFocusSnapshot, buildPracticeDeck } from "../src/focus.js";
 import { getOptionState, hydrateCards, summarizeProgress } from "../src/study.js";
 import { buildModuleLibrary, buildStatsSnapshot, getReviewQueue, recordAttempt, summarizeModules, theorySectionsForModule } from "../src/progress.js";
 
@@ -251,4 +252,92 @@ test("normalizes checkpoint exams with media and matrix prompts for the runtime"
   assert.deepEqual(question.matrix.prompts, ["Provide redundant links and devices."]);
   assert.deepEqual(question.matrix.choices, ["fault tolerance"]);
   assert.deepEqual(question.answerTable.rows, [["fault tolerance", "Provide redundant links and devices."]]);
+});
+
+test("builds a recommended practice deck that surfaces weak cards before fresh and stable ones", () => {
+  const cards = [
+    { id: "m1-1", moduleId: "m1", module: "Module 1", number: 1 },
+    { id: "m1-2", moduleId: "m1", module: "Module 1", number: 2 },
+    { id: "m1-3", moduleId: "m1", module: "Module 1", number: 3 },
+    { id: "m1-4", moduleId: "m1", module: "Module 1", number: 4 },
+  ];
+  const progress = {
+    "m1-1": { attempts: 4, correct: 1, wrong: 3, streak: 0, lastChoice: [], lastMode: "learn", lastSeenAt: "2026-04-06T12:00:00.000Z" },
+    "m1-3": { attempts: 2, correct: 2, wrong: 0, streak: 2, lastChoice: [], lastMode: "learn", lastSeenAt: "2026-04-06T12:03:00.000Z" },
+    "m1-4": { attempts: 5, correct: 5, wrong: 0, streak: 4, lastChoice: [], lastMode: "learn", lastSeenAt: "2026-04-06T12:04:00.000Z" },
+  };
+
+  assert.deepEqual(buildPracticeDeck(cards, progress, "recommended").map((card) => card.id), [
+    "m1-1",
+    "m1-2",
+    "m1-3",
+    "m1-4",
+  ]);
+});
+
+test("builds a focus snapshot with counts that can drive the new study workspace", () => {
+  const cards = [
+    { id: "m1-1", moduleId: "m1", module: "Module 1", number: 1 },
+    { id: "m1-2", moduleId: "m1", module: "Module 1", number: 2 },
+    { id: "m1-3", moduleId: "m1", module: "Module 1", number: 3 },
+    { id: "m1-4", moduleId: "m1", module: "Module 1", number: 4 },
+  ];
+  const progress = {
+    "m1-1": { attempts: 4, correct: 1, wrong: 3, streak: 0, lastChoice: [], lastMode: "learn", lastSeenAt: "2026-04-06T12:00:00.000Z" },
+    "m1-3": { attempts: 2, correct: 2, wrong: 0, streak: 2, lastChoice: [], lastMode: "learn", lastSeenAt: "2026-04-06T12:03:00.000Z" },
+    "m1-4": { attempts: 5, correct: 5, wrong: 0, streak: 4, lastChoice: [], lastMode: "learn", lastSeenAt: "2026-04-06T12:04:00.000Z" },
+  };
+
+  assert.deepEqual(buildFocusSnapshot(cards, progress), {
+    total: 4,
+    fresh: 1,
+    review: 1,
+    active: 1,
+    mastered: 1,
+    recommended: 3,
+  });
+});
+
+test("builds collection focus summaries with a clear next card and workload signal", () => {
+  const cards = [
+    { id: "mod1-1", moduleId: "mod1", module: "Networking Today", number: 1 },
+    { id: "mod1-2", moduleId: "mod1", module: "Networking Today", number: 2 },
+    { id: "check1-1", moduleId: "check1", module: "Checkpoint 1", checkpointId: "check1", sourceType: "checkpoint", number: 1 },
+    { id: "check1-2", moduleId: "check1", module: "Checkpoint 1", checkpointId: "check1", sourceType: "checkpoint", number: 2 },
+  ];
+  const progress = {
+    "mod1-1": { attempts: 1, correct: 0, wrong: 1, streak: 0, lastChoice: [], lastMode: "learn", lastSeenAt: "2026-04-06T12:00:00.000Z" },
+    "check1-1": { attempts: 2, correct: 2, wrong: 0, streak: 2, lastChoice: [], lastMode: "exam", lastSeenAt: "2026-04-06T12:10:00.000Z" },
+  };
+  const collections = [
+    { id: "mod1", title: "Networking Today", kind: "module" },
+    { id: "check1", title: "Checkpoint Exam 1", kind: "checkpoint" },
+  ];
+
+  assert.deepEqual(buildCollectionFocus(collections, cards, progress), [
+    {
+      id: "mod1",
+      title: "Networking Today",
+      kind: "module",
+      total: 2,
+      recommended: 2,
+      review: 1,
+      fresh: 1,
+      mastered: 0,
+      accuracy: 0,
+      nextCardId: "mod1-1",
+    },
+    {
+      id: "check1",
+      title: "Checkpoint Exam 1",
+      kind: "checkpoint",
+      total: 2,
+      recommended: 2,
+      review: 0,
+      fresh: 1,
+      mastered: 0,
+      accuracy: 100,
+      nextCardId: "check1-2",
+    },
+  ]);
 });

@@ -6,6 +6,7 @@ on:
       - initial
       - second
       - third
+      - fourth
   workflow_dispatch:
 
 permissions:
@@ -44,6 +45,12 @@ jobs:
           ref: third
           path: third-branch
 
+      - name: Checkout fourth branch
+        uses: actions/checkout@v4
+        with:
+          ref: fourth
+          path: fourth-branch
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -58,6 +65,7 @@ jobs:
             initial-branch/pnpm-lock.yaml
             second-branch/pnpm-lock.yaml
             third-branch/pnpm-lock.yaml
+            fourth-branch/pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -71,6 +79,10 @@ jobs:
         run: pnpm install --frozen-lockfile
         working-directory: third-branch
 
+      - name: Install fourth branch dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: fourth-branch
+
       - name: Build initial site
         run: pnpm build
         working-directory: initial-branch
@@ -83,12 +95,17 @@ jobs:
         run: pnpm build
         working-directory: third-branch
 
+      - name: Build fourth site
+        run: pnpm build
+        working-directory: fourth-branch
+
       - name: Assemble Pages site
         run: |
-          mkdir -p site/initial site/second site/third
+          mkdir -p site/initial site/second site/third site/fourth
           cp -R initial-branch/dist/. site/initial/
           cp -R second-branch/dist/. site/second/
           cp -R third-branch/dist/. site/third/
+          cp -R fourth-branch/dist/. site/fourth/
           cat > site/index.html <<'EOF'
           <!doctype html>
           <html lang="en">
@@ -205,6 +222,11 @@ jobs:
                     <strong>Third</strong>
                     <span>Open the redesigned learning workspace published from branch <code>third</code>.</span>
                     <span class="chip">/third/</span>
+                  </a>
+                  <a class="card" href="./fourth/">
+                    <strong>Fourth</strong>
+                    <span>Open the deeper focus workspace published from branch <code>fourth</code>.</span>
+                    <span class="chip">/fourth/</span>
                   </a>
                 </section>
               </main>

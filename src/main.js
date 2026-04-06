@@ -1,6 +1,7 @@
 import "./styles.css";
 import { CHECKPOINT_MANIFEST, loadCheckpointSources, resolveCheckpointAsset } from "./checkpoint-sources.js";
 import { buildCheckpointLibrary } from "./checkpoints.js";
+import { buildCollectionFocus, buildFocusSnapshot, buildPracticeDeck, getFocusState } from "./focus.js";
 import { MODULE_SOURCES } from "./module-sources.js";
 import { shuffleCards } from "./parser.js";
 import { buildModuleLibrary, buildStatsSnapshot, getProgressEntry, getReviewQueue, recordAttempt, summarizeModules, theorySectionsForModule } from "./progress.js";
@@ -21,6 +22,8 @@ const app = document.querySelector("#app");
 const pathParts = window.location.pathname.split("/").filter(Boolean);
 const siteTrack = pathParts.at(-1) === "third"
   ? "third"
+  : pathParts.at(-1) === "fourth"
+    ? "fourth"
   : pathParts.at(-1) === "second"
     ? "second"
     : pathParts.at(-1) === "initial"
@@ -31,6 +34,7 @@ const siteLinks = {
   initial: siteTrack === "local" ? "/" : "../initial/",
   second: siteTrack === "local" ? "/" : "../second/",
   third: siteTrack === "local" ? "/" : "../third/",
+  fourth: siteTrack === "local" ? "/" : "../fourth/",
 };
 
 const initialModule = library.modules[0];
@@ -45,7 +49,7 @@ const state = {
   currentCheckpointId: initialCheckpointMeta?.id ?? null,
   selectedCardId: initialCard.id,
   searchQuery: "",
-  questionFilter: "all",
+  questionFilter: "recommended",
   reviewMode: false,
   selectedOptions: [],
   selectedMatrixAnswers: {},
@@ -310,26 +314,37 @@ function currentCollectionTitle() {
     : currentModule().title;
 }
 
+function currentCollectionSnapshot() {
+  return buildFocusSnapshot(currentCollectionItems(), state.progress);
+}
+
+function currentCollectionAccuracy() {
+  const cards = currentCollectionItems();
+  const correct = cards.reduce((sum, card) => sum + (state.progress[card.id]?.correct ?? 0), 0);
+  const wrong = cards.reduce((sum, card) => sum + (state.progress[card.id]?.wrong ?? 0), 0);
+  return correct + wrong > 0 ? Math.round((correct / (correct + wrong)) * 100) : 0;
+}
+
+function currentCollectionReports() {
+  const checkpointCollections = CHECKPOINT_MANIFEST.map((checkpoint) => ({
+    id: checkpoint.id,
+    title: checkpoint.title,
+    kind: "checkpoint",
+  }));
+
+  return buildCollectionFocus([
+    ...library.modules.map((module) => ({ id: module.id, title: module.title, kind: "module" })),
+    ...checkpointCollections,
+  ], getAllPracticeItems(), state.progress);
+}
+
 function currentCard() {
   return runtime.itemMap.get(state.selectedCardId) ?? currentCollectionItems()[0] ?? currentModule().cards[0];
 }
 
 function questionStatus(card) {
-  const progress = getProgressEntry(state.progress, card.id);
-
-  if (progress.attempts === 0) {
-    return "fresh";
-  }
-
-  if (progress.streak >= 3) {
-    return "mastered";
-  }
-
-  if (progress.wrong > progress.correct) {
-    return "struggling";
-  }
-
-  return "active";
+  const focusState = getFocusState(card, state.progress);
+  return focusState === "review" ? "struggling" : focusState;
 }
 
 function availableReviewCards() {
@@ -338,14 +353,16 @@ function availableReviewCards() {
 
 function visibleCards() {
   const query = normalize(state.searchQuery);
-  const cards = state.reviewMode ? availableReviewCards() : currentCollectionItems();
+  const cards = state.reviewMode
+    ? availableReviewCards()
+    : state.questionFilter === "all"
+      ? [...currentCollectionItems()].sort((left, right) => left.number - right.number)
+      : buildPracticeDeck(currentCollectionItems(), state.progress, state.questionFilter)
+        .filter((card) => state.questionFilter !== "recommended" || questionStatus(card) !== "mastered");
 
   return cards.filter((card) => {
     const matchesQuery = !query || normalize(getCardSearchBlob(card)).includes(query);
-    const matchesFilter = state.reviewMode
-      ? true
-      : state.questionFilter === "all" || questionStatus(card) === state.questionFilter;
-    return matchesQuery && matchesFilter;
+    return matchesQuery;
   });
 }
 
@@ -372,13 +389,13 @@ function setModule(moduleId) {
   state.learnSource = "module";
   state.currentModuleId = moduleId;
   state.searchQuery = "";
-  state.questionFilter = "all";
+  state.questionFilter = "recommended";
   state.reviewMode = false;
   state.selectedOptions = [];
   state.selectedMatrixAnswers = {};
   state.learnChecked = false;
   state.learnResult = null;
-  state.selectedCardId = currentModule().cards[0].id;
+  state.selectedCardId = buildPracticeDeck(currentModule().cards, state.progress, "recommended")[0]?.id ?? currentModule().cards[0].id;
   state.notice = `Ai deschis ${currentModule().title}.`;
   render();
 }
@@ -388,13 +405,13 @@ async function setCheckpoint(checkpointId) {
   state.learnSource = "checkpoint";
   state.currentCheckpointId = checkpointId;
   state.searchQuery = "";
-  state.questionFilter = "all";
+  state.questionFilter = "recommended";
   state.reviewMode = false;
   state.selectedOptions = [];
   state.selectedMatrixAnswers = {};
   state.learnChecked = false;
   state.learnResult = null;
-  state.selectedCardId = currentCheckpoint()?.questions[0]?.id ?? null;
+  state.selectedCardId = buildPracticeDeck(currentCheckpoint()?.questions ?? [], state.progress, "recommended")[0]?.id ?? currentCheckpoint()?.questions[0]?.id ?? null;
   state.notice = `Ai deschis ${currentCheckpoint()?.title ?? "checkpoint-ul selectat"}.`;
   render();
 }
@@ -526,13 +543,13 @@ function startWrongReview() {
 
 function stopWrongReview() {
   state.reviewMode = false;
-  state.questionFilter = "all";
+  state.questionFilter = "recommended";
   state.searchQuery = "";
   state.selectedOptions = [];
   state.selectedMatrixAnswers = {};
   state.learnChecked = false;
   state.learnResult = null;
-  state.selectedCardId = currentCollectionItems()[0]?.id ?? currentModule().cards[0]?.id ?? null;
+  state.selectedCardId = buildPracticeDeck(currentCollectionItems(), state.progress, "recommended")[0]?.id ?? currentCollectionItems()[0]?.id ?? currentModule().cards[0]?.id ?? null;
   state.notice = "Ai iesit din review mode.";
   render();
 }
@@ -878,7 +895,7 @@ async function focusCollection(collectionId) {
     state.currentModuleId = module.id;
     state.selectedCardId = focusCard?.id ?? module.cards[0]?.id ?? null;
     state.searchQuery = "";
-    state.questionFilter = "all";
+    state.questionFilter = "recommended";
     state.selectedOptions = [];
     state.selectedMatrixAnswers = {};
     state.learnChecked = false;
@@ -903,7 +920,7 @@ async function focusCollection(collectionId) {
   state.currentCheckpointId = checkpoint.id;
   state.selectedCardId = focusCard?.id ?? checkpoint.questions[0]?.id ?? null;
   state.searchQuery = "";
-  state.questionFilter = "all";
+  state.questionFilter = "recommended";
   state.selectedOptions = [];
   state.selectedMatrixAnswers = {};
   state.learnChecked = false;
@@ -970,6 +987,7 @@ function siteSwitcher() {
       <a class="site-link ${siteTrack === "initial" ? "active" : ""}" href="${siteLinks.initial}">Initial</a>
       <a class="site-link ${siteTrack === "second" ? "active" : ""}" href="${siteLinks.second}">Second</a>
       <a class="site-link ${siteTrack === "third" ? "active" : ""}" href="${siteLinks.third}">Third</a>
+      <a class="site-link ${siteTrack === "fourth" ? "active" : ""}" href="${siteLinks.fourth}">Fourth</a>
     </nav>
   `;
 }
@@ -979,20 +997,22 @@ function render() {
   ensureVisibleSelection();
   const checkpointLibrary = getCheckpointLibrary();
   const totalQuestionCount = library.cards.length + CHECKPOINT_MANIFEST.reduce((sum, item) => sum + item.totalQuestions, 0);
+  const focusSnapshot = buildFocusSnapshot(getAllPracticeItems(), state.progress);
 
   app.innerHTML = `
     <main class="app-shell">
       <header class="app-header">
         <div class="brand">
-          <p class="eyebrow">CCNA Study System</p>
-          <h1>CCNA Focus</h1>
-          <p class="subcopy">Structured questions, clearer explanations, and local stats that keep pace with your practice.</p>
+          <p class="eyebrow">Fourth Workspace</p>
+          <h1>CCNA Flow</h1>
+          <p class="subcopy">A calmer practice workspace built around the next useful question, not around dashboard clutter.</p>
         </div>
         <div class="header-side">
           ${siteSwitcher()}
           <div class="metric-row">
             <div class="metric-pill"><span>Questions</span><strong>${totalQuestionCount}</strong></div>
-            <div class="metric-pill"><span>Reviewed</span><strong>${totalReviewed(state.progress)}</strong></div>
+            <div class="metric-pill"><span>Recommended</span><strong>${focusSnapshot.recommended}</strong></div>
+            <div class="metric-pill"><span>Review</span><strong>${focusSnapshot.review}</strong></div>
             <div class="metric-pill"><span>Accuracy</span><strong>${overallAccuracy()}%</strong></div>
           </div>
         </div>
@@ -1006,6 +1026,27 @@ function render() {
 
       <section class="workspace-frame">
         <aside class="module-rail">
+          <div class="rail-block rail-focus">
+            <p class="eyebrow">Practice lanes</p>
+            <div class="rail-focus-grid">
+              <button class="rail-stat ${state.questionFilter === "recommended" && !state.reviewMode ? "active" : ""}" type="button" data-filter="recommended">
+                <strong>${currentCollectionSnapshot().recommended}</strong>
+                <span>Continue queue</span>
+              </button>
+              <button class="rail-stat ${state.reviewMode ? "active review" : ""}" type="button" data-action="${state.reviewMode ? "stop-review-mode" : "start-wrong-review"}">
+                <strong>${currentCollectionSnapshot().review}</strong>
+                <span>Wrong answers</span>
+              </button>
+              <button class="rail-stat ${state.questionFilter === "fresh" && !state.reviewMode ? "active" : ""}" type="button" data-filter="fresh">
+                <strong>${currentCollectionSnapshot().fresh}</strong>
+                <span>Fresh cards</span>
+              </button>
+              <button class="rail-stat ${state.questionFilter === "mastered" && !state.reviewMode ? "active" : ""}" type="button" data-filter="mastered">
+                <strong>${currentCollectionSnapshot().mastered}</strong>
+                <span>Mastered</span>
+              </button>
+            </div>
+          </div>
           <div class="rail-block">
             <p class="eyebrow">Module</p>
             ${library.modules.map((module) => renderModuleButton(module)).join("")}
@@ -1038,17 +1079,13 @@ function renderPrimaryTab(value, label) {
 
 function renderModuleButton(module) {
   const active = state.learnSource === "module" && module.id === state.currentModuleId ? "active" : "";
-  const summary = summarizeModules(module.cards, state.progress)[module.id] ?? {
-    attempted: 0,
-    questions: module.cards.length,
-    accuracy: 0,
-    mastered: 0,
-  };
+  const summary = summarizeModules(module.cards, state.progress)[module.id] ?? { attempted: 0, accuracy: 0, mastered: 0 };
+  const focus = buildFocusSnapshot(module.cards, state.progress);
 
   return `
     <button class="module-button ${active}" type="button" data-module="${module.id}">
       <span class="module-label">${module.title}</span>
-      <span class="module-meta">${summary.attempted}/${module.cards.length} lucrate · ${summary.accuracy}%</span>
+      <span class="module-meta">${focus.recommended} in queue · ${summary.accuracy}% · ${focus.fresh} noi</span>
     </button>
   `;
 }
@@ -1056,6 +1093,9 @@ function renderModuleButton(module) {
 function renderCheckpointButton(checkpointMeta, checkpointLibrary) {
   const active = state.learnSource === "checkpoint" && checkpointMeta.id === state.currentCheckpointId ? "active" : "";
   const loadedCheckpoint = checkpointLibrary.checkpoints.find((item) => item.id === checkpointMeta.id);
+  const focus = loadedCheckpoint
+    ? buildFocusSnapshot(loadedCheckpoint.questions, state.progress)
+    : summarizeCheckpointProgress(checkpointMeta.id, checkpointMeta.totalQuestions);
   const summary = loadedCheckpoint
     ? summarizeModules(loadedCheckpoint.questions, state.progress)[checkpointMeta.id] ?? summarizeCheckpointProgress(checkpointMeta.id, checkpointMeta.totalQuestions)
     : summarizeCheckpointProgress(checkpointMeta.id, checkpointMeta.totalQuestions);
@@ -1063,7 +1103,7 @@ function renderCheckpointButton(checkpointMeta, checkpointLibrary) {
   return `
     <button class="module-button checkpoint ${active}" type="button" data-checkpoint="${checkpointMeta.id}">
       <span class="module-label">${checkpointMeta.title}</span>
-      <span class="module-meta">${summary.attempted}/${checkpointMeta.totalQuestions} lucrate · ${summary.accuracy}% · ${checkpointMeta.questionsWithMedia} cu imagini</span>
+      <span class="module-meta">${focus.recommended ?? checkpointMeta.totalQuestions} in queue · ${summary.accuracy}% · ${checkpointMeta.questionsWithMedia} cu imagini</span>
     </button>
   `;
 }
@@ -1074,13 +1114,16 @@ function renderRailTheory() {
     const stats = currentCheckpoint()
       ? summarizeModules(currentCheckpoint().questions, state.progress)[currentCheckpoint().id] ?? summarizeCheckpointProgress(currentCheckpoint().id, currentCheckpoint().questions.length)
       : summarizeCheckpointProgress(state.currentCheckpointId, checkpoint?.totalQuestions ?? 0);
+    const focus = currentCheckpoint()
+      ? buildFocusSnapshot(currentCheckpoint().questions, state.progress)
+      : buildFocusSnapshot([], {});
 
     return `
-      <p class="eyebrow">Exam set</p>
+      <p class="eyebrow">Checkpoint brief</p>
       <h2>${checkpoint?.title ?? "Checkpoint"}</h2>
-      <p class="rail-copy">Checkpoint-urile sunt seturi reale de repetitie pentru examen. Le poti parcurge lent, ca bilete, sau le poti rula integral din tabul Examen.</p>
+      <p class="rail-copy">Foloseste checkpoint-ul ca biletar lent in Educatie, apoi ruleaza-l integral in Examen pentru o simulare reala.</p>
       <ul class="compact-list">
-        <li>${checkpoint?.totalQuestions ?? currentCheckpoint()?.questions.length ?? 0} intrebari in set</li>
+        <li>${focus.recommended || checkpoint?.totalQuestions || 0} itemi activi in queue</li>
         <li>${checkpoint?.questionsWithMedia ?? currentCheckpoint()?.questions.filter((item) => item.media?.length).length ?? 0} itemi cu imagini</li>
         <li>${stats.attempted ?? 0} lucrate pana acum</li>
         <li>${stats.accuracy ?? 0}% acuratete</li>
@@ -1091,7 +1134,7 @@ function renderRailTheory() {
   const theory = theorySectionsForModule(state.currentModuleId);
 
   return `
-    <p class="eyebrow">Fara zgomot</p>
+    <p class="eyebrow">Concept anchor</p>
     <h2>${theory.title}</h2>
     <p class="rail-copy">${theory.overview}</p>
     <ul class="compact-list">
@@ -1113,16 +1156,26 @@ function renderActiveView() {
 }
 
 function renderLearnView() {
+  const snapshot = currentCollectionSnapshot();
+  const accuracy = currentCollectionAccuracy();
+
   return `
     <section class="view-header">
       <div>
-        <p class="eyebrow">Mod curent</p>
+        <p class="eyebrow">${state.reviewMode ? "Recovery lane" : state.learnSource === "checkpoint" ? "Checkpoint bilete" : "Module bilete"}</p>
         <h2>${currentCollectionTitle()}</h2>
+        <p class="section-copy">Pastreaza-te in flux: lucreaza coada recomandata, revino pe greseli, apoi deschide teoria doar cand iti lipseste contextul.</p>
       </div>
       <div class="secondary-nav">
         <button class="secondary-tab ${state.learnView === "questions" ? "active" : ""}" type="button" data-learn-view="questions">Intrebari</button>
         <button class="secondary-tab ${state.learnView === "theory" ? "active" : ""}" type="button" data-learn-view="theory">${state.learnSource === "checkpoint" ? "Overview" : "Teorie"}</button>
       </div>
+    </section>
+    <section class="focus-strip">
+      <div class="focus-metric"><span>In queue</span><strong>${snapshot.recommended}</strong></div>
+      <div class="focus-metric"><span>Wrong</span><strong>${snapshot.review}</strong></div>
+      <div class="focus-metric"><span>Fresh</span><strong>${snapshot.fresh}</strong></div>
+      <div class="focus-metric"><span>Accuracy</span><strong>${accuracy}%</strong></div>
     </section>
     ${state.learnView === "questions" ? renderQuestionWorkspace() : renderTheoryWorkspace()}
   `;
@@ -1135,18 +1188,19 @@ function renderQuestionWorkspace() {
     <section class="toolbar">
       <label class="search-field">
         <span>Cauta</span>
-        <input type="text" value="${escapeHtml(state.searchQuery)}" placeholder="termen, protocol, raspuns" data-search />
+        <input type="text" value="${escapeHtml(state.searchQuery)}" placeholder="protocol, comanda, raspuns, checkpoint" data-search />
       </label>
       <div class="filter-chips" aria-label="Question filters">
         ${
           state.reviewMode
             ? `<button class="filter-chip active review" type="button" data-action="stop-review-mode">Doar gresite</button>`
             : `
-              ${renderFilterChip("all", "Toate")}
+              ${renderFilterChip("recommended", "Queue")}
               ${renderFilterChip("fresh", "Noi")}
-              ${renderFilterChip("active", "In progres")}
-              ${renderFilterChip("struggling", "De repetat")}
+              ${renderFilterChip("review", "Gresite")}
+              ${renderFilterChip("active", "Stable")}
               ${renderFilterChip("mastered", "Invatate")}
+              ${renderFilterChip("all", "Toate")}
             `
         }
       </div>
@@ -1269,23 +1323,24 @@ function renderCorrectAnswer(item) {
 function renderQuestionLayout(cards) {
   const card = currentCard();
   const metrics = questionMetrics(card);
+  const answered = getAnswerTexts(card).join(" • ");
 
   return `
     <section class="question-layout">
       <aside class="question-index">
         <div class="index-head">
           <div>
-            <p class="eyebrow">Bilete</p>
-            <h3>${cards.length} ${state.reviewMode ? "de revizuit" : "vizibile"}</h3>
+            <p class="eyebrow">Question rail</p>
+            <h3>${cards.length} ${state.reviewMode ? "de recuperat" : "in vedere"}</h3>
           </div>
           <div class="legend">
             <span><i class="status-dot fresh"></i> Nou</span>
-            <span><i class="status-dot active"></i> Activ</span>
+            <span><i class="status-dot struggling"></i> Review</span>
+            <span><i class="status-dot active"></i> Stabil</span>
             <span><i class="status-dot mastered"></i> Invatat</span>
-            <span><i class="status-dot struggling"></i> Revino</span>
           </div>
         </div>
-        <div class="number-grid">
+        <div class="question-list">
           ${cards.map((item) => renderQuestionButton(item)).join("")}
         </div>
       </aside>
@@ -1293,8 +1348,8 @@ function renderQuestionLayout(cards) {
       <article class="question-stage">
         <div class="stage-top">
           <div>
-            <p class="eyebrow">${state.reviewMode ? `Review mode · ${card.module}` : card.module}</p>
-            <h3>Intrebarea ${card.number}</h3>
+            <p class="eyebrow">${state.reviewMode ? `Recovery lane · ${card.module}` : card.module}</p>
+            <h3>${card.sourceType === "checkpoint" ? "Checkpoint prompt" : "Question"} ${card.number}</h3>
           </div>
           <div class="stage-stats">
             <span>${metrics.attempts} incercari</span>
@@ -1314,7 +1369,7 @@ function renderQuestionLayout(cards) {
 
         ${renderAnswerSurface(card, "learn")}
 
-        <div class="action-bar">
+        <div class="action-bar action-dock">
           <button class="primary-action" type="button" data-action="check-learn">Verifica</button>
           <button class="ghost-action" type="button" data-action="show-theory">Arata explicatia</button>
           <button class="ghost-action" type="button" data-action="next-learn">Urmatoarea</button>
@@ -1358,6 +1413,10 @@ function renderQuestionLayout(cards) {
               `).join("")}
             </div>
           </div>
+          <div class="explanation-block span-two">
+            <p class="eyebrow">Answer line</p>
+            <p>${isMatrixQuestion(card) ? "Vezi tabela corecta de mai sus pentru ordinea exacta." : answered}</p>
+          </div>
         </section>
       </article>
     </section>
@@ -1367,7 +1426,16 @@ function renderQuestionLayout(cards) {
 function renderQuestionButton(card) {
   const active = card.id === state.selectedCardId ? "active" : "";
   const status = questionStatus(card);
-  return `<button class="question-chip ${active} ${status}" type="button" data-card="${card.id}">${card.number}</button>`;
+  const preview = escapeHtml(card.question.length > 88 ? `${card.question.slice(0, 88)}...` : card.question);
+  return `
+    <button class="question-chip question-row ${active} ${status}" type="button" data-card="${card.id}">
+      <span class="question-row-number">${card.number}</span>
+      <span class="question-row-copy">
+        <strong>${card.sourceType === "checkpoint" ? "Checkpoint" : card.module}</strong>
+        <span>${preview}</span>
+      </span>
+    </button>
+  `;
 }
 
 function renderTheoryWorkspace() {
@@ -1623,25 +1691,26 @@ function renderStatsView() {
   const weakestModule = snapshot.weakestModuleId ? getCollectionById(snapshot.weakestModuleId) : null;
   const strongestModule = snapshot.strongestModuleId ? getCollectionById(snapshot.strongestModuleId) : null;
   const hardest = hardestQuestions();
+  const collections = currentCollectionReports();
 
   return `
     <section class="stats-view">
       <div class="stats-overview">
-        <div class="mini-metric"><span>Total raspunsuri</span><strong>${snapshot.totals.attempts}</strong></div>
-        <div class="mini-metric"><span>Corecte</span><strong>${snapshot.totals.correct}</strong></div>
-        <div class="mini-metric"><span>Gresite</span><strong>${snapshot.totals.wrong}</strong></div>
-        <div class="mini-metric"><span>Invatate</span><strong>${snapshot.totals.mastered}</strong></div>
+        <div class="mini-metric"><span>Total attempts</span><strong>${snapshot.totals.attempts}</strong></div>
+        <div class="mini-metric"><span>Wrong answers</span><strong>${snapshot.totals.wrong}</strong></div>
+        <div class="mini-metric"><span>Fresh left</span><strong>${snapshot.totals.untouched}</strong></div>
+        <div class="mini-metric"><span>Mastered</span><strong>${snapshot.totals.mastered}</strong></div>
       </div>
 
       <section class="stats-hero">
         <div class="stats-hero-copy">
-          <p class="eyebrow">Comanda de invatare</p>
-          <h2>${snapshot.reviewCount ? `${snapshot.reviewCount} intrebari cer revizuire` : "Esti curat pe moment"}</h2>
+          <p class="eyebrow">Action center</p>
+          <h2>${snapshot.reviewCount ? `${snapshot.reviewCount} intrebari au nevoie de recuperare` : "Queue-ul este sub control"}</h2>
           <p class="section-copy">
             ${
               snapshot.reviewCount
-                ? `Porneste imediat un review doar pentru intrebarile gresite. Ordinea este prioritizata dupa numarul de greseli si cat de fragila este intelegerea ta.`
-                : `Continua cu Educatie sau Examen pentru a genera noi statistici. Odata ce apar greseli, aici vei avea un mod dedicat de recuperare.`
+                ? `Porneste un review focalizat sau sari direct in cea mai slaba zona. Statistica nu este doar raportare, ci control de trafic pentru urmatoarea sesiune buna.`
+                : `Continua in Educatie sau Examen. Pe masura ce raspunzi, acest panou iti va spune exact unde sa te intorci si ce colectie sa deschizi.`
             }
           </p>
         </div>
@@ -1663,12 +1732,12 @@ function renderStatsView() {
       <section class="stats-section insights">
         <div class="summary-list two-up">
           <article class="summary-item accent-good">
-            <strong>Cea mai buna zona</strong>
+            <strong>Strongest area</strong>
             <p>${strongestModule ? strongestModule.title : "Fara date suficiente"}</p>
             <span>${strongestModule ? `${getCollectionSummary(strongestModule.id, summaryByModule, checkpointSummary)?.accuracy ?? 0}% acuratete` : "Mai raspunde la cateva intrebari."}</span>
           </article>
           <article class="summary-item accent-warn">
-            <strong>Cea mai slaba zona</strong>
+            <strong>Weakest area</strong>
             <p>${weakestModule ? weakestModule.title : "Fara date suficiente"}</p>
             <span>${weakestModule ? `${getCollectionSummary(weakestModule.id, summaryByModule, checkpointSummary)?.accuracy ?? 0}% acuratete` : "Mai raspunde la cateva intrebari."}</span>
           </article>
@@ -1678,27 +1747,26 @@ function renderStatsView() {
       <section class="stats-section">
         <div class="stage-top">
           <div>
-            <p class="eyebrow">Module</p>
-            <h2>Rezumat pe module</h2>
+            <p class="eyebrow">Collections</p>
+            <h2>Where to study next</h2>
           </div>
         </div>
         <div class="table-list">
           <div class="table-row table-head table-row-action">
-            <span>Modul</span>
-            <span>Incercate</span>
+            <span>Collection</span>
+            <span>Queue</span>
+            <span>Review</span>
             <span>Acuratete</span>
-            <span>Invatate</span>
             <span>Actiune</span>
           </div>
-          ${library.modules.map((module) => {
-            const stats = summaryByModule[module.id] ?? { attempted: 0, accuracy: 0, mastered: 0 };
+          ${collections.map((collection) => {
             return `
               <div class="table-row table-row-action">
-                <span>${module.title}</span>
-                <span>${stats.attempted}/${module.cards.length}</span>
-                <span>${stats.accuracy}%</span>
-                <span>${stats.mastered}</span>
-                <button class="inline-link" type="button" data-focus-collection="${module.id}">Studiaza</button>
+                <span>${collection.title}</span>
+                <span>${collection.recommended}/${collection.total}</span>
+                <span>${collection.review}</span>
+                <span>${collection.accuracy}%</span>
+                <button class="inline-link" type="button" data-focus-collection="${collection.id}">${collection.kind === "checkpoint" ? "Bilete" : "Studiaza"}</button>
               </div>
             `;
           }).join("")}
@@ -1720,37 +1788,6 @@ function renderStatsView() {
               <span>${progress.wrong} gresite · ${progress.accuracy}% corect · ${formatRelativeTime(progress.lastSeenAt)}</span>
             </button>
           `).join("") || `<p class="subcopy">Inca nu exista intrebari marcate ca dificile.</p>`}
-        </div>
-      </section>
-
-      <section class="stats-section">
-        <div class="stage-top">
-          <div>
-            <p class="eyebrow">Checkpoint Exams</p>
-            <h2>Progres pe examene reale</h2>
-          </div>
-        </div>
-        <div class="table-list">
-          <div class="table-row table-head table-row-action">
-            <span>Checkpoint</span>
-            <span>Incercate</span>
-            <span>Acuratete</span>
-            <span>Media</span>
-            <span>Actiune</span>
-          </div>
-          ${checkpointLibrary.checkpoints.map((checkpoint) => {
-            const stats = checkpointSummary[checkpoint.id] ?? { attempted: 0, accuracy: 0 };
-            const withMedia = checkpoint.questions.filter((item) => item.media?.length).length;
-            return `
-              <div class="table-row table-row-action">
-                <span>${checkpoint.title}</span>
-                <span>${stats.attempted}/${checkpoint.questions.length}</span>
-                <span>${stats.accuracy}%</span>
-                <span>${withMedia}</span>
-                <button class="inline-link" type="button" data-focus-collection="${checkpoint.id}">Bilete</button>
-              </div>
-            `;
-          }).join("")}
         </div>
       </section>
     </section>
