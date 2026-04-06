@@ -162,6 +162,7 @@ a {
 .answer-option,
 .primary-action,
 .ghost-action,
+.inline-link,
 .search-field input,
 .select-field select {
   transition: border-color 180ms ease, background-color 180ms ease, color 180ms ease, transform 180ms ease;
@@ -175,6 +176,7 @@ a {
 .filter-chip,
 .primary-action,
 .ghost-action,
+.inline-link,
 .status-tag,
 .mini-metric,
 .search-field input,
@@ -701,6 +703,10 @@ a {
 .question-chip:focus-visible,
 .answer-option:hover,
 .answer-option:focus-visible,
+.inline-link:hover,
+.inline-link:focus-visible,
+.clickable-card:hover,
+.clickable-card:focus-visible,
 .filter-chip:hover,
 .filter-chip:focus-visible,
 .primary-tab:hover,
@@ -898,9 +904,37 @@ button:disabled {
   border-bottom: 1px solid var(--line);
 }
 
+.table-row.table-row-action {
+  grid-template-columns: minmax(0, 2fr) repeat(3, minmax(80px, 1fr)) minmax(88px, auto);
+  align-items: center;
+}
+
 .table-head {
   color: var(--muted);
   font-size: 0.88rem;
+}
+
+.inline-link {
+  min-height: 38px;
+  padding: 0 12px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface-soft);
+  color: var(--text);
+  justify-self: end;
+}
+
+.clickable-card {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface-soft);
+  text-align: left;
+  cursor: pointer;
+}
+
+.action-bar.dense {
+  margin-top: 0;
 }
 
 .empty-state {
@@ -959,8 +993,19 @@ button:disabled {
     border-radius: 22px;
   }
 
+  .module-button {
+    padding: 11px 12px;
+    margin-bottom: 8px;
+    border-radius: 16px;
+  }
+
+  .module-meta {
+    font-size: 0.8rem;
+  }
+
   .number-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px;
   }
 
   .stage-top,
@@ -974,5 +1019,31 @@ button:disabled {
 
   .answer-option {
     grid-template-columns: 28px 1fr;
+    padding: 12px;
+    border-radius: 16px;
+  }
+
+  .question-chip {
+    min-height: 46px;
+    border-radius: 14px;
+    font-size: 0.94rem;
+  }
+
+  .search-field input,
+  .select-field select {
+    min-height: 44px;
+    padding: 0 14px;
+  }
+
+  .table-row.table-row-action {
+    grid-template-columns: 1fr;
+  }
+
+  .inline-link {
+    justify-self: start;
+  }
+
+  .stats-hero-actions .action-bar {
+    grid-template-columns: 1fr;
   }
 }

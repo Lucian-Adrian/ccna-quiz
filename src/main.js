@@ -1,5 +1,5 @@
 import "./styles.css";
-import { CHECKPOINT_SOURCES, resolveCheckpointAsset } from "./checkpoint-sources.js";
+import { CHECKPOINT_MANIFEST, loadCheckpointSources, resolveCheckpointAsset } from "./checkpoint-sources.js";
 import { buildCheckpointLibrary } from "./checkpoints.js";
 import { MODULE_SOURCES } from "./module-sources.js";
 import { shuffleCards } from "./parser.js";
@@ -8,11 +8,14 @@ import { buildModuleLibrary, buildStatsSnapshot, getProgressEntry, getReviewQueu
 const STORAGE_KEY = "ccna-study-workspace-v4";
 const LEGACY_STORAGE_KEY = "ccna-study-workspace-v3";
 const library = buildModuleLibrary(MODULE_SOURCES);
-const checkpointLibrary = buildCheckpointLibrary(CHECKPOINT_SOURCES, resolveCheckpointAsset);
-const allPracticeItems = [...library.cards, ...checkpointLibrary.questions];
 const moduleMap = new Map(library.modules.map((module) => [module.id, module]));
-const checkpointMap = new Map(checkpointLibrary.checkpoints.map((checkpoint) => [checkpoint.id, checkpoint]));
-const itemMap = new Map(allPracticeItems.map((item) => [item.id, item]));
+const runtime = {
+  checkpointLibrary: { checkpoints: [], questions: [] },
+  checkpointMap: new Map(),
+  itemMap: new Map(library.cards.map((item) => [item.id, item])),
+  checkpointStatus: "idle",
+  checkpointPromise: null,
+};
 
 const app = document.querySelector("#app");
 const pathParts = window.location.pathname.split("/").filter(Boolean);
@@ -32,11 +35,14 @@ const siteLinks = {
 
 const initialModule = library.modules[0];
 const initialCard = initialModule.cards[0];
+const initialCheckpointMeta = CHECKPOINT_MANIFEST[0] ?? null;
 
 const state = {
   activeTab: "learn",
   learnView: "questions",
+  learnSource: "module",
   currentModuleId: initialModule.id,
+  currentCheckpointId: initialCheckpointMeta?.id ?? null,
   selectedCardId: initialCard.id,
   searchQuery: "",
   questionFilter: "all",
@@ -60,11 +66,48 @@ const state = {
     results: [],
     startedAt: null,
     mode: "practice",
-    checkpointId: checkpointLibrary.checkpoints[0]?.id ?? null,
+    checkpointId: initialCheckpointMeta?.id ?? null,
   },
 };
 
 let timerId = null;
+let pendingFocusState = null;
+
+function captureFocusState() {
+  const active = document.activeElement;
+
+  if (!(active instanceof HTMLInputElement) || active.dataset.search === undefined) {
+    return;
+  }
+
+  pendingFocusState = {
+    selector: "[data-search]",
+    selectionStart: active.selectionStart ?? active.value.length,
+    selectionEnd: active.selectionEnd ?? active.value.length,
+  };
+}
+
+function restorePendingFocus() {
+  if (!pendingFocusState) {
+    return;
+  }
+
+  const focusState = pendingFocusState;
+  pendingFocusState = null;
+  const target = app.querySelector(focusState.selector);
+
+  if (!(target instanceof HTMLInputElement)) {
+    return;
+  }
+
+  requestAnimationFrame(() => {
+    target.focus({ preventScroll: true });
+    const max = target.value.length;
+    const start = Math.min(focusState.selectionStart ?? max, max);
+    const end = Math.min(focusState.selectionEnd ?? max, max);
+    target.setSelectionRange(start, end);
+  });
+}
 
 function loadProgress() {
   const raw = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY);
@@ -101,6 +144,54 @@ function loadProgress() {
 
 function saveProgress() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state.progress));
+}
+
+function getCheckpointLibrary() {
+  return runtime.checkpointLibrary;
+}
+
+function getAllPracticeItems() {
+  return [...library.cards, ...runtime.checkpointLibrary.questions];
+}
+
+function syncCheckpointRuntime(checkpointLibrary) {
+  runtime.checkpointLibrary = checkpointLibrary;
+  runtime.checkpointMap = new Map(checkpointLibrary.checkpoints.map((checkpoint) => [checkpoint.id, checkpoint]));
+  runtime.itemMap = new Map([...library.cards, ...checkpointLibrary.questions].map((item) => [item.id, item]));
+}
+
+async function ensureCheckpointLibrary() {
+  if (runtime.checkpointStatus === "ready") {
+    return runtime.checkpointLibrary;
+  }
+
+  if (runtime.checkpointStatus === "loading") {
+    return runtime.checkpointPromise;
+  }
+
+  runtime.checkpointStatus = "loading";
+  state.notice = "Se incarca checkpoint-urile si imaginile aferente.";
+  render();
+
+  runtime.checkpointPromise = loadCheckpointSources()
+    .then((sources) => {
+      const checkpointLibrary = buildCheckpointLibrary(sources, resolveCheckpointAsset);
+      syncCheckpointRuntime(checkpointLibrary);
+      runtime.checkpointStatus = "ready";
+      runtime.checkpointPromise = null;
+      return checkpointLibrary;
+    })
+    .catch((error) => {
+      runtime.checkpointStatus = "idle";
+      runtime.checkpointPromise = null;
+      throw error;
+    });
+
+  return runtime.checkpointPromise;
+}
+
+function checkpointMetaById(checkpointId) {
+  return CHECKPOINT_MANIFEST.find((entry) => entry.id === checkpointId) ?? null;
 }
 
 function normalize(text = "") {
@@ -197,8 +288,30 @@ function currentModule() {
   return moduleMap.get(state.currentModuleId) ?? library.modules[0];
 }
 
+function currentCheckpoint() {
+  return runtime.checkpointMap.get(state.currentCheckpointId) ?? null;
+}
+
+function currentCollectionItems() {
+  if (state.learnSource === "checkpoint") {
+    return currentCheckpoint()?.questions ?? [];
+  }
+
+  return currentModule().cards;
+}
+
+function currentCollectionTitle() {
+  if (state.reviewMode) {
+    return "Wrong-answer rehearsal";
+  }
+
+  return state.learnSource === "checkpoint"
+    ? currentCheckpoint()?.title ?? "Checkpoint practice"
+    : currentModule().title;
+}
+
 function currentCard() {
-  return itemMap.get(state.selectedCardId) ?? currentModule().cards[0];
+  return runtime.itemMap.get(state.selectedCardId) ?? currentCollectionItems()[0] ?? currentModule().cards[0];
 }
 
 function questionStatus(card) {
@@ -220,12 +333,12 @@ function questionStatus(card) {
 }
 
 function availableReviewCards() {
-  return getReviewQueue(allPracticeItems, state.progress);
+  return getReviewQueue(getAllPracticeItems(), state.progress);
 }
 
 function visibleCards() {
   const query = normalize(state.searchQuery);
-  const cards = state.reviewMode ? availableReviewCards() : currentModule().cards;
+  const cards = state.reviewMode ? availableReviewCards() : currentCollectionItems();
 
   return cards.filter((card) => {
     const matchesQuery = !query || normalize(getCardSearchBlob(card)).includes(query);
@@ -242,7 +355,7 @@ function ensureVisibleSelection() {
   if (!visible.length) {
     state.selectedCardId = state.reviewMode
       ? null
-      : currentModule().cards[0]?.id ?? null;
+      : currentCollectionItems()[0]?.id ?? null;
     return;
   }
 
@@ -256,6 +369,7 @@ function ensureVisibleSelection() {
 }
 
 function setModule(moduleId) {
+  state.learnSource = "module";
   state.currentModuleId = moduleId;
   state.searchQuery = "";
   state.questionFilter = "all";
@@ -266,6 +380,22 @@ function setModule(moduleId) {
   state.learnResult = null;
   state.selectedCardId = currentModule().cards[0].id;
   state.notice = `Ai deschis ${currentModule().title}.`;
+  render();
+}
+
+async function setCheckpoint(checkpointId) {
+  await ensureCheckpointLibrary();
+  state.learnSource = "checkpoint";
+  state.currentCheckpointId = checkpointId;
+  state.searchQuery = "";
+  state.questionFilter = "all";
+  state.reviewMode = false;
+  state.selectedOptions = [];
+  state.selectedMatrixAnswers = {};
+  state.learnChecked = false;
+  state.learnResult = null;
+  state.selectedCardId = currentCheckpoint()?.questions[0]?.id ?? null;
+  state.notice = `Ai deschis ${currentCheckpoint()?.title ?? "checkpoint-ul selectat"}.`;
   render();
 }
 
@@ -381,9 +511,11 @@ function startWrongReview() {
   state.activeTab = "learn";
   state.learnView = "questions";
   state.reviewMode = true;
+  state.learnSource = first.sourceType === "checkpoint" ? "checkpoint" : "module";
   state.searchQuery = "";
   state.selectedCardId = first.id;
   state.currentModuleId = first.moduleId;
+  state.currentCheckpointId = first.checkpointId ?? state.currentCheckpointId;
   state.selectedOptions = [];
   state.selectedMatrixAnswers = {};
   state.learnChecked = false;
@@ -400,7 +532,7 @@ function stopWrongReview() {
   state.selectedMatrixAnswers = {};
   state.learnChecked = false;
   state.learnResult = null;
-  state.selectedCardId = currentModule().cards[0]?.id ?? null;
+  state.selectedCardId = currentCollectionItems()[0]?.id ?? currentModule().cards[0]?.id ?? null;
   state.notice = "Ai iesit din review mode.";
   render();
 }
@@ -414,12 +546,16 @@ function setExamScope(scope) {
   render();
 }
 
-function setExamMode(mode) {
+async function setExamMode(mode) {
+  if (mode === "checkpoint") {
+    await ensureCheckpointLibrary();
+  }
   state.exam.mode = mode;
   render();
 }
 
-function setExamCheckpoint(checkpointId) {
+async function setExamCheckpoint(checkpointId) {
+  await ensureCheckpointLibrary();
   state.exam.checkpointId = checkpointId;
   render();
 }
@@ -431,7 +567,7 @@ function setExamLength(length) {
 
 function buildExamOrder() {
   if (state.exam.mode === "checkpoint") {
-    return [...(checkpointMap.get(state.exam.checkpointId)?.questions ?? [])];
+    return [...(runtime.checkpointMap.get(state.exam.checkpointId)?.questions ?? [])];
   }
 
   const sourceCards = state.exam.scope === "module" ? [...currentModule().cards] : [...library.cards];
@@ -452,7 +588,10 @@ function ensureTimer() {
   }
 }
 
-function startExam() {
+async function startExam() {
+  if (state.exam.mode === "checkpoint") {
+    await ensureCheckpointLibrary();
+  }
   state.exam.order = buildExamOrder();
   state.exam.index = 0;
   state.exam.selectedOptions = [];
@@ -575,14 +714,16 @@ function reviewExamMistakes() {
     return;
   }
 
-  const card = itemMap.get(firstWrong.cardId);
+  const card = runtime.itemMap.get(firstWrong.cardId);
   state.activeTab = "learn";
   state.learnView = "questions";
+  state.learnSource = card.sourceType === "checkpoint" ? "checkpoint" : "module";
   state.currentModuleId = card.moduleId;
+  state.currentCheckpointId = card.checkpointId ?? state.currentCheckpointId;
   state.selectedCardId = card.id;
   state.searchQuery = "";
   state.questionFilter = "all";
-  state.reviewMode = card.sourceType === "checkpoint";
+  state.reviewMode = false;
   state.selectedOptions = [];
   state.selectedMatrixAnswers = {};
   state.learnChecked = true;
@@ -669,18 +810,152 @@ function questionMetrics(card) {
 }
 
 function getCollectionById(collectionId) {
-  return moduleMap.get(collectionId) ?? checkpointMap.get(collectionId) ?? null;
+  return moduleMap.get(collectionId) ?? runtime.checkpointMap.get(collectionId) ?? checkpointMetaById(collectionId) ?? null;
 }
 
 function getCollectionSummary(collectionId, moduleSummary, checkpointSummary) {
   return moduleSummary[collectionId] ?? checkpointSummary[collectionId] ?? null;
 }
 
+function summarizeCheckpointProgress(checkpointId, totalQuestions = 0) {
+  const prefix = `${checkpointId}-`;
+  const summary = {
+    questions: totalQuestions,
+    attempted: 0,
+    correct: 0,
+    wrong: 0,
+    accuracy: 0,
+    mastered: 0,
+  };
+
+  for (const [cardId, entry] of Object.entries(state.progress)) {
+    if (!cardId.startsWith(prefix)) {
+      continue;
+    }
+
+    if ((entry.attempts ?? 0) > 0) {
+      summary.attempted += 1;
+    }
+
+    summary.correct += entry.correct ?? 0;
+    summary.wrong += entry.wrong ?? 0;
+
+    if ((entry.streak ?? 0) >= 3) {
+      summary.mastered += 1;
+    }
+  }
+
+  const totalAttempts = summary.correct + summary.wrong;
+  summary.accuracy = totalAttempts > 0 ? Math.round((summary.correct / totalAttempts) * 100) : 0;
+  return summary;
+}
+
+function compareCardsByPriority(left, right) {
+  const leftMetrics = questionMetrics(left);
+  const rightMetrics = questionMetrics(right);
+
+  return (rightMetrics.wrong - leftMetrics.wrong)
+    || (leftMetrics.accuracy - rightMetrics.accuracy)
+    || (leftMetrics.streak - rightMetrics.streak)
+    || (leftMetrics.attempts - rightMetrics.attempts)
+    || left.module.localeCompare(right.module)
+    || left.number - right.number;
+}
+
+function getCollectionFocusCard(cards) {
+  return [...cards].sort(compareCardsByPriority)[0] ?? cards[0] ?? null;
+}
+
+async function focusCollection(collectionId) {
+  const module = moduleMap.get(collectionId);
+
+  if (module) {
+    const focusCard = getCollectionFocusCard(module.cards);
+    state.activeTab = "learn";
+    state.learnView = "questions";
+    state.learnSource = "module";
+    state.reviewMode = false;
+    state.currentModuleId = module.id;
+    state.selectedCardId = focusCard?.id ?? module.cards[0]?.id ?? null;
+    state.searchQuery = "";
+    state.questionFilter = "all";
+    state.selectedOptions = [];
+    state.selectedMatrixAnswers = {};
+    state.learnChecked = false;
+    state.learnResult = null;
+    state.notice = `Ai deschis ${module.title} in mod de studiu focalizat.`;
+    render();
+    return;
+  }
+
+  await ensureCheckpointLibrary();
+  const checkpoint = runtime.checkpointMap.get(collectionId);
+
+  if (!checkpoint) {
+    return;
+  }
+
+  const focusCard = getCollectionFocusCard(checkpoint.questions);
+  state.activeTab = "learn";
+  state.learnView = "questions";
+  state.learnSource = "checkpoint";
+  state.reviewMode = false;
+  state.currentCheckpointId = checkpoint.id;
+  state.selectedCardId = focusCard?.id ?? checkpoint.questions[0]?.id ?? null;
+  state.searchQuery = "";
+  state.questionFilter = "all";
+  state.selectedOptions = [];
+  state.selectedMatrixAnswers = {};
+  state.learnChecked = false;
+  state.learnResult = null;
+  state.notice = `Ai deschis ${checkpoint.title} ca set de bilete.`;
+  render();
+}
+
+function openHardestQuestion() {
+  const [entry] = hardestQuestions();
+
+  if (!entry) {
+    state.notice = "Nu exista inca o intrebare cu dificultate ridicata.";
+    render();
+    return;
+  }
+
+  focusCollection(entry.card.sourceType === "checkpoint" ? entry.card.checkpointId : entry.card.moduleId)
+    .then(() => {
+      state.selectedCardId = entry.card.id;
+      state.notice = "Ai sarit direct la cea mai dificila intrebare salvata.";
+      render();
+    });
+}
+
+async function openWeakestArea() {
+  await ensureCheckpointLibrary();
+  const snapshot = buildStatsSnapshot(getAllPracticeItems(), state.progress);
+
+  if (!snapshot.weakestModuleId) {
+    state.notice = "Mai raspunde la cateva intrebari ca sa-ti pot indica zona cea mai slaba.";
+    render();
+    return;
+  }
+
+  await focusCollection(snapshot.weakestModuleId);
+}
+
+async function setActiveTab(tab) {
+  if (tab === "stats") {
+    await ensureCheckpointLibrary();
+  }
+
+  state.activeTab = tab;
+  render();
+}
+
 function hardestQuestions() {
-  return allPracticeItems
+  return getAllPracticeItems()
     .map((card) => ({ card, progress: questionMetrics(card) }))
     .filter(({ progress }) => progress.wrong > 0)
-    .sort((left, right) => right.progress.wrong - left.progress.wrong || left.card.module.localeCompare(right.card.module))
+    .sort((left, right) => compareCardsByPriority(left.card, right.card))
     .slice(0, 10);
 }
 
@@ -700,7 +975,10 @@ function siteSwitcher() {
 }
 
 function render() {
+  captureFocusState();
   ensureVisibleSelection();
+  const checkpointLibrary = getCheckpointLibrary();
+  const totalQuestionCount = library.cards.length + CHECKPOINT_MANIFEST.reduce((sum, item) => sum + item.totalQuestions, 0);
 
   app.innerHTML = `
     <main class="app-shell">
@@ -713,7 +991,7 @@ function render() {
         <div class="header-side">
           ${siteSwitcher()}
           <div class="metric-row">
-            <div class="metric-pill"><span>Questions</span><strong>${allPracticeItems.length}</strong></div>
+            <div class="metric-pill"><span>Questions</span><strong>${totalQuestionCount}</strong></div>
             <div class="metric-pill"><span>Reviewed</span><strong>${totalReviewed(state.progress)}</strong></div>
             <div class="metric-pill"><span>Accuracy</span><strong>${overallAccuracy()}%</strong></div>
           </div>
@@ -732,6 +1010,10 @@ function render() {
             <p class="eyebrow">Module</p>
             ${library.modules.map((module) => renderModuleButton(module)).join("")}
           </div>
+          <div class="rail-block">
+            <p class="eyebrow">Checkpoints</p>
+            ${CHECKPOINT_MANIFEST.map((checkpoint) => renderCheckpointButton(checkpoint, checkpointLibrary)).join("")}
+          </div>
           <div class="rail-block rail-theory">
             ${renderRailTheory()}
           </div>
@@ -747,6 +1029,7 @@ function render() {
   `;
 
   wireEvents();
+  restorePendingFocus();
 }
 
 function renderPrimaryTab(value, label) {
@@ -754,7 +1037,7 @@ function renderPrimaryTab(value, label) {
 }
 
 function renderModuleButton(module) {
-  const active = module.id === state.currentModuleId ? "active" : "";
+  const active = state.learnSource === "module" && module.id === state.currentModuleId ? "active" : "";
   const summary = summarizeModules(module.cards, state.progress)[module.id] ?? {
     attempted: 0,
     questions: module.cards.length,
@@ -770,7 +1053,41 @@ function renderModuleButton(module) {
   `;
 }
 
+function renderCheckpointButton(checkpointMeta, checkpointLibrary) {
+  const active = state.learnSource === "checkpoint" && checkpointMeta.id === state.currentCheckpointId ? "active" : "";
+  const loadedCheckpoint = checkpointLibrary.checkpoints.find((item) => item.id === checkpointMeta.id);
+  const summary = loadedCheckpoint
+    ? summarizeModules(loadedCheckpoint.questions, state.progress)[checkpointMeta.id] ?? summarizeCheckpointProgress(checkpointMeta.id, checkpointMeta.totalQuestions)
+    : summarizeCheckpointProgress(checkpointMeta.id, checkpointMeta.totalQuestions);
+
+  return `
+    <button class="module-button checkpoint ${active}" type="button" data-checkpoint="${checkpointMeta.id}">
+      <span class="module-label">${checkpointMeta.title}</span>
+      <span class="module-meta">${summary.attempted}/${checkpointMeta.totalQuestions} lucrate · ${summary.accuracy}% · ${checkpointMeta.questionsWithMedia} cu imagini</span>
+    </button>
+  `;
+}
+
 function renderRailTheory() {
+  if (state.learnSource === "checkpoint") {
+    const checkpoint = currentCheckpoint() ?? checkpointMetaById(state.currentCheckpointId);
+    const stats = currentCheckpoint()
+      ? summarizeModules(currentCheckpoint().questions, state.progress)[currentCheckpoint().id] ?? summarizeCheckpointProgress(currentCheckpoint().id, currentCheckpoint().questions.length)
+      : summarizeCheckpointProgress(state.currentCheckpointId, checkpoint?.totalQuestions ?? 0);
+
+    return `
+      <p class="eyebrow">Exam set</p>
+      <h2>${checkpoint?.title ?? "Checkpoint"}</h2>
+      <p class="rail-copy">Checkpoint-urile sunt seturi reale de repetitie pentru examen. Le poti parcurge lent, ca bilete, sau le poti rula integral din tabul Examen.</p>
+      <ul class="compact-list">
+        <li>${checkpoint?.totalQuestions ?? currentCheckpoint()?.questions.length ?? 0} intrebari in set</li>
+        <li>${checkpoint?.questionsWithMedia ?? currentCheckpoint()?.questions.filter((item) => item.media?.length).length ?? 0} itemi cu imagini</li>
+        <li>${stats.attempted ?? 0} lucrate pana acum</li>
+        <li>${stats.accuracy ?? 0}% acuratete</li>
+      </ul>
+    `;
+  }
+
   const theory = theorySectionsForModule(state.currentModuleId);
 
   return `
@@ -796,19 +1113,15 @@ function renderActiveView() {
 }
 
 function renderLearnView() {
-  const headingTitle = state.reviewMode
-    ? "Wrong-answer rehearsal"
-    : currentModule().title;
-
   return `
     <section class="view-header">
       <div>
         <p class="eyebrow">Mod curent</p>
-        <h2>${headingTitle}</h2>
+        <h2>${currentCollectionTitle()}</h2>
       </div>
       <div class="secondary-nav">
         <button class="secondary-tab ${state.learnView === "questions" ? "active" : ""}" type="button" data-learn-view="questions">Intrebari</button>
-        <button class="secondary-tab ${state.learnView === "theory" ? "active" : ""}" type="button" data-learn-view="theory">Teorie</button>
+        <button class="secondary-tab ${state.learnView === "theory" ? "active" : ""}" type="button" data-learn-view="theory">${state.learnSource === "checkpoint" ? "Overview" : "Teorie"}</button>
       </div>
     </section>
     ${state.learnView === "questions" ? renderQuestionWorkspace() : renderTheoryWorkspace()}
@@ -1058,6 +1371,41 @@ function renderQuestionButton(card) {
 }
 
 function renderTheoryWorkspace() {
+  if (state.learnSource === "checkpoint") {
+    const checkpoint = currentCheckpoint() ?? checkpointMetaById(state.currentCheckpointId);
+    const loaded = currentCheckpoint();
+    const stats = loaded
+      ? summarizeModules(loaded.questions, state.progress)[loaded.id] ?? { questions: loaded.questions.length, attempted: 0, accuracy: 0, mastered: 0 }
+      : { questions: checkpoint?.totalQuestions ?? 0, attempted: 0, accuracy: 0, mastered: 0 };
+
+    return `
+      <article class="theory-layout">
+        <section class="theory-hero">
+          <div>
+            <p class="eyebrow">Checkpoint overview</p>
+            <h3>${checkpoint?.title ?? "Checkpoint"}</h3>
+            <p>Acesta este un set de repetitie apropiat de examenul real. Include intrebari cu imagini si matching prompts. Il poti folosi ca bilete individuale sau ca simulare completa.</p>
+          </div>
+          <div class="metric-column">
+            <div class="mini-metric"><span>Intrebari</span><strong>${stats.questions}</strong></div>
+            <div class="mini-metric"><span>Incercate</span><strong>${stats.attempted}</strong></div>
+            <div class="mini-metric"><span>Acuratete</span><strong>${stats.accuracy}%</strong></div>
+            <div class="mini-metric"><span>Media</span><strong>${checkpoint?.questionsWithMedia ?? loaded?.questions.filter((item) => item.media?.length).length ?? 0}</strong></div>
+          </div>
+        </section>
+
+        <section class="theory-section">
+          <p class="eyebrow">Cum sa-l folosesti</p>
+          <ul class="compact-list large">
+            <li>Deschide intrebarile una cate una in Educatie ca sa intelegi logica raspunsului.</li>
+            <li>Foloseste Rehearse Wrong Answers dupa ce gresesti itemi in checkpoint.</li>
+            <li>Ruleaza apoi acelasi checkpoint din Examen ca simulare completa.</li>
+          </ul>
+        </section>
+      </article>
+    `;
+  }
+
   const module = currentModule();
   const theory = theorySectionsForModule(module.id);
   const stats = summarizeModules(module.cards, state.progress)[module.id] ?? {
@@ -1106,6 +1454,14 @@ function renderTheoryWorkspace() {
 }
 
 function renderExamView() {
+  const checkpointLibrary = getCheckpointLibrary();
+  const checkpointTiles = checkpointLibrary.checkpoints.length
+    ? checkpointLibrary.checkpoints
+    : CHECKPOINT_MANIFEST.map((checkpoint) => ({
+      ...checkpoint,
+      questions: [],
+    }));
+
   if (!state.exam.running && !state.exam.completed) {
     return `
       <section class="exam-setup">
@@ -1144,14 +1500,20 @@ function renderExamView() {
             `
             : `
               <div class="checkpoint-grid">
-                ${checkpointLibrary.checkpoints.map((checkpoint) => {
-                  const snapshot = buildStatsSnapshot(checkpoint.questions, state.progress);
+                ${checkpointTiles.map((checkpoint) => {
+                  const stats = checkpoint.questions.length
+                    ? summarizeModules(checkpoint.questions, state.progress)[checkpoint.id] ?? summarizeCheckpointProgress(checkpoint.id, checkpoint.totalQuestions ?? checkpoint.questions.length)
+                    : summarizeCheckpointProgress(checkpoint.id, checkpoint.totalQuestions ?? 0);
+                  const withMedia = checkpoint.questions.length
+                    ? checkpoint.questions.filter((item) => item.media?.length).length
+                    : checkpoint.questionsWithMedia;
+
                   return `
                     <button class="checkpoint-tile ${state.exam.checkpointId === checkpoint.id ? "active" : ""}" type="button" data-exam-checkpoint="${checkpoint.id}">
                       <strong>${checkpoint.title}</strong>
-                      <span>${checkpoint.questions.length} intrebari</span>
-                      <span>${checkpoint.questions.filter((item) => item.media?.length).length} cu imagini</span>
-                      <span>${snapshot.totals.accuracy}% acuratete</span>
+                      <span>${checkpoint.totalQuestions ?? checkpoint.questions.length} intrebari</span>
+                      <span>${withMedia} cu imagini</span>
+                      <span>${stats.accuracy}% acuratete</span>
                     </button>
                   `;
                 }).join("")}
@@ -1186,7 +1548,7 @@ function renderExamView() {
 
         <div class="summary-list">
           ${state.exam.results.filter((result) => !result.isCorrect).map((result) => {
-            const card = itemMap.get(result.cardId);
+            const card = runtime.itemMap.get(result.cardId);
             return `
               <article class="summary-item">
                 <strong>${card.module} · ${card.number}</strong>
@@ -1254,9 +1616,10 @@ function renderExamView() {
 }
 
 function renderStatsView() {
+  const checkpointLibrary = getCheckpointLibrary();
   const summaryByModule = summarizeModules(library.cards, state.progress);
   const checkpointSummary = summarizeModules(checkpointLibrary.questions, state.progress);
-  const snapshot = buildStatsSnapshot(allPracticeItems, state.progress);
+  const snapshot = buildStatsSnapshot(getAllPracticeItems(), state.progress);
   const weakestModule = snapshot.weakestModuleId ? getCollectionById(snapshot.weakestModuleId) : null;
   const strongestModule = snapshot.strongestModuleId ? getCollectionById(snapshot.strongestModuleId) : null;
   const hardest = hardestQuestions();
@@ -1284,6 +1647,10 @@ function renderStatsView() {
         </div>
         <div class="stats-hero-actions">
           <button class="primary-action wide" type="button" data-action="start-wrong-review" ${snapshot.reviewCount ? "" : "disabled"}>Rehearse Wrong Answers</button>
+          <div class="action-bar dense">
+            <button class="ghost-action" type="button" data-action="open-weakest-area">Open weakest area</button>
+            <button class="ghost-action" type="button" data-action="open-hardest-question">Open hardest question</button>
+          </div>
           <div class="hero-grid">
             <div class="mini-metric emphasis"><span>Acuratete</span><strong>${snapshot.totals.accuracy}%</strong></div>
             <div class="mini-metric"><span>Neatinse</span><strong>${snapshot.totals.untouched}</strong></div>
@@ -1316,20 +1683,22 @@ function renderStatsView() {
           </div>
         </div>
         <div class="table-list">
-          <div class="table-row table-head">
+          <div class="table-row table-head table-row-action">
             <span>Modul</span>
             <span>Incercate</span>
             <span>Acuratete</span>
             <span>Invatate</span>
+            <span>Actiune</span>
           </div>
           ${library.modules.map((module) => {
             const stats = summaryByModule[module.id] ?? { attempted: 0, accuracy: 0, mastered: 0 };
             return `
-              <div class="table-row">
+              <div class="table-row table-row-action">
                 <span>${module.title}</span>
                 <span>${stats.attempted}/${module.cards.length}</span>
                 <span>${stats.accuracy}%</span>
                 <span>${stats.mastered}</span>
+                <button class="inline-link" type="button" data-focus-collection="${module.id}">Studiaza</button>
               </div>
             `;
           }).join("")}
@@ -1345,11 +1714,11 @@ function renderStatsView() {
         </div>
         <div class="summary-list">
           ${hardest.map(({ card, progress }) => `
-            <article class="summary-item">
+            <button class="summary-item clickable-card" type="button" data-focus-card="${card.id}">
               <strong>${card.module} · ${card.number}</strong>
               <p>${card.question}</p>
               <span>${progress.wrong} gresite · ${progress.accuracy}% corect · ${formatRelativeTime(progress.lastSeenAt)}</span>
-            </article>
+            </button>
           `).join("") || `<p class="subcopy">Inca nu exista intrebari marcate ca dificile.</p>`}
         </div>
       </section>
@@ -1362,21 +1731,23 @@ function renderStatsView() {
           </div>
         </div>
         <div class="table-list">
-          <div class="table-row table-head">
+          <div class="table-row table-head table-row-action">
             <span>Checkpoint</span>
             <span>Incercate</span>
             <span>Acuratete</span>
             <span>Media</span>
+            <span>Actiune</span>
           </div>
           ${checkpointLibrary.checkpoints.map((checkpoint) => {
             const stats = checkpointSummary[checkpoint.id] ?? { attempted: 0, accuracy: 0 };
             const withMedia = checkpoint.questions.filter((item) => item.media?.length).length;
             return `
-              <div class="table-row">
+              <div class="table-row table-row-action">
                 <span>${checkpoint.title}</span>
                 <span>${stats.attempted}/${checkpoint.questions.length}</span>
                 <span>${stats.accuracy}%</span>
                 <span>${withMedia}</span>
+                <button class="inline-link" type="button" data-focus-collection="${checkpoint.id}">Bilete</button>
               </div>
             `;
           }).join("")}
@@ -1404,9 +1775,8 @@ function statusLabel(status) {
 
 function wireEvents() {
   app.querySelectorAll("[data-tab]").forEach((button) => {
-    button.addEventListener("click", () => {
-      state.activeTab = button.dataset.tab;
-      render();
+    button.addEventListener("click", async () => {
+      await setActiveTab(button.dataset.tab);
     });
   });
 
@@ -1435,7 +1805,18 @@ function wireEvents() {
     });
   });
 
+  app.querySelectorAll("[data-checkpoint]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      await setCheckpoint(button.dataset.checkpoint);
+    });
+  });
+
   app.querySelector("[data-search]")?.addEventListener("input", (event) => {
+    pendingFocusState = {
+      selector: "[data-search]",
+      selectionStart: event.target.selectionStart ?? event.target.value.length,
+      selectionEnd: event.target.selectionEnd ?? event.target.value.length,
+    };
     state.searchQuery = event.target.value;
     ensureVisibleSelection();
     render();
@@ -1466,14 +1847,35 @@ function wireEvents() {
   });
 
   app.querySelectorAll("[data-exam-mode]").forEach((button) => {
-    button.addEventListener("click", () => {
-      setExamMode(button.dataset.examMode);
+    button.addEventListener("click", async () => {
+      await setExamMode(button.dataset.examMode);
     });
   });
 
   app.querySelectorAll("[data-exam-checkpoint]").forEach((button) => {
-    button.addEventListener("click", () => {
-      setExamCheckpoint(button.dataset.examCheckpoint);
+    button.addEventListener("click", async () => {
+      await setExamCheckpoint(button.dataset.examCheckpoint);
+    });
+  });
+
+  app.querySelectorAll("[data-focus-collection]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      await focusCollection(button.dataset.focusCollection);
+    });
+  });
+
+  app.querySelectorAll("[data-focus-card]").forEach((card) => {
+    card.addEventListener("click", async () => {
+      const item = runtime.itemMap.get(card.dataset.focusCard);
+
+      if (!item) {
+        return;
+      }
+
+      await focusCollection(item.sourceType === "checkpoint" ? item.checkpointId : item.moduleId);
+      state.selectedCardId = item.id;
+      state.notice = `Ai deschis ${item.module}, intrebarea ${item.number}.`;
+      render();
     });
   });
 
@@ -1486,7 +1888,7 @@ function wireEvents() {
   });
 
   app.querySelectorAll("[data-action]").forEach((button) => {
-    button.addEventListener("click", () => {
+    button.addEventListener("click", async () => {
       const action = button.dataset.action;
 
       if (action === "check-learn") {
@@ -1498,7 +1900,7 @@ function wireEvents() {
       } else if (action === "reset-learn") {
         resetLearnPane();
       } else if (action === "start-exam") {
-        startExam();
+        await startExam();
       } else if (action === "check-exam") {
         checkExamAnswer();
       } else if (action === "next-exam") {
@@ -1507,13 +1909,17 @@ function wireEvents() {
         stopExam();
       } else if (action === "restart-exam") {
         state.exam.completed = false;
-        startExam();
+        await startExam();
       } else if (action === "review-mistakes") {
         reviewExamMistakes();
       } else if (action === "start-wrong-review") {
         startWrongReview();
       } else if (action === "stop-review-mode") {
         stopWrongReview();
+      } else if (action === "open-weakest-area") {
+        await openWeakestArea();
+      } else if (action === "open-hardest-question") {
+        openHardestQuestion();
       }
     });
   });
