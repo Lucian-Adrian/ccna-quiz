@@ -216,51 +216,74 @@ function getSelectionCount(question) {
 
 export function parseQuizMarkdown(markdown, moduleLabel) {
   const normalized = markdown.replace(/\r\n/g, "\n").trim();
-  const matches = [...normalized.matchAll(/^\s*(\d+)\.\s/gm)];
+  const lines = normalized.split("\n").map((line) => line.trim());
   const cards = [];
+  let currentCard = null;
+  let inExplanation = false;
 
-  matches.forEach((match, index) => {
-    const start = match.index ?? 0;
-    const end = index + 1 < matches.length ? matches[index + 1].index ?? normalized.length : normalized.length;
-    const block = normalized.slice(start, end).trim();
-    const lines = block.split("\n").map((line) => line.trim()).filter(Boolean);
-
-    const firstLine = lines.shift() ?? "";
-    const number = Number(firstLine.match(/^(\d+)\./)?.[1] ?? 0);
-    const question = firstLine.replace(/^\d+\.\s*/, "").trim();
-    const selectionCount = getSelectionCount(question);
-    const options = [];
-    const explanationParts = [];
-
-    let inExplanation = false;
-
-    for (const line of lines) {
-      if (/^Explanation:/i.test(line)) {
-        inExplanation = true;
-        explanationParts.push(line.replace(/^Explanation:\s*/i, ""));
-        continue;
-      }
-
-      if (inExplanation) {
-        explanationParts.push(line);
-      } else {
-        options.push(line);
-      }
+  const pushCard = () => {
+    if (!currentCard) {
+      return;
     }
 
-    const explanation = explanationParts.join(" ").trim();
-    const answers = selectAnswers(question, explanation, options, selectionCount);
+    const explanation = currentCard.explanationParts.join(" ").trim();
+    const answers = explanation
+      ? selectAnswers(currentCard.question, explanation, currentCard.options, currentCard.selectionCount)
+      : [];
 
     cards.push({
-      number,
+      number: currentCard.number,
       module: moduleLabel,
-      question,
-      options,
+      question: currentCard.question,
+      options: currentCard.options,
       explanation,
-      selectionCount,
+      selectionCount: currentCard.selectionCount,
       answers,
     });
-  });
+  };
+
+  for (const line of lines) {
+    if (!line) {
+      continue;
+    }
+
+    const questionMatch = line.match(/^(\d+)\.\s+(.*)$/);
+    if (questionMatch && questionMatch[2].includes("?")) {
+      pushCard();
+
+      const question = questionMatch[2].trim();
+      currentCard = {
+        number: Number(questionMatch[1]),
+        question,
+        selectionCount: getSelectionCount(question),
+        options: [],
+        explanationParts: [],
+      };
+      inExplanation = false;
+      continue;
+    }
+
+    if (!currentCard) {
+      continue;
+    }
+
+    if (/^Explanation:/i.test(line)) {
+      inExplanation = true;
+      const remainder = line.replace(/^Explanation:\s*/i, "").trim();
+      if (remainder) {
+        currentCard.explanationParts.push(remainder);
+      }
+      continue;
+    }
+
+    if (inExplanation) {
+      currentCard.explanationParts.push(line);
+    } else {
+      currentCard.options.push(line);
+    }
+  }
+
+  pushCard();
 
   return cards;
 }
