@@ -8,6 +8,7 @@ import { buildModuleLibrary, buildStatsSnapshot, getProgressEntry, getReviewQueu
 
 const STORAGE_KEY = "ccna-study-workspace-v4";
 const LEGACY_STORAGE_KEY = "ccna-study-workspace-v3";
+const QUESTION_PAGE_SIZE = 12;
 const library = buildModuleLibrary(MODULE_SOURCES);
 const moduleMap = new Map(library.modules.map((module) => [module.id, module]));
 const runtime = {
@@ -48,6 +49,7 @@ const state = {
   currentModuleId: initialModule.id,
   currentCheckpointId: initialCheckpointMeta?.id ?? null,
   selectedCardId: initialCard.id,
+  questionPage: 0,
   searchQuery: "",
   questionFilter: "recommended",
   reviewMode: false,
@@ -76,6 +78,7 @@ const state = {
 
 let timerId = null;
 let pendingFocusState = null;
+let pendingScrollY = null;
 
 function captureFocusState() {
   const active = document.activeElement;
@@ -110,6 +113,22 @@ function restorePendingFocus() {
     const start = Math.min(focusState.selectionStart ?? max, max);
     const end = Math.min(focusState.selectionEnd ?? max, max);
     target.setSelectionRange(start, end);
+  });
+}
+
+function captureScrollPosition() {
+  pendingScrollY = window.scrollY;
+}
+
+function restorePendingScroll() {
+  if (pendingScrollY === null) {
+    return;
+  }
+
+  const top = pendingScrollY;
+  pendingScrollY = null;
+  requestAnimationFrame(() => {
+    window.scrollTo({ top });
   });
 }
 
@@ -358,12 +377,50 @@ function visibleCards() {
     : state.questionFilter === "all"
       ? [...currentCollectionItems()].sort((left, right) => left.number - right.number)
       : buildPracticeDeck(currentCollectionItems(), state.progress, state.questionFilter)
-        .filter((card) => state.questionFilter !== "recommended" || questionStatus(card) !== "mastered");
+        .filter((card) => state.questionFilter !== "recommended" || (questionStatus(card) !== "mastered" && card.isVerified !== false));
 
   return cards.filter((card) => {
     const matchesQuery = !query || normalize(getCardSearchBlob(card)).includes(query);
     return matchesQuery;
   });
+}
+
+function ensureQuestionPage(cards = visibleCards()) {
+  if (!cards.length) {
+    state.questionPage = 0;
+    return;
+  }
+
+  const totalPages = Math.max(Math.ceil(cards.length / QUESTION_PAGE_SIZE), 1);
+  const selectedIndex = Math.max(cards.findIndex((card) => card.id === state.selectedCardId), 0);
+  const selectedPage = Math.floor(selectedIndex / QUESTION_PAGE_SIZE);
+
+  if (state.questionPage >= totalPages) {
+    state.questionPage = totalPages - 1;
+  }
+
+  if (state.questionPage < 0) {
+    state.questionPage = 0;
+  }
+
+  const pageStart = state.questionPage * QUESTION_PAGE_SIZE;
+  const pageEnd = pageStart + QUESTION_PAGE_SIZE;
+
+  if (selectedIndex < pageStart || selectedIndex >= pageEnd) {
+    state.questionPage = selectedPage;
+  }
+}
+
+function pagedCards(cards = visibleCards()) {
+  ensureQuestionPage(cards);
+  const totalPages = Math.max(Math.ceil(cards.length / QUESTION_PAGE_SIZE), 1);
+  const start = state.questionPage * QUESTION_PAGE_SIZE;
+
+  return {
+    items: cards.slice(start, start + QUESTION_PAGE_SIZE),
+    totalPages,
+    start,
+  };
 }
 
 function ensureVisibleSelection() {
@@ -373,6 +430,7 @@ function ensureVisibleSelection() {
     state.selectedCardId = state.reviewMode
       ? null
       : currentCollectionItems()[0]?.id ?? null;
+    state.questionPage = 0;
     return;
   }
 
@@ -383,6 +441,8 @@ function ensureVisibleSelection() {
     state.learnChecked = false;
     state.learnResult = null;
   }
+
+  ensureQuestionPage(visible);
 }
 
 function setModule(moduleId) {
@@ -390,6 +450,7 @@ function setModule(moduleId) {
   state.currentModuleId = moduleId;
   state.searchQuery = "";
   state.questionFilter = "recommended";
+  state.questionPage = 0;
   state.reviewMode = false;
   state.selectedOptions = [];
   state.selectedMatrixAnswers = {};
@@ -406,6 +467,7 @@ async function setCheckpoint(checkpointId) {
   state.currentCheckpointId = checkpointId;
   state.searchQuery = "";
   state.questionFilter = "recommended";
+  state.questionPage = 0;
   state.reviewMode = false;
   state.selectedOptions = [];
   state.selectedMatrixAnswers = {};
@@ -428,6 +490,13 @@ function selectCard(cardId) {
 function setQuestionFilter(filter) {
   state.questionFilter = filter;
   state.reviewMode = false;
+  state.questionPage = 0;
+  ensureVisibleSelection();
+  render();
+}
+
+function setQuestionPage(nextPage) {
+  state.questionPage = nextPage;
   ensureVisibleSelection();
   render();
 }
@@ -435,7 +504,7 @@ function setQuestionFilter(filter) {
 function toggleLearnOption(option) {
   const card = currentCard();
 
-  if (state.learnChecked) {
+  if (state.learnChecked || card.isVerified === false) {
     return;
   }
 
@@ -452,11 +521,12 @@ function toggleLearnOption(option) {
     return;
   }
 
+  captureScrollPosition();
   render();
 }
 
 function setLearnMatrixAnswer(slotIndex, value) {
-  if (state.learnChecked) {
+  if (state.learnChecked || currentCard().isVerified === false) {
     return;
   }
 
@@ -464,11 +534,21 @@ function setLearnMatrixAnswer(slotIndex, value) {
     ...state.selectedMatrixAnswers,
     [slotIndex]: value,
   };
+  captureScrollPosition();
   render();
 }
 
 function checkLearnAnswer(recordStats = true) {
   const card = currentCard();
+
+  if (card.isVerified === false) {
+    state.learnChecked = true;
+    state.learnResult = null;
+    state.notice = "Acest item nu are un raspuns verificat in exportul sursa. Il tratez ca item de teorie.";
+    render();
+    return;
+  }
+
   const hasSelection = isSelectionComplete(card, state.selectedOptions, state.selectedMatrixAnswers);
   const isCorrect = hasSelection ? responseMatches(card, state.selectedOptions, state.selectedMatrixAnswers) : null;
 
@@ -530,6 +610,7 @@ function startWrongReview() {
   state.reviewMode = true;
   state.learnSource = first.sourceType === "checkpoint" ? "checkpoint" : "module";
   state.searchQuery = "";
+  state.questionPage = 0;
   state.selectedCardId = first.id;
   state.currentModuleId = first.moduleId;
   state.currentCheckpointId = first.checkpointId ?? state.currentCheckpointId;
@@ -545,6 +626,7 @@ function stopWrongReview() {
   state.reviewMode = false;
   state.questionFilter = "recommended";
   state.searchQuery = "";
+  state.questionPage = 0;
   state.selectedOptions = [];
   state.selectedMatrixAnswers = {};
   state.learnChecked = false;
@@ -584,10 +666,11 @@ function setExamLength(length) {
 
 function buildExamOrder() {
   if (state.exam.mode === "checkpoint") {
-    return [...(runtime.checkpointMap.get(state.exam.checkpointId)?.questions ?? [])];
+    return [...(runtime.checkpointMap.get(state.exam.checkpointId)?.questions ?? [])].filter((card) => card.isVerified !== false);
   }
 
-  const sourceCards = state.exam.scope === "module" ? [...currentModule().cards] : [...library.cards];
+  const sourceCards = (state.exam.scope === "module" ? [...currentModule().cards] : [...library.cards])
+    .filter((card) => card.isVerified !== false);
   const shuffled = shuffleCards(sourceCards, Date.now());
   const limit = state.exam.length === 0 ? shuffled.length : Math.min(state.exam.length, shuffled.length);
   return shuffled.slice(0, limit);
@@ -640,7 +723,7 @@ function stopExam() {
 function toggleExamOption(option) {
   const card = currentExamCard();
 
-  if (!card || state.exam.checked) {
+  if (!card || state.exam.checked || card.isVerified === false) {
     return;
   }
 
@@ -655,13 +738,14 @@ function toggleExamOption(option) {
     state.notice = `Examenul cere ${card.selectionCount} raspunsuri pentru aceasta intrebare.`;
   }
 
+  captureScrollPosition();
   render();
 }
 
 function setExamMatrixAnswer(slotIndex, value) {
   const card = currentExamCard();
 
-  if (!card || state.exam.checked) {
+  if (!card || state.exam.checked || card.isVerified === false) {
     return;
   }
 
@@ -669,6 +753,7 @@ function setExamMatrixAnswer(slotIndex, value) {
     ...state.exam.selectedMatrixAnswers,
     [slotIndex]: value,
   };
+  captureScrollPosition();
   render();
 }
 
@@ -896,6 +981,7 @@ async function focusCollection(collectionId) {
     state.selectedCardId = focusCard?.id ?? module.cards[0]?.id ?? null;
     state.searchQuery = "";
     state.questionFilter = "recommended";
+    state.questionPage = 0;
     state.selectedOptions = [];
     state.selectedMatrixAnswers = {};
     state.learnChecked = false;
@@ -921,6 +1007,7 @@ async function focusCollection(collectionId) {
   state.selectedCardId = focusCard?.id ?? checkpoint.questions[0]?.id ?? null;
   state.searchQuery = "";
   state.questionFilter = "recommended";
+  state.questionPage = 0;
   state.selectedOptions = [];
   state.selectedMatrixAnswers = {};
   state.learnChecked = false;
@@ -1071,6 +1158,7 @@ function render() {
 
   wireEvents();
   restorePendingFocus();
+  restorePendingScroll();
 }
 
 function renderPrimaryTab(value, label) {
@@ -1285,6 +1373,15 @@ function renderMatrixActivity(item, selectedMatrixAnswers, mode = "learn") {
 }
 
 function renderAnswerSurface(item, mode = "learn") {
+  if (item.isVerified === false) {
+    return `
+      <section class="unverified-panel">
+        <p class="eyebrow">Answer key missing</p>
+        <p>Acest item exista in checkpoint, dar exportul sursa nu include un raspuns verificat. Il poti folosi pentru teorie si context, dar nu il tratez ca intrebare scorabila.</p>
+      </section>
+    `;
+  }
+
   if (isMatrixQuestion(item)) {
     return renderMatrixActivity(
       item,
@@ -1324,6 +1421,9 @@ function renderQuestionLayout(cards) {
   const card = currentCard();
   const metrics = questionMetrics(card);
   const answered = getAnswerTexts(card).join(" • ");
+  const { items: pageCards, totalPages, start } = pagedCards(cards);
+  const pageStart = start + 1;
+  const pageEnd = Math.min(start + pageCards.length, cards.length);
 
   return `
     <section class="question-layout">
@@ -1332,6 +1432,7 @@ function renderQuestionLayout(cards) {
           <div>
             <p class="eyebrow">Question rail</p>
             <h3>${cards.length} ${state.reviewMode ? "de recuperat" : "in vedere"}</h3>
+            <p class="section-copy">Pagina ${state.questionPage + 1}/${totalPages} · ${pageStart}-${pageEnd}</p>
           </div>
           <div class="legend">
             <span><i class="status-dot fresh"></i> Nou</span>
@@ -1340,8 +1441,15 @@ function renderQuestionLayout(cards) {
             <span><i class="status-dot mastered"></i> Invatat</span>
           </div>
         </div>
+        <div class="question-pager">
+          <button class="ghost-action" type="button" data-page="${Math.max(state.questionPage - 1, 0)}" ${state.questionPage === 0 ? "disabled" : ""}>Prev</button>
+          <div class="pager-dots">
+            ${Array.from({ length: totalPages }, (_, index) => `<button class="pager-dot ${index === state.questionPage ? "active" : ""}" type="button" data-page="${index}">${index + 1}</button>`).join("")}
+          </div>
+          <button class="ghost-action" type="button" data-page="${Math.min(state.questionPage + 1, totalPages - 1)}" ${state.questionPage >= totalPages - 1 ? "disabled" : ""}>Next</button>
+        </div>
         <div class="question-list">
-          ${cards.map((item) => renderQuestionButton(item)).join("")}
+          ${pageCards.map((item) => renderQuestionButton(item)).join("")}
         </div>
       </aside>
 
@@ -1363,15 +1471,17 @@ function renderQuestionLayout(cards) {
         ${renderMediaStrip(card)}
 
         <div class="helper-line">
-          <span>${isMatrixQuestion(card) ? "Potriveste fiecare prompt cu raspunsul corect" : card.selectionCount === 1 ? "Alege un raspuns" : `Alege ${card.selectionCount} raspunsuri`}</span>
+          <span>${card.isVerified === false ? "Fara raspuns verificat in exportul sursa" : isMatrixQuestion(card) ? "Potriveste fiecare prompt cu raspunsul corect" : card.selectionCount === 1 ? "Alege un raspuns" : `Alege ${card.selectionCount} raspunsuri`}</span>
           <span class="status-tag ${metrics.status}">${statusLabel(metrics.status)}</span>
         </div>
 
         ${renderAnswerSurface(card, "learn")}
 
         <div class="action-bar action-dock">
-          <button class="primary-action" type="button" data-action="check-learn">Verifica</button>
-          <button class="ghost-action" type="button" data-action="show-theory">Arata explicatia</button>
+          ${card.isVerified === false
+            ? `<button class="primary-action" type="button" data-action="show-theory">Arata explicatia</button>`
+            : `<button class="primary-action" type="button" data-action="check-learn">Verifica</button>
+               <button class="ghost-action" type="button" data-action="show-theory">Arata explicatia</button>`}
           <button class="ghost-action" type="button" data-action="next-learn">Urmatoarea</button>
           <button class="ghost-action" type="button" data-action="reset-learn">Reset</button>
         </div>
@@ -1839,6 +1949,12 @@ function wireEvents() {
   app.querySelectorAll("[data-card]").forEach((button) => {
     button.addEventListener("click", () => {
       selectCard(button.dataset.card);
+    });
+  });
+
+  app.querySelectorAll("[data-page]").forEach((button) => {
+    button.addEventListener("click", () => {
+      setQuestionPage(Number(button.dataset.page));
     });
   });
 

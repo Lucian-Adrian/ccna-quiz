@@ -254,6 +254,67 @@ test("normalizes checkpoint exams with media and matrix prompts for the runtime"
   assert.deepEqual(question.answerTable.rows, [["fault tolerance", "Provide redundant links and devices."]]);
 });
 
+test("flags checkpoint questions with missing answer keys and replaces placeholder explanations", () => {
+  const checkpointSources = [
+    {
+      id: "check-x",
+      title: "Checkpoint X",
+      questions: [
+        {
+          number: 19,
+          kind: "single_choice",
+          question: "Which command should be used?",
+          options: ["show ip route", "show version"],
+          correctOptionIndices: [],
+          correctOptions: [],
+          explanation: {
+            eli5: "In simple terms, the correct answers are the correct answer.",
+            ccna: "The correct answers are the correct answer.",
+          },
+        },
+      ],
+    },
+  ];
+
+  const library = buildCheckpointLibrary(checkpointSources);
+  const [question] = library.questions;
+
+  assert.equal(question.isVerified, false);
+  assert.match(question.explanation.eli5, /does not include a verified answer/i);
+  assert.match(question.explanation.ccna, /verify/i);
+});
+
+test("applies the corrected answer and explanation for check1 question 20", () => {
+  const checkpointSources = [
+    {
+      id: "check1",
+      title: "Checkpoint Exam 1",
+      questions: [
+        {
+          number: 20,
+          kind: "single_choice",
+          question: "Which command or key combination allows a user to return to the previous level in the command hierarchy?",
+          options: ["end", "exit", "Ctrl-Z", "Ctrl-C"],
+          correctOptionIndices: [],
+          correctOptions: [],
+          explanation: {
+            eli5: "",
+            ccna: "",
+          },
+        },
+      ],
+    },
+  ];
+
+  const library = buildCheckpointLibrary(checkpointSources);
+  const [question] = library.questions;
+
+  assert.equal(question.isVerified, true);
+  assert.deepEqual(question.answerIndices, [1]);
+  assert.equal(question.answers[0].text, "exit");
+  assert.match(question.explanation.ccna, /previous command mode/i);
+});
+
 test("builds a recommended practice deck that surfaces weak cards before fresh and stable ones", () => {
   const cards = [
     { id: "m1-1", moduleId: "m1", module: "Module 1", number: 1 },

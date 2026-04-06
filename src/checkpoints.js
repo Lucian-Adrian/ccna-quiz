@@ -2,6 +2,41 @@ function normalizeText(text = "") {
   return String(text).replace(/\s+/g, " ").trim();
 }
 
+function isPlaceholderExplanation(text = "") {
+  const normalized = normalizeText(text).toLowerCase();
+  return normalized === "the correct answers are the correct answer."
+    || normalized === "in simple terms, the correct answers are the correct answer.";
+}
+
+function buildFallbackExplanation(question, answerTexts) {
+  if (answerTexts.length) {
+    const answerLine = answerTexts.join(", ");
+    return {
+      eli5: `In simple terms, the verified answer is ${answerLine}. Use the CCNA note below to understand why that choice fits the prompt.`,
+      ccna: `The source export did not include a clean explanation for this checkpoint item, but the verified answer is ${answerLine}. Review the prompt, the exhibit, and the surrounding CCNA theory before memorizing it.`,
+    };
+  }
+
+  return {
+    eli5: "This checkpoint export does not include a verified answer for this item yet. Use it as a theory prompt instead of trusting a random choice.",
+    ccna: "The source material for this checkpoint item is missing a verified answer key. Keep the question for review, but verify it against the original checkpoint or course theory before using it as scored practice.",
+  };
+}
+
+function checkpointOverride(checkpoint, question) {
+  if (checkpoint.id === "check1" && question.number === 20) {
+    return {
+      answerIndices: [1],
+      explanation: {
+        eli5: "In simple terms, the answer is exit. The exit command moves you back one level in the Cisco IOS command hierarchy instead of jumping all the way out.",
+        ccna: "The correct answer is exit. In Cisco IOS, exit returns the user to the previous command mode. End and Ctrl-Z jump back to privileged EXEC mode, while Ctrl-C stops the command currently in process.",
+      },
+    };
+  }
+
+  return null;
+}
+
 function getSelectionCount(question) {
   if (question.kind === "multiple_choice") {
     return question.correctOptionIndices?.length
@@ -59,7 +94,18 @@ function normalizeMatrix(activity = {}) {
 
 export function normalizeCheckpointQuestion(checkpoint, question, resolveAssetUrl = (path) => path) {
   const options = normalizeChoices(question);
-  const answerIndices = normalizeAnswerIndices(question, options);
+  const override = checkpointOverride(checkpoint, question);
+  const answerIndices = override?.answerIndices ?? normalizeAnswerIndices(question, options);
+  const answerTexts = answerIndices
+    .map((index) => options[index]?.text)
+    .filter(Boolean);
+  const fallbackExplanation = buildFallbackExplanation(question, answerTexts);
+  const rawEli5 = normalizeText(question.explanation?.eli5);
+  const rawCcna = normalizeText(question.explanation?.ccna);
+  const hasMatrixAnswer = question.kind === "matrix_sort" && Boolean(question.answer?.table?.rows?.length);
+  const isVerified = answerIndices.length > 0 || hasMatrixAnswer;
+  const eli5 = override?.explanation?.eli5 ?? (!rawEli5 || isPlaceholderExplanation(rawEli5) ? fallbackExplanation.eli5 : rawEli5);
+  const ccna = override?.explanation?.ccna ?? (!rawCcna || isPlaceholderExplanation(rawCcna) ? fallbackExplanation.ccna : rawCcna);
   const answers = answerIndices
     .map((index) => options[index])
     .filter(Boolean)
@@ -67,8 +113,8 @@ export function normalizeCheckpointQuestion(checkpoint, question, resolveAssetUr
       index: option.index,
       text: option.text,
       explanation: {
-        eli5: normalizeText(question.explanation?.eli5),
-        ccna: normalizeText(question.explanation?.ccna),
+        eli5,
+        ccna,
       },
     }));
 
@@ -89,9 +135,10 @@ export function normalizeCheckpointQuestion(checkpoint, question, resolveAssetUr
     options: options.map((option) => option.text),
     answerIndices,
     answers,
+    isVerified,
     explanation: {
-      eli5: normalizeText(question.explanation?.eli5),
-      ccna: normalizeText(question.explanation?.ccna),
+      eli5,
+      ccna,
     },
     media: normalizeMedia(question.media, resolveAssetUrl),
     answerTable: question.answer?.table ?? null,
