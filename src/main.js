@@ -20,6 +20,13 @@ const moduleCards = modules.map((module) => ({
 
 const allCards = moduleCards.flatMap((module) => module.cards);
 const app = document.querySelector("#app");
+const pathParts = window.location.pathname.split("/").filter(Boolean);
+const siteTrack = pathParts.at(-1) === "second" ? "second" : pathParts.at(-1) === "initial" ? "initial" : "local";
+const siteLinks = {
+  home: siteTrack === "local" ? "/" : "../",
+  initial: siteTrack === "local" ? "/" : "../initial/",
+  second: siteTrack === "local" ? "/" : "../second/",
+};
 
 const state = {
   moduleFilter: "all",
@@ -289,9 +296,15 @@ function render() {
 
   app.innerHTML = `
     <main class="shell">
+      <nav class="site-switcher" aria-label="Site versions">
+        <a class="site-link" href="${siteLinks.home}">Hub</a>
+        <a class="site-link ${siteTrack === "initial" ? "active" : ""}" href="${siteLinks.initial}">Initial</a>
+        <a class="site-link ${siteTrack === "second" ? "active" : ""}" href="${siteLinks.second}">Second</a>
+      </nav>
+
       <section class="hero">
         <div>
-          <p class="eyebrow">Cisco CCNA study deck</p>
+          <p class="eyebrow">Cisco CCNA study deck ${siteTrack !== "local" ? `· ${siteTrack}` : ""}</p>
           <h1>Train the three markdown modules on one phone-ready page.</h1>
           <p class="lede">Everything is local and static. Open the Vite network URL on your phone, then drill in quiz mode or flip through classic flashcards.</p>
         </div>
