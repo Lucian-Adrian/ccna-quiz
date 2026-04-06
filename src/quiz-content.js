@@ -25,7 +25,7 @@ function buildNaturalLead(selectionCount, answerTexts) {
 function stripGeneratedPrefix(text, question) {
   const normalized = normalizeText(text);
   if (!normalized.startsWith(`For "${question}"`)) {
-    return normalized;
+    return rewriteGenericLead(normalized);
   }
 
   const markerIndex = normalized.toLowerCase().indexOf("in simple terms,");
@@ -36,6 +36,20 @@ function stripGeneratedPrefix(text, question) {
   const becauseIndex = normalized.toLowerCase().indexOf(" because ");
   if (becauseIndex >= 0) {
     return normalized.slice(becauseIndex + " because ".length).trim();
+  }
+
+  return rewriteGenericLead(normalized);
+}
+
+function rewriteGenericLead(text) {
+  const normalized = normalizeText(text);
+
+  if (/^In simple terms,\s+the correct answers are\s+/i.test(normalized)) {
+    return normalized.replace(/^In simple terms,\s+the correct answers are\s+/i, "The correct answers are ");
+  }
+
+  if (/^In simple terms,\s+the answer is\s+/i.test(normalized)) {
+    return normalized.replace(/^In simple terms,\s+the answer is\s+/i, "The correct answer is ");
   }
 
   return normalized;

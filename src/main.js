@@ -274,6 +274,41 @@ function isMatrixQuestion(item) {
   return item.kind === "matrix_sort" && item.matrix;
 }
 
+function selectionRequirementText(item) {
+  if (isMatrixQuestion(item)) {
+    return "Potriveste fiecare prompt cu raspunsul corect.";
+  }
+
+  if (item.selectionCount === 1) {
+    return "Alege un raspuns.";
+  }
+
+  return `Alege exact ${item.selectionCount} raspunsuri.`;
+}
+
+function selectionProgressText(item, mode = "learn") {
+  if (isMatrixQuestion(item)) {
+    const selected = Object.values(mode === "learn" ? state.selectedMatrixAnswers : state.exam.selectedMatrixAnswers)
+      .filter((value) => normalize(value ?? "") !== "").length;
+    return `${selected}/${item.matrix.prompts.length} completate`;
+  }
+
+  const selected = (mode === "learn" ? state.selectedOptions : state.exam.selectedOptions).length;
+  return `${selected}/${Math.max(item.selectionCount ?? 1, 1)} selectate`;
+}
+
+function selectionNotice(item) {
+  if (isMatrixQuestion(item)) {
+    return "Completeaza toate potrivirile inainte sa verifici.";
+  }
+
+  if (item.selectionCount === 1) {
+    return "Selecteaza un raspuns inainte sa verifici.";
+  }
+
+  return `Selecteaza exact ${item.selectionCount} raspunsuri inainte sa verifici.`;
+}
+
 function serializeSelection(item, selectedOptions, selectedMatrixAnswers) {
   if (isMatrixQuestion(item)) {
     return Object.entries(selectedMatrixAnswers)
@@ -474,7 +509,7 @@ function toggleLearnOption(option) {
   } else if (state.selectedOptions.length < card.selectionCount) {
     state.selectedOptions = [...state.selectedOptions, option];
   } else {
-    state.notice = `Intrebarea cere ${card.selectionCount} raspunsuri.`;
+    state.notice = `Ai deja ${card.selectionCount}/${card.selectionCount}. Scoate o optiune daca vrei sa schimbi raspunsul.`;
     render();
     return;
   }
@@ -524,7 +559,7 @@ function checkLearnAnswer(recordStats = true) {
   state.learnResult = isCorrect;
 
   if (!hasSelection) {
-    state.notice = "Ai deschis explicatia fara sa trimiti un raspuns.";
+    state.notice = selectionNotice(card);
   } else {
     state.notice = isCorrect
       ? "Raspuns corect. Continua cat timp informatia este proaspata."
@@ -722,9 +757,7 @@ function checkExamAnswer() {
   const card = currentExamCard();
 
   if (!card || !isSelectionComplete(card, state.exam.selectedOptions, state.exam.selectedMatrixAnswers)) {
-    state.notice = isMatrixQuestion(card)
-      ? "Completeaza toate potrivirile inainte sa verifici."
-      : "Selecteaza cel putin un raspuns inainte sa verifici.";
+    state.notice = selectionNotice(card);
     render();
     return;
   }
@@ -1293,11 +1326,13 @@ function renderChoiceAnswerList(item, selectedLookup, answerLookup, mode = "lear
         const revealed = mode === "learn" ? state.learnChecked : state.exam.checked;
         const correct = revealed && answerLookup.has(normalize(option));
         const wrong = revealed && selected && !correct;
+        const marker = item.selectionCount === 1 ? "radio" : "check";
 
         return `
           <button class="answer-option ${selected ? "selected" : ""} ${correct ? "correct" : ""} ${wrong ? "wrong" : ""}" type="button" data-${mode}-option="${escapeHtml(option)}">
             <span class="answer-index">${index + 1}</span>
-            <span>${option}</span>
+            <span class="answer-marker ${marker}" aria-hidden="true">${selected ? "●" : item.selectionCount === 1 ? "○" : "□"}</span>
+            <span class="answer-copy">${option}</span>
           </button>
         `;
       }).join("")}
@@ -1317,7 +1352,7 @@ function renderMatrixActivity(item, selectedMatrixAnswers, mode = "learn") {
       <div class="matrix-grid">
         ${item.matrix.prompts.map((prompt, index) => `
           <label class="matrix-row">
-            <span>${prompt}</span>
+            <span class="matrix-prompt"><strong>${index + 1}.</strong> ${prompt}</span>
             <select data-${mode}-matrix="${index}">
               <option value="">Selecteaza</option>
               ${item.matrix.choices.map((choice) => `
@@ -1351,7 +1386,13 @@ function renderAnswerSurface(item, mode = "learn") {
 
   const selectedLookup = new Set((mode === "learn" ? state.selectedOptions : state.exam.selectedOptions).map(normalize));
   const answerLookup = new Set(getAnswerTexts(item).map(normalize));
-  return renderChoiceAnswerList(item, selectedLookup, answerLookup, mode);
+  return `
+    <div class="selection-summary">
+      <span>${selectionRequirementText(item)}</span>
+      <strong>${selectionProgressText(item, mode)}</strong>
+    </div>
+    ${renderChoiceAnswerList(item, selectedLookup, answerLookup, mode)}
+  `;
 }
 
 function renderCorrectAnswer(item) {
@@ -1446,7 +1487,7 @@ function renderQuestionLayout(cards) {
         ${renderMediaStrip(card)}
 
         <div class="helper-line">
-          <span>${card.isVerified === false ? "Fara raspuns verificat in exportul sursa" : isMatrixQuestion(card) ? "Potriveste fiecare prompt cu raspunsul corect" : card.selectionCount === 1 ? "Alege un raspuns" : `Alege ${card.selectionCount} raspunsuri`}</span>
+          <span>${card.isVerified === false ? "Fara raspuns verificat in exportul sursa" : selectionRequirementText(card)}</span>
           <span class="status-tag ${metrics.status}">${statusLabel(metrics.status)}</span>
         </div>
 
@@ -1455,7 +1496,7 @@ function renderQuestionLayout(cards) {
         <div class="action-bar action-dock">
           ${card.isVerified === false
             ? `<button class="primary-action" type="button" data-action="show-theory">Arata explicatia</button>`
-            : `<button class="primary-action" type="button" data-action="check-learn">Verifica</button>
+            : `<button class="primary-action" type="button" data-action="check-learn" ${isSelectionComplete(card, state.selectedOptions, state.selectedMatrixAnswers) ? "" : "disabled"}>Verifica</button>
                <button class="ghost-action" type="button" data-action="show-theory">Arata explicatia</button>`}
           <button class="ghost-action" type="button" data-action="next-learn">Urmatoarea</button>
           <button class="ghost-action" type="button" data-action="reset-learn">Reset</button>
@@ -1479,18 +1520,18 @@ function renderQuestionLayout(cards) {
             ${renderCorrectAnswer(card)}
           </div>
           <div class="explanation-block">
-            <p class="eyebrow">ELI5</p>
-            <p>${card.explanation.eli5}</p>
-          </div>
-          <div class="explanation-block">
-            <p class="eyebrow">CCNA</p>
-            <p>${card.explanation.ccna}</p>
-          </div>
-          <div class="explanation-block span-two">
-            <p class="eyebrow">Detaliu pe raspuns</p>
-            <div class="rationale-list">
-              ${card.answers.map((answer) => `
-                <article class="rationale-item">
+          <p class="eyebrow">ELI5</p>
+          <p>${card.explanation.eli5}</p>
+        </div>
+        <div class="explanation-block">
+          <p class="eyebrow">CCNA logic</p>
+          <p>${card.explanation.ccna}</p>
+        </div>
+        <div class="explanation-block span-two">
+          <p class="eyebrow">De ce acesta e raspunsul</p>
+          <div class="rationale-list">
+            ${card.answers.map((answer) => `
+              <article class="rationale-item">
                   <strong>${answer.text}</strong>
                   <p>${answer.explanation.eli5}</p>
                   <p class="rationale-ccna">${answer.explanation.ccna}</p>
@@ -1498,11 +1539,11 @@ function renderQuestionLayout(cards) {
               `).join("")}
             </div>
           </div>
-          <div class="explanation-block span-two">
-            <p class="eyebrow">Answer line</p>
-            <p>${isMatrixQuestion(card) ? "Vezi tabela corecta de mai sus pentru ordinea exacta." : answered}</p>
-          </div>
-        </section>
+        <div class="explanation-block span-two">
+          <p class="eyebrow">Raspuns final</p>
+          <p>${isMatrixQuestion(card) ? "Vezi tabela corecta de mai sus pentru ordinea exacta." : answered}</p>
+        </div>
+      </section>
       </article>
     </section>
   `;
@@ -1745,7 +1786,7 @@ function renderExamView() {
         ${
           state.exam.checked
             ? `<button class="primary-action" type="button" data-action="next-exam">Continua</button>`
-            : `<button class="primary-action" type="button" data-action="check-exam">Verifica</button>`
+            : `<button class="primary-action" type="button" data-action="check-exam" ${isSelectionComplete(card, state.exam.selectedOptions, state.exam.selectedMatrixAnswers) ? "" : "disabled"}>Verifica</button>`
         }
         <button class="ghost-action" type="button" data-action="close-exam">Inchide</button>
       </div>
@@ -1760,7 +1801,7 @@ function renderExamView() {
           <p>${card.explanation.eli5}</p>
         </div>
         <div class="explanation-block">
-          <p class="eyebrow">CCNA</p>
+          <p class="eyebrow">CCNA logic</p>
           <p>${card.explanation.ccna}</p>
         </div>
       </section>

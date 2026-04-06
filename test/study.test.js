@@ -484,3 +484,76 @@ test("linear navigation stops at the end instead of looping back to the beginnin
     isLast: true,
   });
 });
+
+test("ignores invalid matrix slots so checkpoint matching questions can be answered correctly", () => {
+  const checkpointSources = [
+    {
+      id: "check1",
+      title: "Checkpoint Exam 1",
+      questions: [
+        {
+          number: 9,
+          kind: "matrix_sort",
+          question: "Match the access type.",
+          activity: {
+            prompts: [
+              { position: 0, text: "DSL" },
+              { position: 1, text: "dialup telephone" },
+              { position: 2, text: "satellite" },
+              { position: 3, text: "cable" },
+            ],
+            choices: [
+              { position: 0, text: "high bandwidth connection that runs over telephone line", correctSlots: [0] },
+              { position: 1, text: "typically has very low bandwidth", correctSlots: [1] },
+              { position: 2, text: "not suited for heavily wooded areas", correctSlots: [2] },
+              { position: 3, text: "uses coaxial cable as a medium", correctSlots: [3] },
+              { position: 4, text: "typically uses a T1/E1 or T3/E3 circuit", correctSlots: [4] },
+            ],
+          },
+          explanation: {
+            eli5: "Match the items like this: uses coaxial cable as a medium = cable; not suited for heavily wooded areas = satellite; typically has very low bandwidth = dialup telephone; high bandwidth connection that runs over telephone line = DSL.",
+            ccna: "DSL is high bandwidth over telephone lines. Cable uses coaxial cable. Dialup is very low bandwidth. Satellite needs clear line of sight.",
+          },
+          answer: {
+            type: "table",
+            table: {
+              rows: [
+                ["uses coaxial cable as a medium", "cable"],
+                ["not suited for heavily wooded areas", "satellite"],
+                ["typically has very low bandwidth", "dialup telephone"],
+                ["high bandwidth connection that runs over telephone line", "DSL"],
+              ],
+            },
+          },
+        },
+      ],
+    },
+  ];
+
+  const library = buildCheckpointLibrary(checkpointSources);
+  const [question] = library.questions;
+
+  assert.equal(question.matrix.mappings.length, 4);
+  assert.deepEqual(question.matrix.mappings.map((item) => item.text), [
+    "high bandwidth connection that runs over telephone line",
+    "typically has very low bandwidth",
+    "not suited for heavily wooded areas",
+    "uses coaxial cable as a medium",
+  ]);
+});
+
+test("rewrites generic choose-two explanations into cleaner copy", () => {
+  const formatted = formatQuestionExplanations({
+    question: "Which two fields or features does Ethernet examine?",
+    selectionCount: 2,
+    answerTexts: ["Frame Check Sequence", "minimum frame size"],
+    explanation: {
+      eli5: "In simple terms, the correct answers are Frame Check Sequence, minimum frame size. An Ethernet frame is not processed if it is smaller than the minimum or if the calculated FCS does not match.",
+      ccna: "An Ethernet frame is discarded if it is smaller than 64 bytes or if the calculated FCS value does not match the received FCS value.",
+    },
+  });
+
+  assert.doesNotMatch(formatted.eli5, /^In simple terms, the correct answers are/i);
+  assert.match(formatted.eli5, /Frame Check Sequence/i);
+  assert.match(formatted.eli5, /minimum frame size/i);
+});

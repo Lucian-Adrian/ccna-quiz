@@ -112,19 +112,24 @@ function normalizeMedia(media = [], resolveAssetUrl = (path) => path) {
 }
 
 function normalizeMatrix(activity = {}) {
+  const prompts = (activity.prompts ?? [])
+    .slice()
+    .sort((left, right) => left.position - right.position)
+    .map((item) => item.text);
+  const maxSlot = prompts.length - 1;
+  const choices = (activity.choices ?? [])
+    .slice()
+    .sort((left, right) => left.position - right.position);
+
   return {
-    prompts: (activity.prompts ?? [])
-      .slice()
-      .sort((left, right) => left.position - right.position)
-      .map((item) => item.text),
-    choices: (activity.choices ?? [])
-      .slice()
-      .sort((left, right) => left.position - right.position)
-      .map((item) => item.text),
-    mappings: (activity.choices ?? []).map((choice) => ({
-      text: choice.text,
-      correctSlots: choice.correctSlots ?? [],
-    })),
+    prompts,
+    choices: choices.map((item) => item.text),
+    mappings: choices
+      .map((choice) => ({
+        text: choice.text,
+        correctSlots: (choice.correctSlots ?? []).filter((slot) => slot >= 0 && slot <= maxSlot),
+      }))
+      .filter((choice) => choice.correctSlots.length > 0),
   };
 }
 
