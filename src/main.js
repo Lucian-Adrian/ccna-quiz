@@ -501,6 +501,15 @@ function setQuestionPage(nextPage) {
   render();
 }
 
+function selectQuestionFromJump(cardId) {
+  if (!cardId) {
+    return;
+  }
+
+  captureScrollPosition();
+  selectCard(cardId);
+}
+
 function toggleLearnOption(option) {
   const card = currentCard();
 
@@ -1417,6 +1426,40 @@ function renderCorrectAnswer(item) {
   `;
 }
 
+function renderQuestionJumpbar(cards, totalPages) {
+  const currentIndex = cards.findIndex((item) => item.id === state.selectedCardId);
+  const currentCardIndex = currentIndex >= 0 ? currentIndex : 0;
+  const prevCard = cards[currentCardIndex - 1] ?? null;
+  const nextCard = cards[currentCardIndex + 1] ?? null;
+
+  return `
+    <section class="question-jumpbar">
+      <div class="jumpbar-head">
+        <p class="eyebrow">Navigator</p>
+        <span>${cards.length} intrebari</span>
+      </div>
+      <div class="jumpbar-controls">
+        <label class="select-field compact">
+          <span>Pagina</span>
+          <select data-page-select>
+            ${Array.from({ length: totalPages }, (_, index) => `<option value="${index}" ${index === state.questionPage ? "selected" : ""}>Pagina ${index + 1}</option>`).join("")}
+          </select>
+        </label>
+        <label class="select-field compact">
+          <span>Intrebare</span>
+          <select data-question-select>
+            ${cards.map((item) => `<option value="${item.id}" ${item.id === state.selectedCardId ? "selected" : ""}>${item.number}</option>`).join("")}
+          </select>
+        </label>
+      </div>
+      <div class="jumpbar-actions">
+        <button class="ghost-action" type="button" data-prev-card="${prevCard?.id ?? ""}" ${prevCard ? "" : "disabled"}>Anteriora</button>
+        <button class="ghost-action" type="button" data-next-card="${nextCard?.id ?? ""}" ${nextCard ? "" : "disabled"}>Urmatoarea</button>
+      </div>
+    </section>
+  `;
+}
+
 function renderQuestionLayout(cards) {
   const card = currentCard();
   const metrics = questionMetrics(card);
@@ -1454,6 +1497,7 @@ function renderQuestionLayout(cards) {
       </aside>
 
       <article class="question-stage">
+        ${renderQuestionJumpbar(cards, totalPages)}
         <div class="stage-top">
           <div>
             <p class="eyebrow">${state.reviewMode ? `Recovery lane · ${card.module}` : card.module}</p>
@@ -1955,6 +1999,26 @@ function wireEvents() {
   app.querySelectorAll("[data-page]").forEach((button) => {
     button.addEventListener("click", () => {
       setQuestionPage(Number(button.dataset.page));
+    });
+  });
+
+  app.querySelector("[data-page-select]")?.addEventListener("change", (event) => {
+    setQuestionPage(Number(event.target.value));
+  });
+
+  app.querySelector("[data-question-select]")?.addEventListener("change", (event) => {
+    selectQuestionFromJump(event.target.value);
+  });
+
+  app.querySelectorAll("[data-prev-card]").forEach((button) => {
+    button.addEventListener("click", () => {
+      selectQuestionFromJump(button.dataset.prevCard);
+    });
+  });
+
+  app.querySelectorAll("[data-next-card]").forEach((button) => {
+    button.addEventListener("click", () => {
+      selectQuestionFromJump(button.dataset.nextCard);
     });
   });
 
