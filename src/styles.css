@@ -537,14 +537,6 @@ a {
   gap: 8px;
 }
 
-.question-pager {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  gap: 8px;
-  align-items: center;
-  margin-bottom: 10px;
-}
-
 .question-jumpbar {
   display: grid;
   gap: 12px;
@@ -574,29 +566,6 @@ a {
 
 .select-field.compact span {
   font-size: 0.8rem;
-}
-
-.pager-dots {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  padding-bottom: 2px;
-}
-
-.pager-dot {
-  min-width: 34px;
-  height: 34px;
-  border: 1px solid var(--line);
-  border-radius: 999px;
-  background: var(--surface-strong);
-  color: var(--muted);
-  font-family: "IBM Plex Mono", monospace;
-}
-
-.pager-dot.active {
-  border-color: var(--blue);
-  color: var(--blue);
-  background: var(--blue-soft);
 }
 
 .question-row {

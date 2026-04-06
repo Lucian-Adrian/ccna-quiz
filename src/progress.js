@@ -1,5 +1,6 @@
 import { hydrateCards } from "./study.js";
 import { getModuleTheory } from "./module-theory.js";
+import { formatQuestionExplanations } from "./quiz-content.js";
 
 export function theorySectionsForModule(moduleId) {
   return getModuleTheory(moduleId);
@@ -9,42 +10,25 @@ function normalizeText(text = "") {
   return String(text).replace(/\s+/g, " ").trim();
 }
 
-function buildEli5Lead(question, selectionCount, variant = "card") {
-  if (variant === "answer") {
-    return selectionCount > 1
-      ? `For "${question}", this choice is correct`
-      : `For "${question}", this answer is correct`;
-  }
-
-  return selectionCount > 1
-    ? `For "${question}", these choices are correct`
-    : `For "${question}", this answer is correct`;
-}
-
-function toEli5(question, selectionCount, ccnaExplanation, answerText = "", variant = "card") {
-  const lead = buildEli5Lead(question, selectionCount, variant);
-  const base = normalizeText(ccnaExplanation).replace(/^Reference Topic\s+\d+(?:\.\d+)*\.?\s*/i, "");
-
-  if (!base) {
-    return answerText ? `${lead}: "${answerText}".` : lead;
-  }
-
-  const sentence = base.endsWith(".") ? base : `${base}.`;
-
-  if (variant === "answer") {
-    return `${lead}: "${answerText}". In simple terms, ${sentence.charAt(0).toLowerCase()}${sentence.slice(1)}`;
-  }
-
-  return `${lead} because ${sentence.charAt(0).toLowerCase()}${sentence.slice(1)}`;
-}
-
 function normalizeStructuredAnswers(card, ccnaExplanation) {
+  const formatted = formatQuestionExplanations({
+    question: card.question,
+    selectionCount: card.selectionCount,
+    answerTexts: Array.isArray(card.answers)
+      ? card.answers.map((answer) => (typeof answer === "string" ? answer : answer.text)).filter(Boolean)
+      : [],
+    explanation: {
+      eli5: card.explanation?.eli5,
+      ccna: ccnaExplanation,
+    },
+  });
+
   if (Array.isArray(card.answers) && card.answers.length > 0 && typeof card.answers[0] === "object") {
     return card.answers.map((answer) => ({
       index: answer.index,
       text: answer.text,
       explanation: {
-        eli5: normalizeText(answer.explanation?.eli5) || toEli5(card.question, card.selectionCount, ccnaExplanation, answer.text, "answer"),
+        eli5: normalizeText(answer.explanation?.eli5) || formatted.answerEli5,
         ccna: normalizeText(answer.explanation?.ccna) || ccnaExplanation,
       },
     }));
@@ -57,7 +41,7 @@ function normalizeStructuredAnswers(card, ccnaExplanation) {
       index,
       text: answerText,
       explanation: {
-        eli5: toEli5(card.question, card.selectionCount, ccnaExplanation, answerText, "answer"),
+        eli5: formatted.answerEli5,
         ccna: ccnaExplanation,
       },
     };
@@ -69,6 +53,15 @@ function normalizeCard(moduleId, moduleTitle, card) {
     typeof card.explanation === "object" ? card.explanation?.ccna : card.explanation,
   );
   const answers = normalizeStructuredAnswers(card, ccnaExplanation);
+  const formatted = formatQuestionExplanations({
+    question: card.question,
+    selectionCount: card.selectionCount,
+    answerTexts: answers.map((answer) => answer.text),
+    explanation: {
+      eli5: card.explanation?.eli5,
+      ccna: ccnaExplanation,
+    },
+  });
 
   return {
     ...card,
@@ -78,8 +71,8 @@ function normalizeCard(moduleId, moduleTitle, card) {
     answerIndices: card.answerIndices ?? answers.map((answer) => answer.index).filter((index) => index >= 0),
     answers,
     explanation: {
-      eli5: normalizeText(card.explanation?.eli5) || toEli5(card.question, card.selectionCount, ccnaExplanation),
-      ccna: ccnaExplanation,
+      eli5: formatted.eli5,
+      ccna: formatted.ccna,
     },
   };
 }

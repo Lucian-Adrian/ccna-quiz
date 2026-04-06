@@ -3,6 +3,7 @@ import fs from "node:fs";
 import { test } from "node:test";
 import { buildCheckpointLibrary } from "../src/checkpoints.js";
 import { buildCollectionFocus, buildFocusSnapshot, buildPracticeDeck } from "../src/focus.js";
+import { formatQuestionExplanations, getLinearNavigation, isChoiceSelectionComplete } from "../src/quiz-content.js";
 import { getOptionState, hydrateCards, summarizeProgress } from "../src/study.js";
 import { buildModuleLibrary, buildStatsSnapshot, getReviewQueue, recordAttempt, summarizeModules, theorySectionsForModule } from "../src/progress.js";
 
@@ -401,4 +402,85 @@ test("builds collection focus summaries with a clear next card and workload sign
       nextCardId: "check1-2",
     },
   ]);
+});
+
+test("requires full selection count before a choose-two response is ready", () => {
+  assert.equal(isChoiceSelectionComplete({ selectionCount: 2 }, ["A"]), false);
+  assert.equal(isChoiceSelectionComplete({ selectionCount: 2 }, ["A", "B"]), true);
+  assert.equal(isChoiceSelectionComplete({ selectionCount: 1 }, ["A"]), true);
+});
+
+test("infers missing checkpoint choice answers from explanation text and repairs placeholders", () => {
+  const checkpointSources = [
+    {
+      id: "check1",
+      title: "Checkpoint Exam 1",
+      questions: [
+        {
+          number: 19,
+          kind: "single_choice",
+          question: "What is the technician configuring?",
+          options: [
+            { text: "Telnet access", correct: false },
+            { text: "SVI", correct: false },
+            { text: "password encryption", correct: false },
+            { text: "physical switchport access", correct: false },
+          ],
+          explanation: {
+            eli5: "In simple terms, the correct answers are the correct answer.",
+            ccna: "The switch virtual interface provides remote management on a Layer 2 switch.",
+          },
+        },
+      ],
+    },
+  ];
+
+  const library = buildCheckpointLibrary(checkpointSources);
+  const [question] = library.questions;
+
+  assert.deepEqual(question.answerIndices, [1]);
+  assert.equal(question.answers[0].text, "SVI");
+  assert.match(question.explanation.eli5, /SVI/i);
+  assert.doesNotMatch(question.explanation.eli5, /the correct answer/i);
+});
+
+test("rewrites generated module explanations into cleaner natural copy", () => {
+  const formatted = formatQuestionExplanations({
+    question: "What are two services performed by the data link layer of the OSI model?",
+    selectionCount: 2,
+    answerTexts: [
+      "It accepts Layer 3 packets and encapsulates them into frames.",
+      "It provides media access control and performs error detection.",
+    ],
+    explanation: {
+      eli5: "For \"What are two services performed by the data link layer of the OSI model?\", these choices are correct because the data link layer is responsible for the exchange of frames between nodes over a physical network media.",
+      ccna: "The data link layer accepts Layer 3 packets, encapsulates them into frames, and handles media access control plus error detection.",
+    },
+  });
+
+  assert.doesNotMatch(formatted.eli5, /^For "/);
+  assert.match(formatted.eli5, /data link layer/i);
+  assert.match(formatted.answerEli5, /accepts Layer 3 packets/i);
+});
+
+test("linear navigation stops at the end instead of looping back to the beginning", () => {
+  const cards = [{ id: "q1" }, { id: "q2" }, { id: "q3" }];
+
+  assert.deepEqual(getLinearNavigation(cards, "q1"), {
+    previousId: null,
+    nextId: "q2",
+    index: 0,
+    total: 3,
+    isFirst: true,
+    isLast: false,
+  });
+
+  assert.deepEqual(getLinearNavigation(cards, "q3"), {
+    previousId: "q2",
+    nextId: null,
+    index: 2,
+    total: 3,
+    isFirst: false,
+    isLast: true,
+  });
 });

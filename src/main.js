@@ -5,10 +5,10 @@ import { buildCollectionFocus, buildFocusSnapshot, buildPracticeDeck, getFocusSt
 import { MODULE_SOURCES } from "./module-sources.js";
 import { shuffleCards } from "./parser.js";
 import { buildModuleLibrary, buildStatsSnapshot, getProgressEntry, getReviewQueue, recordAttempt, summarizeModules, theorySectionsForModule } from "./progress.js";
+import { getLinearNavigation, isChoiceSelectionComplete } from "./quiz-content.js";
 
 const STORAGE_KEY = "ccna-study-workspace-v4";
 const LEGACY_STORAGE_KEY = "ccna-study-workspace-v3";
-const QUESTION_PAGE_SIZE = 12;
 const library = buildModuleLibrary(MODULE_SOURCES);
 const moduleMap = new Map(library.modules.map((module) => [module.id, module]));
 const runtime = {
@@ -49,9 +49,8 @@ const state = {
   currentModuleId: initialModule.id,
   currentCheckpointId: initialCheckpointMeta?.id ?? null,
   selectedCardId: initialCard.id,
-  questionPage: 0,
   searchQuery: "",
-  questionFilter: "recommended",
+  questionFilter: "all",
   reviewMode: false,
   selectedOptions: [],
   selectedMatrixAnswers: {},
@@ -290,7 +289,7 @@ function isSelectionComplete(item, selectedOptions, selectedMatrixAnswers) {
     return item.matrix.prompts.every((_, index) => normalize(selectedMatrixAnswers[index] ?? "") !== "");
   }
 
-  return selectedOptions.length > 0;
+  return isChoiceSelectionComplete(item, selectedOptions);
 }
 
 function matrixMatches(item, selectedMatrixAnswers) {
@@ -385,44 +384,6 @@ function visibleCards() {
   });
 }
 
-function ensureQuestionPage(cards = visibleCards()) {
-  if (!cards.length) {
-    state.questionPage = 0;
-    return;
-  }
-
-  const totalPages = Math.max(Math.ceil(cards.length / QUESTION_PAGE_SIZE), 1);
-  const selectedIndex = Math.max(cards.findIndex((card) => card.id === state.selectedCardId), 0);
-  const selectedPage = Math.floor(selectedIndex / QUESTION_PAGE_SIZE);
-
-  if (state.questionPage >= totalPages) {
-    state.questionPage = totalPages - 1;
-  }
-
-  if (state.questionPage < 0) {
-    state.questionPage = 0;
-  }
-
-  const pageStart = state.questionPage * QUESTION_PAGE_SIZE;
-  const pageEnd = pageStart + QUESTION_PAGE_SIZE;
-
-  if (selectedIndex < pageStart || selectedIndex >= pageEnd) {
-    state.questionPage = selectedPage;
-  }
-}
-
-function pagedCards(cards = visibleCards()) {
-  ensureQuestionPage(cards);
-  const totalPages = Math.max(Math.ceil(cards.length / QUESTION_PAGE_SIZE), 1);
-  const start = state.questionPage * QUESTION_PAGE_SIZE;
-
-  return {
-    items: cards.slice(start, start + QUESTION_PAGE_SIZE),
-    totalPages,
-    start,
-  };
-}
-
 function ensureVisibleSelection() {
   const visible = visibleCards();
 
@@ -430,7 +391,6 @@ function ensureVisibleSelection() {
     state.selectedCardId = state.reviewMode
       ? null
       : currentCollectionItems()[0]?.id ?? null;
-    state.questionPage = 0;
     return;
   }
 
@@ -441,22 +401,19 @@ function ensureVisibleSelection() {
     state.learnChecked = false;
     state.learnResult = null;
   }
-
-  ensureQuestionPage(visible);
 }
 
 function setModule(moduleId) {
   state.learnSource = "module";
   state.currentModuleId = moduleId;
   state.searchQuery = "";
-  state.questionFilter = "recommended";
-  state.questionPage = 0;
+  state.questionFilter = "all";
   state.reviewMode = false;
   state.selectedOptions = [];
   state.selectedMatrixAnswers = {};
   state.learnChecked = false;
   state.learnResult = null;
-  state.selectedCardId = buildPracticeDeck(currentModule().cards, state.progress, "recommended")[0]?.id ?? currentModule().cards[0].id;
+  state.selectedCardId = currentModule().cards[0].id;
   state.notice = `Ai deschis ${currentModule().title}.`;
   render();
 }
@@ -466,14 +423,13 @@ async function setCheckpoint(checkpointId) {
   state.learnSource = "checkpoint";
   state.currentCheckpointId = checkpointId;
   state.searchQuery = "";
-  state.questionFilter = "recommended";
-  state.questionPage = 0;
+  state.questionFilter = "all";
   state.reviewMode = false;
   state.selectedOptions = [];
   state.selectedMatrixAnswers = {};
   state.learnChecked = false;
   state.learnResult = null;
-  state.selectedCardId = buildPracticeDeck(currentCheckpoint()?.questions ?? [], state.progress, "recommended")[0]?.id ?? currentCheckpoint()?.questions[0]?.id ?? null;
+  state.selectedCardId = currentCheckpoint()?.questions[0]?.id ?? null;
   state.notice = `Ai deschis ${currentCheckpoint()?.title ?? "checkpoint-ul selectat"}.`;
   render();
 }
@@ -490,13 +446,6 @@ function selectCard(cardId) {
 function setQuestionFilter(filter) {
   state.questionFilter = filter;
   state.reviewMode = false;
-  state.questionPage = 0;
-  ensureVisibleSelection();
-  render();
-}
-
-function setQuestionPage(nextPage) {
-  state.questionPage = nextPage;
   ensureVisibleSelection();
   render();
 }
@@ -587,11 +536,16 @@ function checkLearnAnswer(recordStats = true) {
 
 function nextLearnCard() {
   const cards = visibleCards();
-  const currentIndex = cards.findIndex((card) => card.id === state.selectedCardId);
-  const next = cards[currentIndex + 1] ?? cards[0];
+  const { nextId, isLast } = getLinearNavigation(cards, state.selectedCardId);
 
-  if (next) {
-    selectCard(next.id);
+  if (nextId) {
+    selectCard(nextId);
+    return;
+  }
+
+  if (isLast) {
+    state.notice = "Ai ajuns la ultima intrebare din acest set. Alege alta intrebare sau treci in Teorie/Examen.";
+    render();
   }
 }
 
@@ -619,7 +573,6 @@ function startWrongReview() {
   state.reviewMode = true;
   state.learnSource = first.sourceType === "checkpoint" ? "checkpoint" : "module";
   state.searchQuery = "";
-  state.questionPage = 0;
   state.selectedCardId = first.id;
   state.currentModuleId = first.moduleId;
   state.currentCheckpointId = first.checkpointId ?? state.currentCheckpointId;
@@ -633,14 +586,13 @@ function startWrongReview() {
 
 function stopWrongReview() {
   state.reviewMode = false;
-  state.questionFilter = "recommended";
+  state.questionFilter = "all";
   state.searchQuery = "";
-  state.questionPage = 0;
   state.selectedOptions = [];
   state.selectedMatrixAnswers = {};
   state.learnChecked = false;
   state.learnResult = null;
-  state.selectedCardId = buildPracticeDeck(currentCollectionItems(), state.progress, "recommended")[0]?.id ?? currentCollectionItems()[0]?.id ?? currentModule().cards[0]?.id ?? null;
+  state.selectedCardId = currentCollectionItems()[0]?.id ?? currentModule().cards[0]?.id ?? null;
   state.notice = "Ai iesit din review mode.";
   render();
 }
@@ -989,8 +941,7 @@ async function focusCollection(collectionId) {
     state.currentModuleId = module.id;
     state.selectedCardId = focusCard?.id ?? module.cards[0]?.id ?? null;
     state.searchQuery = "";
-    state.questionFilter = "recommended";
-    state.questionPage = 0;
+    state.questionFilter = "all";
     state.selectedOptions = [];
     state.selectedMatrixAnswers = {};
     state.learnChecked = false;
@@ -1015,8 +966,7 @@ async function focusCollection(collectionId) {
   state.currentCheckpointId = checkpoint.id;
   state.selectedCardId = focusCard?.id ?? checkpoint.questions[0]?.id ?? null;
   state.searchQuery = "";
-  state.questionFilter = "recommended";
-  state.questionPage = 0;
+  state.questionFilter = "all";
   state.selectedOptions = [];
   state.selectedMatrixAnswers = {};
   state.learnChecked = false;
@@ -1127,7 +1077,7 @@ function render() {
             <div class="rail-focus-grid">
               <button class="rail-stat ${state.questionFilter === "recommended" && !state.reviewMode ? "active" : ""}" type="button" data-filter="recommended">
                 <strong>${currentCollectionSnapshot().recommended}</strong>
-                <span>Continue queue</span>
+                <span>Focus queue</span>
               </button>
               <button class="rail-stat ${state.reviewMode ? "active review" : ""}" type="button" data-action="${state.reviewMode ? "stop-review-mode" : "start-wrong-review"}">
                 <strong>${currentCollectionSnapshot().review}</strong>
@@ -1292,12 +1242,12 @@ function renderQuestionWorkspace() {
           state.reviewMode
             ? `<button class="filter-chip active review" type="button" data-action="stop-review-mode">Doar gresite</button>`
             : `
-              ${renderFilterChip("recommended", "Queue")}
+              ${renderFilterChip("all", "Secvential")}
+              ${renderFilterChip("recommended", "Focus")}
               ${renderFilterChip("fresh", "Noi")}
               ${renderFilterChip("review", "Gresite")}
               ${renderFilterChip("active", "Stable")}
               ${renderFilterChip("mastered", "Invatate")}
-              ${renderFilterChip("all", "Toate")}
             `
         }
       </div>
@@ -1426,25 +1376,16 @@ function renderCorrectAnswer(item) {
   `;
 }
 
-function renderQuestionJumpbar(cards, totalPages) {
-  const currentIndex = cards.findIndex((item) => item.id === state.selectedCardId);
-  const currentCardIndex = currentIndex >= 0 ? currentIndex : 0;
-  const prevCard = cards[currentCardIndex - 1] ?? null;
-  const nextCard = cards[currentCardIndex + 1] ?? null;
+function renderQuestionJumpbar(cards) {
+  const navigation = getLinearNavigation(cards, state.selectedCardId);
 
   return `
     <section class="question-jumpbar">
       <div class="jumpbar-head">
         <p class="eyebrow">Navigator</p>
-        <span>${cards.length} intrebari</span>
+        <span>${navigation.index + 1}/${navigation.total}</span>
       </div>
       <div class="jumpbar-controls">
-        <label class="select-field compact">
-          <span>Pagina</span>
-          <select data-page-select>
-            ${Array.from({ length: totalPages }, (_, index) => `<option value="${index}" ${index === state.questionPage ? "selected" : ""}>Pagina ${index + 1}</option>`).join("")}
-          </select>
-        </label>
         <label class="select-field compact">
           <span>Intrebare</span>
           <select data-question-select>
@@ -1453,8 +1394,8 @@ function renderQuestionJumpbar(cards, totalPages) {
         </label>
       </div>
       <div class="jumpbar-actions">
-        <button class="ghost-action" type="button" data-prev-card="${prevCard?.id ?? ""}" ${prevCard ? "" : "disabled"}>Anteriora</button>
-        <button class="ghost-action" type="button" data-next-card="${nextCard?.id ?? ""}" ${nextCard ? "" : "disabled"}>Urmatoarea</button>
+        <button class="ghost-action" type="button" data-prev-card="${navigation.previousId ?? ""}" ${navigation.previousId ? "" : "disabled"}>Anteriora</button>
+        <button class="ghost-action" type="button" data-next-card="${navigation.nextId ?? ""}" ${navigation.nextId ? "" : "disabled"}>Urmatoarea</button>
       </div>
     </section>
   `;
@@ -1464,9 +1405,6 @@ function renderQuestionLayout(cards) {
   const card = currentCard();
   const metrics = questionMetrics(card);
   const answered = getAnswerTexts(card).join(" • ");
-  const { items: pageCards, totalPages, start } = pagedCards(cards);
-  const pageStart = start + 1;
-  const pageEnd = Math.min(start + pageCards.length, cards.length);
 
   return `
     <section class="question-layout">
@@ -1475,7 +1413,7 @@ function renderQuestionLayout(cards) {
           <div>
             <p class="eyebrow">Question rail</p>
             <h3>${cards.length} ${state.reviewMode ? "de recuperat" : "in vedere"}</h3>
-            <p class="section-copy">Pagina ${state.questionPage + 1}/${totalPages} · ${pageStart}-${pageEnd}</p>
+            <p class="section-copy">Ordine liniara, fara looping. Lucrezi setul de sus pana jos.</p>
           </div>
           <div class="legend">
             <span><i class="status-dot fresh"></i> Nou</span>
@@ -1484,20 +1422,13 @@ function renderQuestionLayout(cards) {
             <span><i class="status-dot mastered"></i> Invatat</span>
           </div>
         </div>
-        <div class="question-pager">
-          <button class="ghost-action" type="button" data-page="${Math.max(state.questionPage - 1, 0)}" ${state.questionPage === 0 ? "disabled" : ""}>Prev</button>
-          <div class="pager-dots">
-            ${Array.from({ length: totalPages }, (_, index) => `<button class="pager-dot ${index === state.questionPage ? "active" : ""}" type="button" data-page="${index}">${index + 1}</button>`).join("")}
-          </div>
-          <button class="ghost-action" type="button" data-page="${Math.min(state.questionPage + 1, totalPages - 1)}" ${state.questionPage >= totalPages - 1 ? "disabled" : ""}>Next</button>
-        </div>
         <div class="question-list">
-          ${pageCards.map((item) => renderQuestionButton(item)).join("")}
+          ${cards.map((item) => renderQuestionButton(item)).join("")}
         </div>
       </aside>
 
       <article class="question-stage">
-        ${renderQuestionJumpbar(cards, totalPages)}
+        ${renderQuestionJumpbar(cards)}
         <div class="stage-top">
           <div>
             <p class="eyebrow">${state.reviewMode ? `Recovery lane · ${card.module}` : card.module}</p>
@@ -1994,16 +1925,6 @@ function wireEvents() {
     button.addEventListener("click", () => {
       selectCard(button.dataset.card);
     });
-  });
-
-  app.querySelectorAll("[data-page]").forEach((button) => {
-    button.addEventListener("click", () => {
-      setQuestionPage(Number(button.dataset.page));
-    });
-  });
-
-  app.querySelector("[data-page-select]")?.addEventListener("change", (event) => {
-    setQuestionPage(Number(event.target.value));
   });
 
   app.querySelector("[data-question-select]")?.addEventListener("change", (event) => {
