@@ -2,22 +2,28 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { test } from "node:test";
 import { getOptionState, hydrateCards, summarizeProgress } from "../src/study.js";
+import { buildModuleLibrary, recordAttempt, summarizeModules, theorySectionsForModule } from "../src/progress.js";
 
 test("hydrates all module cards with complete answer keys", () => {
   const modules = [
-    { id: "mod1", label: "Module 1", file: "mod1.md" },
-    { id: "mod2", label: "Module 2", file: "mod2.md" },
-    { id: "mod3", label: "Module 3", file: "mod3.md" },
+    { id: "mod1", label: "Module 1", file: "../modules/mod1.md" },
+    { id: "mod2", label: "Module 2", file: "../modules/mod2.md" },
+    { id: "mod3", label: "Module 3", file: "../modules/mod3.md" },
+    { id: "mod4", label: "Module 4", file: "../modules/mod4.md" },
+    { id: "mod5", label: "Module 5", file: "../modules/mod5.md" },
+    { id: "mod6", label: "Module 6", file: "../modules/mod6.md" },
+    { id: "mod7", label: "Module 7", file: "../modules/mod7.md" },
   ];
 
   for (const module of modules) {
-    const markdown = fs.readFileSync(new URL(`../${module.file}`, import.meta.url), "utf8");
+    const markdown = fs.readFileSync(new URL(module.file, import.meta.url), "utf8");
     const cards = hydrateCards(module.id, module.label, markdown);
 
     assert.ok(cards.length > 0, `${module.id} should produce cards`);
 
     for (const card of cards) {
       assert.equal(card.answers.length, card.selectionCount, `${card.id} should have ${card.selectionCount} answers`);
+      assert.ok(card.explanation.length > 0, `${card.id} should have an explanation`);
       for (const answer of card.answers) {
         assert.ok(card.options.includes(answer), `${card.id} answer should exist in options`);
       }
@@ -61,5 +67,67 @@ test("summarizes mastered cards and cards that still need work", () => {
     mastered: 1,
     needsWork: 1,
     seen: 3,
+  });
+});
+
+test("builds a seven-module library with theory sections", () => {
+  const moduleSources = [
+    { id: "mod1", label: "Module 1", markdown: fs.readFileSync(new URL("../modules/mod1.md", import.meta.url), "utf8") },
+    { id: "mod2", label: "Module 2", markdown: fs.readFileSync(new URL("../modules/mod2.md", import.meta.url), "utf8") },
+    { id: "mod3", label: "Module 3", markdown: fs.readFileSync(new URL("../modules/mod3.md", import.meta.url), "utf8") },
+    { id: "mod4", label: "Module 4", markdown: fs.readFileSync(new URL("../modules/mod4.md", import.meta.url), "utf8") },
+    { id: "mod5", label: "Module 5", markdown: fs.readFileSync(new URL("../modules/mod5.md", import.meta.url), "utf8") },
+    { id: "mod6", label: "Module 6", markdown: fs.readFileSync(new URL("../modules/mod6.md", import.meta.url), "utf8") },
+    { id: "mod7", label: "Module 7", markdown: fs.readFileSync(new URL("../modules/mod7.md", import.meta.url), "utf8") },
+  ];
+  const library = buildModuleLibrary(moduleSources);
+
+  assert.equal(library.modules.length, 7);
+  assert.ok(library.cards.length >= 100);
+
+  for (const module of library.modules) {
+    const theory = theorySectionsForModule(module.id);
+    assert.ok(theory.overview.length > 40, `${module.id} overview should be present`);
+    assert.ok(theory.keyIdeas.length >= 3, `${module.id} should have key ideas`);
+    assert.ok(theory.glossary.length >= 3, `${module.id} should have glossary entries`);
+  }
+});
+
+test("records per-question progress with timestamps and last choice", () => {
+  const before = {};
+  const after = recordAttempt(before, {
+    cardId: "mod1-2",
+    isCorrect: true,
+    selectedOptions: ["VPN"],
+    mode: "exam",
+    now: "2026-04-06T12:00:00.000Z",
+  });
+
+  assert.deepEqual(after["mod1-2"], {
+    attempts: 1,
+    correct: 1,
+    wrong: 0,
+    streak: 1,
+    lastChoice: ["VPN"],
+    lastMode: "exam",
+    lastSeenAt: "2026-04-06T12:00:00.000Z",
+  });
+});
+
+test("summarizes modules from saved progress", () => {
+  const cards = [
+    { id: "mod1-1", moduleId: "mod1" },
+    { id: "mod1-2", moduleId: "mod1" },
+    { id: "mod2-1", moduleId: "mod2" },
+  ];
+  const progress = {
+    "mod1-1": { attempts: 2, correct: 2, wrong: 0, streak: 2, lastChoice: [], lastMode: "learn", lastSeenAt: "x" },
+    "mod1-2": { attempts: 1, correct: 0, wrong: 1, streak: 0, lastChoice: [], lastMode: "learn", lastSeenAt: "x" },
+    "mod2-1": { attempts: 3, correct: 2, wrong: 1, streak: 1, lastChoice: [], lastMode: "exam", lastSeenAt: "x" },
+  };
+
+  assert.deepEqual(summarizeModules(cards, progress), {
+    mod1: { questions: 2, attempted: 2, correct: 2, wrong: 1, accuracy: 67, mastered: 0 },
+    mod2: { questions: 1, attempted: 1, correct: 2, wrong: 1, accuracy: 67, mastered: 0 },
   });
 });

@@ -1,45 +1,58 @@
-import mod1 from "../mod1.md?raw";
-import mod2 from "../mod2.md?raw";
-import mod3 from "../mod3.md?raw";
-import { shuffleCards } from "./parser.js";
-import { getOptionState, hydrateCards, summarizeProgress } from "./study.js";
 import "./styles.css";
+import { MODULE_SOURCES } from "./module-sources.js";
+import { shuffleCards } from "./parser.js";
+import { buildModuleLibrary, getProgressEntry, recordAttempt, summarizeModules, theorySectionsForModule } from "./progress.js";
 
-const STORAGE_KEY = "cisco-flashcards-progress-v2";
+const STORAGE_KEY = "ccna-study-workspace-v3";
+const library = buildModuleLibrary(MODULE_SOURCES);
+const moduleMap = new Map(library.modules.map((module) => [module.id, module]));
+const cardMap = new Map(library.cards.map((card) => [card.id, card]));
 
-const modules = [
-  { id: "mod1", label: "Module 1", markdown: mod1 },
-  { id: "mod2", label: "Module 2", markdown: mod2 },
-  { id: "mod3", label: "Module 3", markdown: mod3 },
-];
-
-const moduleCards = modules.map((module) => ({
-  ...module,
-  cards: hydrateCards(module.id, module.label, module.markdown),
-}));
-
-const allCards = moduleCards.flatMap((module) => module.cards);
 const app = document.querySelector("#app");
 const pathParts = window.location.pathname.split("/").filter(Boolean);
-const siteTrack = pathParts.at(-1) === "second" ? "second" : pathParts.at(-1) === "initial" ? "initial" : "local";
+const siteTrack = pathParts.at(-1) === "third"
+  ? "third"
+  : pathParts.at(-1) === "second"
+    ? "second"
+    : pathParts.at(-1) === "initial"
+      ? "initial"
+      : "local";
 const siteLinks = {
   home: siteTrack === "local" ? "/" : "../",
   initial: siteTrack === "local" ? "/" : "../initial/",
   second: siteTrack === "local" ? "/" : "../second/",
+  third: siteTrack === "local" ? "/" : "../third/",
 };
 
+const initialModule = library.modules[0];
+const initialCard = initialModule.cards[0];
+
 const state = {
-  moduleFilter: "all",
-  focusFilter: "all",
-  mode: "quiz",
-  orderSeed: Date.now(),
-  order: [],
-  index: 0,
-  revealed: false,
-  selected: [],
+  activeTab: "learn",
+  learnView: "tickets",
+  currentModuleId: initialModule.id,
+  selectedCardId: initialCard.id,
+  searchQuery: "",
+  selectedOptions: [],
+  learnChecked: false,
+  learnResult: null,
   progress: loadProgress(),
-  notice: "Quiz mode shows options first. Flip mode hides them until you reveal the back.",
+  notice: "Alege un bilet, raspunde, apoi verifica. Statisticile se salveaza local pentru fiecare intrebare.",
+  exam: {
+    scope: "module",
+    length: 20,
+    running: false,
+    completed: false,
+    order: [],
+    index: 0,
+    selectedOptions: [],
+    checked: false,
+    results: [],
+    startedAt: null,
+  },
 };
+
+let timerId = null;
 
 function loadProgress() {
   try {
@@ -48,7 +61,25 @@ function loadProgress() {
       return {};
     }
     const parsed = JSON.parse(raw);
-    return parsed && typeof parsed === "object" ? parsed : {};
+    const normalized = {};
+
+    for (const [cardId, entry] of Object.entries(parsed)) {
+      if (!entry || typeof entry !== "object") {
+        continue;
+      }
+
+      normalized[cardId] = {
+        attempts: entry.attempts ?? entry.seen ?? 0,
+        correct: entry.correct ?? 0,
+        wrong: entry.wrong ?? 0,
+        streak: entry.streak ?? 0,
+        lastChoice: Array.isArray(entry.lastChoice) ? entry.lastChoice : [],
+        lastMode: entry.lastMode ?? "learn",
+        lastSeenAt: entry.lastSeenAt ?? null,
+      };
+    }
+
+    return normalized;
   } catch {
     return {};
   }
@@ -62,76 +93,8 @@ function normalize(text) {
   return text.toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
 }
 
-function getProgress(card) {
-  return state.progress[card.id] ?? { streak: 0, seen: 0, correct: 0, wrong: 0 };
-}
-
-function matchesFocus(card) {
-  const progress = getProgress(card);
-
-  if (state.focusFilter === "new") {
-    return progress.seen === 0;
-  }
-
-  if (state.focusFilter === "needs-work") {
-    return progress.wrong > 0 && progress.streak < 2;
-  }
-
-  if (state.focusFilter === "mastered") {
-    return progress.streak >= 3;
-  }
-
-  return true;
-}
-
-function getFilteredCards() {
-  return allCards.filter((card) => {
-    const moduleMatch = state.moduleFilter === "all" || card.moduleId === state.moduleFilter;
-    return moduleMatch && matchesFocus(card);
-  });
-}
-
-function buildOrder() {
-  const cards = getFilteredCards().map((card) => ({
-    ...card,
-    progress: getProgress(card),
-  }));
-
-  if (cards.length === 0) {
-    state.order = [];
-    state.index = 0;
-    state.revealed = false;
-    state.selected = [];
-    return;
-  }
-
-  const groups = new Map();
-  for (const card of cards) {
-    const key = Math.min(card.progress.streak, 5);
-    if (!groups.has(key)) {
-      groups.set(key, []);
-    }
-    groups.get(key).push(card);
-  }
-
-  const ordered = [];
-  const sortedKeys = [...groups.keys()].sort((left, right) => left - right);
-  for (const key of sortedKeys) {
-    ordered.push(...shuffleCards(groups.get(key), state.orderSeed + key));
-  }
-
-  state.order = ordered;
-  state.index = 0;
-  state.revealed = false;
-  state.selected = [];
-}
-
-function currentCard() {
-  return state.order[state.index];
-}
-
-function selectedMatches(card) {
-  const selected = new Set(state.selected.map(normalize));
+function selectedMatches(card, selectedOptions) {
+  const selected = new Set(selectedOptions.map(normalize));
   const answers = new Set(card.answers.map(normalize));
 
   if (selected.size !== answers.size) {
@@ -147,333 +110,821 @@ function selectedMatches(card) {
   return true;
 }
 
-function toggleSelection(option) {
+function currentModule() {
+  return moduleMap.get(state.currentModuleId) ?? library.modules[0];
+}
+
+function currentCard() {
+  return cardMap.get(state.selectedCardId) ?? currentModule().cards[0];
+}
+
+function filteredModuleCards() {
+  const query = normalize(state.searchQuery);
+  const cards = currentModule().cards;
+
+  if (!query) {
+    return cards;
+  }
+
+  return cards.filter((card) => {
+    const haystack = `${card.number} ${card.question} ${card.answers.join(" ")} ${card.explanation}`.toLowerCase();
+    return haystack.includes(query);
+  });
+}
+
+function questionStatus(card) {
+  const progress = getProgressEntry(state.progress, card.id);
+
+  if (progress.attempts === 0) {
+    return "fresh";
+  }
+
+  if (progress.streak >= 3) {
+    return "mastered";
+  }
+
+  if (progress.wrong > progress.correct) {
+    return "struggling";
+  }
+
+  return "active";
+}
+
+function setModule(moduleId) {
+  state.currentModuleId = moduleId;
+  state.searchQuery = "";
+  state.selectedOptions = [];
+  state.learnChecked = false;
+  state.learnResult = null;
+  state.selectedCardId = currentModule().cards[0].id;
+  state.notice = `Ai deschis ${currentModule().title}.`;
+  render();
+}
+
+function selectCard(cardId) {
+  state.selectedCardId = cardId;
+  state.selectedOptions = [];
+  state.learnChecked = false;
+  state.learnResult = null;
+  render();
+}
+
+function toggleLearnOption(option) {
   const card = currentCard();
-  if (!card || state.revealed || state.mode !== "quiz") {
+  if (state.learnChecked) {
     return;
   }
 
-  const existing = state.selected.includes(option);
-
+  const exists = state.selectedOptions.includes(option);
   if (card.selectionCount === 1) {
-    state.selected = existing ? [] : [option];
-  } else if (existing) {
-    state.selected = state.selected.filter((item) => item !== option);
-  } else if (state.selected.length < card.selectionCount) {
-    state.selected = [...state.selected, option];
+    state.selectedOptions = exists ? [] : [option];
+  } else if (exists) {
+    state.selectedOptions = state.selectedOptions.filter((item) => item !== option);
+  } else if (state.selectedOptions.length < card.selectionCount) {
+    state.selectedOptions = [...state.selectedOptions, option];
   } else {
-    state.notice = `Pick up to ${card.selectionCount} answers for this card.`;
+    state.notice = `Intrebarea cere ${card.selectionCount} raspunsuri.`;
+    render();
     return;
-  }
-
-  state.notice = state.selected.length
-    ? `${state.selected.length} of ${card.selectionCount} selected.`
-    : "Selection cleared.";
-
-  render();
-}
-
-function revealCard() {
-  const card = currentCard();
-  if (!card) {
-    return;
-  }
-
-  state.revealed = true;
-
-  if (state.mode === "quiz") {
-    state.notice = selectedMatches(card)
-      ? "Strong read. Check the explanation, then mark it got it."
-      : "Review the correct answer, then send it back again or mark it got it.";
-  } else {
-    state.notice = "Back side open. Read the explanation, then score yourself.";
   }
 
   render();
 }
 
-function advanceCard(isSuccess) {
+function checkLearnAnswer(recordStats = true) {
   const card = currentCard();
-  if (!card) {
+  const hasSelection = state.selectedOptions.length > 0;
+  const isCorrect = hasSelection ? selectedMatches(card, state.selectedOptions) : null;
+
+  if (recordStats && hasSelection) {
+    state.progress = recordAttempt(state.progress, {
+      cardId: card.id,
+      isCorrect,
+      selectedOptions: state.selectedOptions,
+      mode: "learn",
+    });
+    saveProgress();
+  }
+
+  state.learnChecked = true;
+  state.learnResult = isCorrect;
+
+  if (!hasSelection) {
+    state.notice = "Ai deschis explicatia fara sa trimiti un raspuns.";
+  } else {
+    state.notice = isCorrect ? "Raspuns corect. Continua cu urmatorul bilet." : "Raspuns gresit. Citeste explicatia si incearca din nou mai tarziu.";
+  }
+
+  render();
+}
+
+function nextLearnCard() {
+  const cards = filteredModuleCards();
+  const currentIndex = cards.findIndex((card) => card.id === state.selectedCardId);
+  const next = cards[currentIndex + 1] ?? cards[0];
+  if (next) {
+    selectCard(next.id);
+  }
+}
+
+function resetLearnPane() {
+  state.selectedOptions = [];
+  state.learnChecked = false;
+  state.learnResult = null;
+  render();
+}
+
+function currentExamCard() {
+  return state.exam.order[state.exam.index] ?? null;
+}
+
+function setExamScope(scope) {
+  state.exam.scope = scope;
+  render();
+}
+
+function setExamLength(length) {
+  state.exam.length = Number(length);
+  render();
+}
+
+function buildExamOrder() {
+  const sourceCards = state.exam.scope === "module" ? [...currentModule().cards] : [...library.cards];
+  const shuffled = shuffleCards(sourceCards, Date.now());
+  const limit = state.exam.length === 0 ? shuffled.length : Math.min(state.exam.length, shuffled.length);
+  return shuffled.slice(0, limit);
+}
+
+function ensureTimer() {
+  if (timerId) {
+    clearInterval(timerId);
+  }
+
+  if (state.exam.running && !state.exam.completed) {
+    timerId = window.setInterval(() => {
+      render();
+    }, 1000);
+  }
+}
+
+function startExam() {
+  state.exam.order = buildExamOrder();
+  state.exam.index = 0;
+  state.exam.selectedOptions = [];
+  state.exam.checked = false;
+  state.exam.results = [];
+  state.exam.running = true;
+  state.exam.completed = false;
+  state.exam.startedAt = Date.now();
+  state.notice = "Examen pornit. Raspunde, verifica si continua.";
+  ensureTimer();
+  render();
+}
+
+function stopExam() {
+  state.exam.running = false;
+  state.exam.completed = false;
+  state.exam.order = [];
+  state.exam.index = 0;
+  state.exam.selectedOptions = [];
+  state.exam.checked = false;
+  state.exam.results = [];
+  state.exam.startedAt = null;
+  ensureTimer();
+  render();
+}
+
+function toggleExamOption(option) {
+  const card = currentExamCard();
+  if (!card || state.exam.checked) {
     return;
   }
 
-  const entry = getProgress(card);
-  const nextEntry = {
-    ...entry,
-    seen: entry.seen + 1,
-    streak: isSuccess ? Math.min(entry.streak + 1, 5) : 0,
-    correct: entry.correct + (isSuccess ? 1 : 0),
-    wrong: entry.wrong + (isSuccess ? 0 : 1),
-  };
+  const exists = state.exam.selectedOptions.includes(option);
+  if (card.selectionCount === 1) {
+    state.exam.selectedOptions = exists ? [] : [option];
+  } else if (exists) {
+    state.exam.selectedOptions = state.exam.selectedOptions.filter((item) => item !== option);
+  } else if (state.exam.selectedOptions.length < card.selectionCount) {
+    state.exam.selectedOptions = [...state.exam.selectedOptions, option];
+  } else {
+    state.notice = `Examenul cere ${card.selectionCount} raspunsuri pentru aceasta intrebare.`;
+  }
 
-  state.progress[card.id] = nextEntry;
+  render();
+}
+
+function checkExamAnswer() {
+  const card = currentExamCard();
+  if (!card || state.exam.selectedOptions.length === 0) {
+    state.notice = "Selecteaza macar un raspuns inainte sa verifici.";
+    render();
+    return;
+  }
+
+  const isCorrect = selectedMatches(card, state.exam.selectedOptions);
+  state.progress = recordAttempt(state.progress, {
+    cardId: card.id,
+    isCorrect,
+    selectedOptions: state.exam.selectedOptions,
+    mode: "exam",
+  });
   saveProgress();
 
-  state.index += 1;
-  state.revealed = false;
-  state.selected = [];
+  state.exam.results = [
+    ...state.exam.results,
+    {
+      cardId: card.id,
+      isCorrect,
+      selectedOptions: [...state.exam.selectedOptions],
+    },
+  ];
+  state.exam.checked = true;
+  state.notice = isCorrect ? "Corect. Verifica explicatia si continua." : "Gresit. Citeste explicatia si continua.";
+  render();
+}
 
-  if (state.index >= state.order.length) {
-    state.orderSeed = Date.now();
-    buildOrder();
-    state.notice = isSuccess
-      ? "Round complete. Starting another pass with the weakest cards first."
-      : "Round complete. Starting a fresh review pass.";
-  } else {
-    state.notice = isSuccess ? "Logged as got it. Next card." : "Logged for more practice. Next card.";
+function nextExamCard() {
+  state.exam.index += 1;
+  state.exam.selectedOptions = [];
+  state.exam.checked = false;
+
+  if (state.exam.index >= state.exam.order.length) {
+    state.exam.running = false;
+    state.exam.completed = true;
+    ensureTimer();
   }
 
   render();
 }
 
-function skipCard() {
-  if (!state.order.length) {
-    return;
+function totalAttempts(progress) {
+  return Object.values(progress).reduce((sum, entry) => sum + (entry.attempts ?? 0), 0);
+}
+
+function totalCorrect(progress) {
+  return Object.values(progress).reduce((sum, entry) => sum + (entry.correct ?? 0), 0);
+}
+
+function totalWrong(progress) {
+  return Object.values(progress).reduce((sum, entry) => sum + (entry.wrong ?? 0), 0);
+}
+
+function totalMastered(progress) {
+  return Object.values(progress).filter((entry) => (entry.streak ?? 0) >= 3).length;
+}
+
+function hardestQuestions() {
+  return library.cards
+    .map((card) => ({ card, progress: getProgressEntry(state.progress, card.id) }))
+    .filter(({ progress }) => progress.wrong > 0)
+    .sort((left, right) => right.progress.wrong - left.progress.wrong || left.card.module.localeCompare(right.card.module))
+    .slice(0, 8);
+}
+
+function elapsedExamSeconds() {
+  if (!state.exam.startedAt) {
+    return 0;
+  }
+  return Math.max(Math.floor((Date.now() - state.exam.startedAt) / 1000), 0);
+}
+
+function formatDuration(totalSeconds) {
+  const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+  const seconds = String(totalSeconds % 60).padStart(2, "0");
+  return `${minutes}:${seconds}`;
+}
+
+function overallAccuracy() {
+  const correct = totalCorrect(state.progress);
+  const wrong = totalWrong(state.progress);
+  return correct + wrong > 0 ? Math.round((correct / (correct + wrong)) * 100) : 0;
+}
+
+function siteSwitcher() {
+  if (siteTrack === "local") {
+    return "";
   }
 
-  state.index += 1;
-  state.revealed = false;
-  state.selected = [];
-
-  if (state.index >= state.order.length) {
-    state.orderSeed = Date.now();
-    buildOrder();
-    state.notice = "Skipped to a fresh review pass.";
-  } else {
-    state.notice = "Skipped.";
-  }
-
-  render();
-}
-
-function resetProgress() {
-  state.progress = {};
-  localStorage.removeItem(STORAGE_KEY);
-  state.orderSeed = Date.now();
-  buildOrder();
-  state.notice = "Progress reset. You are starting from a clean deck.";
-  render();
-}
-
-function setModuleFilter(filter) {
-  state.moduleFilter = filter;
-  state.orderSeed = Date.now();
-  buildOrder();
-  state.notice = `Deck changed to ${filter === "all" ? "all modules" : modules.find((module) => module.id === filter)?.label ?? filter}.`;
-  render();
-}
-
-function setFocusFilter(filter) {
-  state.focusFilter = filter;
-  state.orderSeed = Date.now();
-  buildOrder();
-  state.notice = `Focus changed to ${filter.replace("-", " ")}.`;
-  render();
-}
-
-function setMode(mode) {
-  state.mode = mode;
-  state.revealed = false;
-  state.selected = [];
-  state.notice =
-    mode === "quiz"
-      ? "Quiz mode is on. Pick an answer first, then reveal."
-      : "Flashcard mode is on. Reveal the back when you are ready.";
-  render();
-}
-
-function formatProgress(card) {
-  const progress = getProgress(card);
-  return `Seen ${progress.seen} · Streak ${progress.streak} · Right ${progress.correct} · Missed ${progress.wrong}`;
+  return `
+    <nav class="site-switcher" aria-label="Published branches">
+      <a class="site-link" href="${siteLinks.home}">Hub</a>
+      <a class="site-link ${siteTrack === "initial" ? "active" : ""}" href="${siteLinks.initial}">Initial</a>
+      <a class="site-link ${siteTrack === "second" ? "active" : ""}" href="${siteLinks.second}">Second</a>
+      <a class="site-link ${siteTrack === "third" ? "active" : ""}" href="${siteLinks.third}">Third</a>
+    </nav>
+  `;
 }
 
 function render() {
-  const card = currentCard();
-  const total = state.order.length;
-  const remaining = Math.max(total - state.index - 1, 0);
-  const summary = summarizeProgress(allCards, state.progress);
-
   app.innerHTML = `
-    <main class="shell">
-      <nav class="site-switcher" aria-label="Site versions">
-        <a class="site-link" href="${siteLinks.home}">Hub</a>
-        <a class="site-link ${siteTrack === "initial" ? "active" : ""}" href="${siteLinks.initial}">Initial</a>
-        <a class="site-link ${siteTrack === "second" ? "active" : ""}" href="${siteLinks.second}">Second</a>
+    <main class="workspace">
+      <header class="header">
+        <div>
+          <p class="kicker">Testare online</p>
+          <h1>CCNA Learning Workspace</h1>
+          <p class="lede">Minimal, precise, and built for repetition. Every answer updates your local learning analytics question by question.</p>
+        </div>
+        <div class="header-meta">
+          ${siteSwitcher()}
+          <div class="stat-strip">
+            <span><strong>${library.cards.length}</strong> intrebari</span>
+            <span><strong>${totalAttempts(state.progress)}</strong> raspunsuri salvate</span>
+            <span><strong>${overallAccuracy()}%</strong> acuratete</span>
+          </div>
+        </div>
+      </header>
+
+      <nav class="top-tabs" aria-label="Primary sections">
+        ${renderTopTab("learn", "Educatie")}
+        ${renderTopTab("exam", "Examen")}
+        ${renderTopTab("stats", "Statistici")}
       </nav>
 
-      <section class="hero">
-        <div>
-          <p class="eyebrow">Cisco CCNA study deck ${siteTrack !== "local" ? `· ${siteTrack}` : ""}</p>
-          <h1>Train the three markdown modules on one phone-ready page.</h1>
-          <p class="lede">Everything is local and static. Open the Vite network URL on your phone, then drill in quiz mode or flip through classic flashcards.</p>
-        </div>
-        <div class="hero-metrics">
-          <div class="metric">
-            <span>Total cards</span>
-            <strong>${allCards.length}</strong>
+      <section class="shell">
+        <aside class="sidebar">
+          <div class="module-list">
+            <p class="section-label">Module</p>
+            ${library.modules.map((module) => renderModuleButton(module)).join("")}
           </div>
-          <div class="metric">
-            <span>Mastered</span>
-            <strong>${summary.mastered}</strong>
+          <div class="mini-theory">
+            ${renderMiniTheory()}
           </div>
-          <div class="metric">
-            <span>Need work</span>
-            <strong>${summary.needsWork}</strong>
-          </div>
-          <div class="metric">
-            <span>Seen</span>
-            <strong>${summary.seen}</strong>
-          </div>
-        </div>
+        </aside>
+
+        <section class="content">
+          ${renderMainContent()}
+        </section>
       </section>
 
-      <section class="control-grid">
-        <div class="control-group">
-          <span class="group-label">Module</span>
-          <div class="toolbar">
-            ${renderChip("module", "all", "All modules", state.moduleFilter)}
-            ${moduleCards.map((module) => renderChip("module", module.id, module.label, state.moduleFilter)).join("")}
-          </div>
-        </div>
-
-        <div class="control-group">
-          <span class="group-label">Focus</span>
-          <div class="toolbar">
-            ${renderChip("focus", "all", "Mixed", state.focusFilter)}
-            ${renderChip("focus", "new", "New", state.focusFilter)}
-            ${renderChip("focus", "needs-work", "Need work", state.focusFilter)}
-            ${renderChip("focus", "mastered", "Mastered", state.focusFilter)}
-          </div>
-        </div>
-
-        <div class="control-group">
-          <span class="group-label">Mode</span>
-          <div class="toolbar">
-            ${renderChip("mode", "quiz", "Quiz", state.mode)}
-            ${renderChip("mode", "flash", "Flashcard", state.mode)}
-            <button class="chip danger" type="button" data-action="reset">Reset progress</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="statusbar" aria-live="polite">
-        <span>${state.notice}</span>
-        <span>${remaining} left in this pass</span>
-      </section>
-
-      ${card ? renderCard(card, total) : renderEmpty()}
+      <footer class="notice" aria-live="polite">${state.notice}</footer>
     </main>
   `;
 
   wireEvents();
 }
 
-function renderChip(group, value, label, currentValue) {
-  const active = currentValue === value ? "active" : "";
-  return `<button class="chip ${active}" type="button" data-group="${group}" data-value="${value}">${label}</button>`;
+function renderTopTab(value, label) {
+  return `<button class="tab ${state.activeTab === value ? "active" : ""}" type="button" data-tab="${value}">${label}</button>`;
 }
 
-function renderCard(card, total) {
+function renderModuleButton(module) {
+  const active = module.id === state.currentModuleId ? "active" : "";
+  const moduleStats = summarizeModules(module.cards, state.progress)[module.id] ?? {
+    attempted: 0,
+    questions: module.cards.length,
+    accuracy: 0,
+  };
+
   return `
-    <article class="card ${state.revealed ? "revealed" : ""}">
-      <div class="card-top">
-        <div>
-          <p class="card-kicker">${card.module}</p>
-          <h2>Question ${card.number}</h2>
-        </div>
-        <div class="badge">${state.mode === "quiz" ? (card.selectionCount === 1 ? "single answer" : `choose ${card.selectionCount}`) : "flip + self-grade"}</div>
-      </div>
-
-      <p class="question">${card.question}</p>
-
-      <div class="progress-line" aria-hidden="true">
-        <span style="width:${Math.min(getProgress(card).streak * 20, 100)}%"></span>
-      </div>
-
-      <div class="round-note">
-        <span>Card ${Math.min(state.index + 1, total)} of ${Math.max(total, 1)}</span>
-        <span>${formatProgress(card)}</span>
-      </div>
-
-      ${
-        state.mode === "quiz"
-          ? renderQuizAnswers(card)
-          : `<section class="flash-face">
-              <p class="flash-hint">Front side</p>
-              <p class="flash-copy">Say the answer out loud before you reveal the back. This works especially well for quick phone review sessions.</p>
-            </section>`
-      }
-
-      <div class="card-actions">
-        ${
-          state.revealed
-            ? `
-              <button type="button" class="action ghost" data-action="again">Again</button>
-              <button type="button" class="action primary" data-action="gotit">Got it</button>
-            `
-            : `
-              <button type="button" class="action primary" data-action="reveal">${state.mode === "quiz" ? "Check and reveal" : "Flip card"}</button>
-            `
-        }
-        <button type="button" class="action ghost" data-action="skip">Skip</button>
-      </div>
-
-      <div class="review-panel ${state.revealed ? "show" : ""}">
-        <div class="review-head">
-          <span>Back side</span>
-          <strong>${card.answers.length > 1 ? "Correct answers" : "Correct answer"}</strong>
-        </div>
-        <p class="review-selection">Correct: ${card.answers.join(" • ")}</p>
-        ${state.mode === "quiz" ? `<p class="review-selection muted">Your pick: ${state.selected.length ? state.selected.join(" • ") : "none"}</p>` : ""}
-        <p>${card.explanation || "This card came without an explanation in the markdown source, so the app is using the verified answer key only."}</p>
-      </div>
-    </article>
+    <button class="module-button ${active}" type="button" data-module="${module.id}">
+      <span class="module-name">${module.title}</span>
+      <span class="module-meta">${moduleStats.attempted}/${module.cards.length} lucrate · ${moduleStats.accuracy}%</span>
+    </button>
   `;
 }
 
-function renderQuizAnswers(card) {
+function renderMiniTheory() {
+  const theory = theorySectionsForModule(state.currentModuleId);
   return `
-    <div class="answers" role="list" aria-label="Answer choices">
-      ${card.options
-        .map((option) => {
-          const optionState = getOptionState(card, state.selected, option, state.revealed);
-          const classes = ["answer"];
+    <p class="section-label">Nucleu de teorie</p>
+    <h2>${theory.title}</h2>
+    <p>${theory.overview}</p>
+    <ul class="bullet-list">
+      ${theory.keyIdeas.slice(0, 3).map((idea) => `<li>${idea}</li>`).join("")}
+    </ul>
+  `;
+}
 
-          if (optionState.selected) {
-            classes.push("selected");
-          }
-          if (optionState.correct) {
-            classes.push("correct");
-          }
-          if (optionState.wrong) {
-            classes.push("wrong");
-          }
+function renderMainContent() {
+  if (state.activeTab === "learn") {
+    return renderLearnView();
+  }
 
-          return `
-            <button type="button" class="${classes.join(" ")}" data-option="${escapeHtml(option)}">
-              <span class="answer-letter">${optionLetter(card, option)}</span>
-              <span class="answer-text">${option}</span>
-            </button>
-          `;
-        })
-        .join("")}
+  if (state.activeTab === "exam") {
+    return renderExamView();
+  }
+
+  return renderStatsView();
+}
+
+function renderLearnView() {
+  const cards = filteredModuleCards();
+
+  return `
+    <div class="subtabs">
+      <button class="subtab ${state.learnView === "tickets" ? "active" : ""}" type="button" data-learn-view="tickets">Bilete</button>
+      <button class="subtab ${state.learnView === "theory" ? "active" : ""}" type="button" data-learn-view="theory">Teorie</button>
+    </div>
+
+    ${state.learnView === "tickets" ? renderTicketWorkspace(cards) : renderTheoryWorkspace()}
+  `;
+}
+
+function renderTicketWorkspace(cards) {
+  const card = currentCard();
+  const progress = getProgressEntry(state.progress, card.id);
+  const theory = theorySectionsForModule(card.moduleId);
+  const selectedLookup = new Set(state.selectedOptions.map(normalize));
+  const answerLookup = new Set(card.answers.map(normalize));
+
+  return `
+    <div class="toolbar-row">
+      <label class="search">
+        <span>Cauta</span>
+        <input type="text" value="${escapeHtml(state.searchQuery)}" placeholder="cuvant cheie, concept, raspuns" data-search />
+      </label>
+      <div class="legend">
+        <span class="legend-item"><i class="dot fresh"></i> Nou</span>
+        <span class="legend-item"><i class="dot active"></i> In progres</span>
+        <span class="legend-item"><i class="dot mastered"></i> Invatat</span>
+        <span class="legend-item"><i class="dot struggling"></i> De repetat</span>
+      </div>
+    </div>
+
+    <div class="tickets-layout">
+      <section class="ticket-grid" aria-label="Question navigator">
+        ${cards.map((item) => renderTicket(item)).join("")}
+      </section>
+
+      <section class="detail-pane">
+        <div class="detail-head">
+          <div>
+            <p class="detail-kicker">${card.module}</p>
+            <h2>Intrebarea ${card.number}</h2>
+          </div>
+          <div class="detail-stats">
+            <span>${progress.attempts} raspunsuri</span>
+            <span>${progress.correct} bune</span>
+            <span>${progress.wrong} gresite</span>
+            <span>${progress.streak} streak</span>
+          </div>
+        </div>
+
+        <p class="question-copy">${card.question}</p>
+
+        <div class="option-list">
+          ${card.options.map((option, index) => {
+            const selected = selectedLookup.has(normalize(option));
+            const correct = state.learnChecked && answerLookup.has(normalize(option));
+            const wrong = state.learnChecked && selected && !correct;
+
+            return `
+              <button class="option ${selected ? "selected" : ""} ${correct ? "correct" : ""} ${wrong ? "wrong" : ""}" type="button" data-learn-option="${escapeHtml(option)}">
+                <span class="option-index">${index + 1}</span>
+                <span>${option}</span>
+              </button>
+            `;
+          }).join("")}
+        </div>
+
+        <div class="action-row">
+          <button class="primary-action" type="button" data-action="check-learn">Verifica raspunsul</button>
+          <button class="secondary-action" type="button" data-action="show-theory">Arata explicatia</button>
+          <button class="secondary-action" type="button" data-action="next-learn">Urmatorul bilet</button>
+          <button class="secondary-action" type="button" data-action="reset-learn">Reseteaza</button>
+        </div>
+
+        <div class="result-line ${state.learnChecked ? "show" : ""}">
+          ${
+            state.learnChecked
+              ? state.learnResult === null
+                ? "Ai deschis explicatia fara verificare."
+                : state.learnResult
+                  ? "Raspuns corect."
+                  : "Raspuns gresit."
+              : "Selecteaza raspunsul si verifica pentru a salva progresul."
+          }
+        </div>
+
+        <section class="explanation-pane ${state.learnChecked ? "show" : ""}">
+          <h3>Explicatie</h3>
+          <p>${card.explanation}</p>
+          <h3>Context de baza</h3>
+          <p>${theory.overview}</p>
+          <ul class="bullet-list">
+            ${theory.keyIdeas.slice(0, 2).map((idea) => `<li>${idea}</li>`).join("")}
+          </ul>
+        </section>
+      </section>
     </div>
   `;
 }
 
-function renderEmpty() {
+function renderTicket(card) {
+  const active = card.id === state.selectedCardId ? "active" : "";
+  const status = questionStatus(card);
+  return `<button class="ticket ${active} ${status}" type="button" data-card="${card.id}">${card.number}</button>`;
+}
+
+function renderTheoryWorkspace() {
+  const theory = theorySectionsForModule(state.currentModuleId);
+  const module = currentModule();
+  const stats = summarizeModules(module.cards, state.progress)[module.id] ?? {
+    questions: module.cards.length,
+    attempted: 0,
+    accuracy: 0,
+    mastered: 0,
+  };
+
   return `
-    <section class="card empty">
-      <h2>No cards match this filter.</h2>
-      <p>Switch back to Mixed or All modules to keep studying.</p>
+    <article class="theory-layout">
+      <div class="theory-header">
+        <div>
+          <p class="detail-kicker">Fundament</p>
+          <h2>${theory.title}</h2>
+        </div>
+        <div class="detail-stats">
+          <span>${stats.questions} intrebari</span>
+          <span>${stats.attempted} incercate</span>
+          <span>${stats.mastered} invatate</span>
+          <span>${stats.accuracy}% acuratete</span>
+        </div>
+      </div>
+
+      <section class="theory-block">
+        <h3>Panorama</h3>
+        <p>${theory.overview}</p>
+      </section>
+
+      <section class="theory-block">
+        <h3>Idei-cheie</h3>
+        <ul class="bullet-list">
+          ${theory.keyIdeas.map((idea) => `<li>${idea}</li>`).join("")}
+        </ul>
+      </section>
+
+      <section class="theory-block">
+        <h3>Glosar rapid</h3>
+        <div class="glossary">
+          ${theory.glossary.map((item) => `
+            <div class="glossary-row">
+              <strong>${item.term}</strong>
+              <span>${item.definition}</span>
+            </div>
+          `).join("")}
+        </div>
+      </section>
+    </article>
+  `;
+}
+
+function renderExamView() {
+  if (!state.exam.running && !state.exam.completed) {
+    return `
+      <section class="exam-setup">
+        <div class="setup-block">
+          <p class="section-label">Configurare examen</p>
+          <h2>Simulare minimalista</h2>
+          <p>Foloseste modulul curent sau toate modulele, alege lungimea sesiunii si incepe un examen cronometrat. Fiecare raspuns se salveaza separat in statistici.</p>
+        </div>
+        <div class="setup-grid">
+          <label class="select-group">
+            <span>Scop</span>
+            <select data-exam-scope>
+              <option value="module" ${state.exam.scope === "module" ? "selected" : ""}>Modul curent</option>
+              <option value="all" ${state.exam.scope === "all" ? "selected" : ""}>Toate modulele</option>
+            </select>
+          </label>
+          <label class="select-group">
+            <span>Lungime</span>
+            <select data-exam-length>
+              <option value="10" ${state.exam.length === 10 ? "selected" : ""}>10 intrebari</option>
+              <option value="20" ${state.exam.length === 20 ? "selected" : ""}>20 intrebari</option>
+              <option value="30" ${state.exam.length === 30 ? "selected" : ""}>30 intrebari</option>
+              <option value="0" ${state.exam.length === 0 ? "selected" : ""}>Tot setul</option>
+            </select>
+          </label>
+        </div>
+        <div class="action-row">
+          <button class="primary-action" type="button" data-action="start-exam">Porneste examenul</button>
+        </div>
+      </section>
+    `;
+  }
+
+  if (state.exam.completed) {
+    const correct = state.exam.results.filter((result) => result.isCorrect).length;
+    const wrong = state.exam.results.length - correct;
+    const accuracy = state.exam.results.length ? Math.round((correct / state.exam.results.length) * 100) : 0;
+
+    return `
+      <section class="exam-summary">
+        <div class="theory-header">
+          <div>
+            <p class="section-label">Rezultat examen</p>
+            <h2>${correct}/${state.exam.results.length} corecte</h2>
+          </div>
+          <div class="detail-stats">
+            <span>${accuracy}% acuratete</span>
+            <span>${wrong} gresite</span>
+            <span>${formatDuration(elapsedExamSeconds())}</span>
+          </div>
+        </div>
+        <div class="summary-list">
+          ${state.exam.results.filter((result) => !result.isCorrect).map((result) => {
+            const card = cardMap.get(result.cardId);
+            return `
+              <div class="summary-row">
+                <strong>${card.module} · ${card.number}</strong>
+                <span>${card.question}</span>
+                <span>Raspuns corect: ${card.answers.join(" • ")}</span>
+              </div>
+            `;
+          }).join("") || `<p>Ai terminat fara raspunsuri gresite.</p>`}
+        </div>
+        <div class="action-row">
+          <button class="primary-action" type="button" data-action="restart-exam">Examen nou</button>
+          <button class="secondary-action" type="button" data-action="close-exam">Inchide</button>
+        </div>
+      </section>
+    `;
+  }
+
+  const card = currentExamCard();
+  const selectedLookup = new Set(state.exam.selectedOptions.map(normalize));
+  const answerLookup = new Set(card.answers.map(normalize));
+
+  return `
+    <section class="exam-live">
+      <div class="theory-header">
+        <div>
+          <p class="section-label">Examen in curs</p>
+          <h2>${card.module} · Intrebarea ${state.exam.index + 1}/${state.exam.order.length}</h2>
+        </div>
+        <div class="detail-stats">
+          <span>${formatDuration(elapsedExamSeconds())}</span>
+          <span>${card.selectionCount === 1 ? "un raspuns" : `${card.selectionCount} raspunsuri`}</span>
+        </div>
+      </div>
+
+      <p class="question-copy">${card.question}</p>
+
+      <div class="option-list">
+        ${card.options.map((option, index) => {
+          const selected = selectedLookup.has(normalize(option));
+          const correct = state.exam.checked && answerLookup.has(normalize(option));
+          const wrong = state.exam.checked && selected && !correct;
+
+          return `
+            <button class="option ${selected ? "selected" : ""} ${correct ? "correct" : ""} ${wrong ? "wrong" : ""}" type="button" data-exam-option="${escapeHtml(option)}">
+              <span class="option-index">${index + 1}</span>
+              <span>${option}</span>
+            </button>
+          `;
+        }).join("")}
+      </div>
+
+      <div class="action-row">
+        ${
+          state.exam.checked
+            ? `<button class="primary-action" type="button" data-action="next-exam">Continua</button>`
+            : `<button class="primary-action" type="button" data-action="check-exam">Verifica</button>`
+        }
+        <button class="secondary-action" type="button" data-action="close-exam">Inchide examenul</button>
+      </div>
+
+      <div class="explanation-pane ${state.exam.checked ? "show" : ""}">
+        <h3>Explicatie</h3>
+        <p>${card.explanation}</p>
+      </div>
     </section>
   `;
 }
 
-function optionLetter(card, option) {
-  const index = card.options.indexOf(option);
-  return String.fromCharCode(65 + index);
+function renderStatsView() {
+  const summaryByModule = summarizeModules(library.cards, state.progress);
+  const hardest = hardestQuestions();
+
+  return `
+    <section class="stats-layout">
+      <div class="stats-overview">
+        <div class="metric-line"><span>Total raspunsuri</span><strong>${totalAttempts(state.progress)}</strong></div>
+        <div class="metric-line"><span>Corecte</span><strong>${totalCorrect(state.progress)}</strong></div>
+        <div class="metric-line"><span>Gresite</span><strong>${totalWrong(state.progress)}</strong></div>
+        <div class="metric-line"><span>Invatate</span><strong>${totalMastered(state.progress)}</strong></div>
+      </div>
+
+      <section class="stats-table">
+        <h2>Statistici pe module</h2>
+        <div class="table-head">
+          <span>Modul</span>
+          <span>Incercate</span>
+          <span>Acuratete</span>
+          <span>Invatate</span>
+        </div>
+        ${library.modules.map((module) => {
+          const stats = summaryByModule[module.id] ?? { attempted: 0, accuracy: 0, mastered: 0 };
+          return `
+            <div class="table-row">
+              <span>${module.title}</span>
+              <span>${stats.attempted}/${module.cards.length}</span>
+              <span>${stats.accuracy}%</span>
+              <span>${stats.mastered}</span>
+            </div>
+          `;
+        }).join("")}
+      </section>
+
+      <section class="stats-table">
+        <h2>Intrebari dificile</h2>
+        ${hardest.map(({ card, progress }) => `
+          <div class="summary-row">
+            <strong>${card.module} · ${card.number}</strong>
+            <span>${card.question}</span>
+            <span>${progress.wrong} raspunsuri gresite · corect: ${card.answers.join(" • ")}</span>
+          </div>
+        `).join("") || `<p>Inca nu exista intrebari dificile salvate.</p>`}
+      </section>
+    </section>
+  `;
+}
+
+function wireEvents() {
+  app.querySelectorAll("[data-tab]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.activeTab = button.dataset.tab;
+      render();
+    });
+  });
+
+  app.querySelectorAll("[data-module]").forEach((button) => {
+    button.addEventListener("click", () => {
+      setModule(button.dataset.module);
+    });
+  });
+
+  app.querySelectorAll("[data-learn-view]").forEach((button) => {
+    button.addEventListener("click", () => {
+      state.learnView = button.dataset.learnView;
+      render();
+    });
+  });
+
+  app.querySelectorAll("[data-card]").forEach((button) => {
+    button.addEventListener("click", () => {
+      selectCard(button.dataset.card);
+    });
+  });
+
+  app.querySelector("[data-search]")?.addEventListener("input", (event) => {
+    state.searchQuery = event.target.value;
+    const cards = filteredModuleCards();
+    if (cards.length && !cards.some((card) => card.id === state.selectedCardId)) {
+      state.selectedCardId = cards[0].id;
+      state.selectedOptions = [];
+      state.learnChecked = false;
+      state.learnResult = null;
+    }
+    render();
+  });
+
+  app.querySelectorAll("[data-learn-option]").forEach((button) => {
+    button.addEventListener("click", () => {
+      toggleLearnOption(unescapeHtml(button.dataset.learnOption));
+    });
+  });
+
+  app.querySelectorAll("[data-exam-option]").forEach((button) => {
+    button.addEventListener("click", () => {
+      toggleExamOption(unescapeHtml(button.dataset.examOption));
+    });
+  });
+
+  app.querySelector("[data-exam-scope]")?.addEventListener("change", (event) => {
+    setExamScope(event.target.value);
+  });
+
+  app.querySelector("[data-exam-length]")?.addEventListener("change", (event) => {
+    setExamLength(event.target.value);
+  });
+
+  app.querySelectorAll("[data-action]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const action = button.dataset.action;
+
+      if (action === "check-learn") {
+        checkLearnAnswer(true);
+      } else if (action === "show-theory") {
+        checkLearnAnswer(false);
+      } else if (action === "next-learn") {
+        nextLearnCard();
+      } else if (action === "reset-learn") {
+        resetLearnPane();
+      } else if (action === "start-exam") {
+        startExam();
+      } else if (action === "check-exam") {
+        checkExamAnswer();
+      } else if (action === "next-exam") {
+        nextExamCard();
+      } else if (action === "close-exam") {
+        stopExam();
+      } else if (action === "restart-exam") {
+        state.exam.completed = false;
+        startExam();
+      }
+    });
+  });
 }
 
 function escapeHtml(value) {
@@ -485,51 +936,9 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
-function unescapeHtml(value) {
+function unescapeHtml(value = "") {
   const parser = new DOMParser();
   return parser.parseFromString(`<!doctype html><body>${value}`, "text/html").body.textContent || "";
 }
 
-function wireEvents() {
-  app.querySelectorAll("[data-group]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const group = button.dataset.group;
-      const value = button.dataset.value ?? "";
-
-      if (group === "module") {
-        setModuleFilter(value);
-      } else if (group === "focus") {
-        setFocusFilter(value);
-      } else if (group === "mode") {
-        setMode(value);
-      }
-    });
-  });
-
-  app.querySelectorAll("[data-option]").forEach((button) => {
-    button.addEventListener("click", () => {
-      toggleSelection(unescapeHtml(button.dataset.option ?? ""));
-    });
-  });
-
-  app.querySelectorAll("[data-action]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const action = button.dataset.action;
-
-      if (action === "reveal") {
-        revealCard();
-      } else if (action === "again") {
-        advanceCard(false);
-      } else if (action === "gotit") {
-        advanceCard(true);
-      } else if (action === "skip") {
-        skipCard();
-      } else if (action === "reset") {
-        resetProgress();
-      }
-    });
-  });
-}
-
-buildOrder();
 render();

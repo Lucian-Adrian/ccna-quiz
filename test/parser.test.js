@@ -73,13 +73,17 @@ Explanation: The benefits of using a layered model include protocol design suppo
 
 test("parses the real module files into the expected card counts", () => {
   const modules = [
-    ["mod1.md", 15],
-    ["mod2.md", 14],
-    ["mod3.md", 18],
+    ["../modules/mod1.md", 15],
+    ["../modules/mod2.md", 14],
+    ["../modules/mod3.md", 18],
+    ["../modules/mod4.md", 18],
+    ["../modules/mod5.md", 14],
+    ["../modules/mod6.md", 15],
+    ["../modules/mod7.md", 14],
   ];
 
   for (const [file, expectedCount] of modules) {
-    const markdown = fs.readFileSync(new URL(`../${file}`, import.meta.url), "utf8");
+    const markdown = fs.readFileSync(new URL(file, import.meta.url), "utf8");
     const cards = parseQuizMarkdown(markdown, file);
     assert.equal(cards.length, expectedCount, `${file} should parse into ${expectedCount} cards`);
   }

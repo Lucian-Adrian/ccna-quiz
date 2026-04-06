@@ -5,6 +5,7 @@ on:
     branches:
       - initial
       - second
+      - third
   workflow_dispatch:
 
 permissions:
@@ -37,6 +38,12 @@ jobs:
           ref: second
           path: second-branch
 
+      - name: Checkout third branch
+        uses: actions/checkout@v4
+        with:
+          ref: third
+          path: third-branch
+
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
         with:
@@ -50,6 +57,7 @@ jobs:
           cache-dependency-path: |
             initial-branch/pnpm-lock.yaml
             second-branch/pnpm-lock.yaml
+            third-branch/pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -59,6 +67,10 @@ jobs:
         run: pnpm install --frozen-lockfile
         working-directory: second-branch
 
+      - name: Install third branch dependencies
+        run: pnpm install --frozen-lockfile
+        working-directory: third-branch
+
       - name: Build initial site
         run: pnpm build
         working-directory: initial-branch
@@ -67,11 +79,16 @@ jobs:
         run: pnpm build
         working-directory: second-branch
 
+      - name: Build third site
+        run: pnpm build
+        working-directory: third-branch
+
       - name: Assemble Pages site
         run: |
-          mkdir -p site/initial site/second
+          mkdir -p site/initial site/second site/third
           cp -R initial-branch/dist/. site/initial/
           cp -R second-branch/dist/. site/second/
+          cp -R third-branch/dist/. site/third/
           cat > site/index.html <<'EOF'
           <!doctype html>
           <html lang="en">
@@ -172,7 +189,7 @@ jobs:
               <main>
                 <p class="eyebrow">GitHub Pages Hub</p>
                 <h1>Choose your CCNA deck.</h1>
-                <p>The repo now publishes both GitHub Pages variants side by side so you can switch between the original branch and the new branch without redeploying.</p>
+                <p>The repo now publishes all GitHub Pages variants side by side so you can switch between the stable, alternate, and redesigned study workspaces without redeploying.</p>
                 <section class="grid">
                   <a class="card" href="./initial/">
                     <strong>Initial</strong>
@@ -183,6 +200,11 @@ jobs:
                     <strong>Second</strong>
                     <span>Open the version published from branch <code>second</code>.</span>
                     <span class="chip">/second/</span>
+                  </a>
+                  <a class="card" href="./third/">
+                    <strong>Third</strong>
+                    <span>Open the redesigned learning workspace published from branch <code>third</code>.</span>
+                    <span class="chip">/third/</span>
                   </a>
                 </section>
               </main>

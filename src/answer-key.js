@@ -51,18 +51,103 @@ export const CARD_OVERRIDES = {
     16: {
       answerIndices: [1, 3, 4],
       explanation:
-        "Network protocols define how messages are encoded, how large they can be, and how they are delivered across the network.",
+        "Protocols define message encoding, message size, and delivery options so devices can exchange data using shared rules.",
     },
     17: {
       answerIndices: [2],
       explanation:
-        "Data link layer addresses are used for local delivery on the local network segment.",
+        "Data link layer addresses are used for local delivery. Routers are needed only when traffic must leave the local network.",
     },
     18: {
       answerIndices: [2],
       explanation:
-        "In the TCP/IP model, the internet layer is responsible for routing packets and selecting the best path through the network.",
+        "In the TCP/IP model, the internet layer handles logical addressing and routing, so it chooses the best path through the network.",
     },
+  },
+  mod4: {
+    1: { answerIndices: [1] },
+    2: { answerIndices: [2] },
+    3: { answerIndices: [2] },
+    4: { answerIndices: [1] },
+    5: { answerIndices: [3] },
+    6: { answerIndices: [2] },
+    7: { answerIndices: [3] },
+    8: { answerIndices: [0] },
+    9: { answerIndices: [0, 2] },
+    10: { answerIndices: [3] },
+    11: { answerIndices: [3] },
+    12: { answerIndices: [1] },
+    13: { answerIndices: [3] },
+    14: { answerIndices: [1] },
+    15: { answerIndices: [1] },
+    16: { answerIndices: [2] },
+    17: {
+      answerIndices: [1, 3],
+      explanation:
+        "Media access control depends on how the data link layer sees the connection between nodes and on whether the medium is shared by multiple devices.",
+    },
+    18: {
+      answerIndices: [3],
+      explanation:
+        "A hub-and-spoke WAN links branch sites back to one central site through point-to-point links. Branches do not connect directly to one another.",
+    },
+  },
+  mod5: {
+    1: { answerIndices: [2] },
+    2: { answerIndices: [0] },
+    3: {
+      answerIndices: [2],
+      explanation:
+        "Hexadecimal CA converts one nibble at a time: C is 1100 and A is 1010, which together form 11001010.",
+    },
+    4: { answerIndices: [0] },
+    5: { answerIndices: [0, 3] },
+    6: { answerIndices: [1] },
+    7: { answerIndices: [2] },
+    8: { answerIndices: [0] },
+    9: { answerIndices: [0] },
+    10: { answerIndices: [0] },
+    11: { answerIndices: [0] },
+    12: { answerIndices: [3] },
+    13: { answerIndices: [3] },
+    14: { answerIndices: [0] },
+  },
+  mod6: {
+    1: { answerIndices: [2, 3] },
+    2: { answerIndices: [0] },
+    3: { answerIndices: [2] },
+    4: { answerIndices: [2] },
+    5: { answerIndices: [2] },
+    6: { answerIndices: [2] },
+    7: { answerIndices: [1] },
+    8: { answerIndices: [2] },
+    9: { answerIndices: [0] },
+    10: { answerIndices: [2, 4] },
+    11: { answerIndices: [2] },
+    12: { answerIndices: [1] },
+    13: { answerIndices: [0, 2] },
+    14: { answerIndices: [2] },
+    15: { answerIndices: [3] },
+  },
+  mod7: {
+    1: { answerIndices: [0] },
+    2: { answerIndices: [3] },
+    3: { answerIndices: [0, 2] },
+    4: { answerIndices: [3] },
+    5: { answerIndices: [0] },
+    6: { answerIndices: [1, 4] },
+    7: { answerIndices: [3] },
+    8: {
+      answerIndices: [0, 3],
+      explanation:
+        "Ethernet is defined by IEEE 802.3 and relies on unique MAC addresses so frames can be delivered to the correct destination on a LAN.",
+    },
+    9: { answerIndices: [0] },
+    10: { answerIndices: [3] },
+    11: { answerIndices: [2] },
+    12: { answerIndices: [2] },
+    13: { answerIndices: [1] },
+    14: { answerIndices: [2] },
   },
 };
 
