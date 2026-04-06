@@ -2,7 +2,7 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import { test } from "node:test";
 import { getOptionState, hydrateCards, summarizeProgress } from "../src/study.js";
-import { buildModuleLibrary, recordAttempt, summarizeModules, theorySectionsForModule } from "../src/progress.js";
+import { buildModuleLibrary, buildStatsSnapshot, getReviewQueue, recordAttempt, summarizeModules, theorySectionsForModule } from "../src/progress.js";
 
 test("hydrates all module cards with complete answer keys", () => {
   const modules = [
@@ -168,5 +168,43 @@ test("summarizes modules from saved progress", () => {
   assert.deepEqual(summarizeModules(cards, progress), {
     mod1: { questions: 2, attempted: 2, correct: 2, wrong: 1, accuracy: 67, mastered: 0 },
     mod2: { questions: 1, attempted: 1, correct: 2, wrong: 1, accuracy: 67, mastered: 0 },
+  });
+});
+
+test("builds a stats snapshot and prioritizes the review queue from wrong answers", () => {
+  const cards = [
+    { id: "mod1-1", moduleId: "mod1", module: "Networking Today", number: 1, question: "Q1" },
+    { id: "mod1-2", moduleId: "mod1", module: "Networking Today", number: 2, question: "Q2" },
+    { id: "mod2-1", moduleId: "mod2", module: "Protocols and Models", number: 1, question: "Q3" },
+    { id: "mod2-2", moduleId: "mod2", module: "Protocols and Models", number: 2, question: "Q4" },
+  ];
+  const progress = {
+    "mod1-1": { attempts: 4, correct: 1, wrong: 3, streak: 0, lastChoice: [], lastMode: "learn", lastSeenAt: "2026-04-06T12:00:00.000Z" },
+    "mod1-2": { attempts: 5, correct: 5, wrong: 0, streak: 4, lastChoice: [], lastMode: "learn", lastSeenAt: "2026-04-06T12:00:00.000Z" },
+    "mod2-1": { attempts: 3, correct: 1, wrong: 2, streak: 0, lastChoice: [], lastMode: "exam", lastSeenAt: "2026-04-06T12:05:00.000Z" },
+    "mod2-2": { attempts: 1, correct: 0, wrong: 1, streak: 0, lastChoice: [], lastMode: "learn", lastSeenAt: "2026-04-06T12:10:00.000Z" },
+  };
+
+  assert.deepEqual(getReviewQueue(cards, progress).map((card) => card.id), [
+    "mod1-1",
+    "mod2-1",
+    "mod2-2",
+  ]);
+
+  assert.deepEqual(buildStatsSnapshot(cards, progress), {
+    totals: {
+      questions: 4,
+      reviewed: 4,
+      attempts: 13,
+      correct: 7,
+      wrong: 6,
+      mastered: 1,
+      struggling: 3,
+      untouched: 0,
+      accuracy: 54,
+    },
+    weakestModuleId: "mod2",
+    strongestModuleId: "mod1",
+    reviewCount: 3,
   });
 });

@@ -1,7 +1,7 @@
 import "./styles.css";
 import { MODULE_SOURCES } from "./module-sources.js";
 import { shuffleCards } from "./parser.js";
-import { buildModuleLibrary, getProgressEntry, recordAttempt, summarizeModules, theorySectionsForModule } from "./progress.js";
+import { buildModuleLibrary, buildStatsSnapshot, getProgressEntry, getReviewQueue, recordAttempt, summarizeModules, theorySectionsForModule } from "./progress.js";
 
 const STORAGE_KEY = "ccna-study-workspace-v4";
 const LEGACY_STORAGE_KEY = "ccna-study-workspace-v3";
@@ -35,6 +35,7 @@ const state = {
   selectedCardId: initialCard.id,
   searchQuery: "",
   questionFilter: "all",
+  reviewMode: false,
   selectedOptions: [],
   learnChecked: false,
   learnResult: null,
@@ -173,22 +174,30 @@ function questionStatus(card) {
   return "active";
 }
 
-function filteredModuleCards() {
+function availableReviewCards() {
+  return getReviewQueue(library.cards, state.progress);
+}
+
+function visibleCards() {
   const query = normalize(state.searchQuery);
-  const cards = currentModule().cards;
+  const cards = state.reviewMode ? availableReviewCards() : currentModule().cards;
 
   return cards.filter((card) => {
     const matchesQuery = !query || normalize(getCardSearchBlob(card)).includes(query);
-    const matchesFilter = state.questionFilter === "all" || questionStatus(card) === state.questionFilter;
+    const matchesFilter = state.reviewMode
+      ? true
+      : state.questionFilter === "all" || questionStatus(card) === state.questionFilter;
     return matchesQuery && matchesFilter;
   });
 }
 
 function ensureVisibleSelection() {
-  const visible = filteredModuleCards();
+  const visible = visibleCards();
 
   if (!visible.length) {
-    state.selectedCardId = currentModule().cards[0]?.id ?? null;
+    state.selectedCardId = state.reviewMode
+      ? null
+      : currentModule().cards[0]?.id ?? null;
     return;
   }
 
@@ -204,6 +213,7 @@ function setModule(moduleId) {
   state.currentModuleId = moduleId;
   state.searchQuery = "";
   state.questionFilter = "all";
+  state.reviewMode = false;
   state.selectedOptions = [];
   state.learnChecked = false;
   state.learnResult = null;
@@ -222,6 +232,7 @@ function selectCard(cardId) {
 
 function setQuestionFilter(filter) {
   state.questionFilter = filter;
+  state.reviewMode = false;
   ensureVisibleSelection();
   render();
 }
@@ -279,7 +290,7 @@ function checkLearnAnswer(recordStats = true) {
 }
 
 function nextLearnCard() {
-  const cards = filteredModuleCards();
+  const cards = visibleCards();
   const currentIndex = cards.findIndex((card) => card.id === state.selectedCardId);
   const next = cards[currentIndex + 1] ?? cards[0];
 
@@ -292,6 +303,42 @@ function resetLearnPane() {
   state.selectedOptions = [];
   state.learnChecked = false;
   state.learnResult = null;
+  render();
+}
+
+function startWrongReview() {
+  const reviewCards = availableReviewCards();
+
+  if (!reviewCards.length) {
+    state.notice = "Nu exista intrebari gresite salvate inca.";
+    state.activeTab = "stats";
+    render();
+    return;
+  }
+
+  const first = reviewCards[0];
+  state.activeTab = "learn";
+  state.learnView = "questions";
+  state.reviewMode = true;
+  state.searchQuery = "";
+  state.selectedCardId = first.id;
+  state.currentModuleId = first.moduleId;
+  state.selectedOptions = [];
+  state.learnChecked = false;
+  state.learnResult = null;
+  state.notice = `Review mode pornit. Lucrezi doar intrebarile gresite, in ordinea prioritatii.`;
+  render();
+}
+
+function stopWrongReview() {
+  state.reviewMode = false;
+  state.questionFilter = "all";
+  state.searchQuery = "";
+  state.selectedOptions = [];
+  state.learnChecked = false;
+  state.learnResult = null;
+  state.selectedCardId = currentModule().cards[0]?.id ?? null;
+  state.notice = "Ai iesit din review mode.";
   render();
 }
 
@@ -659,7 +706,7 @@ function renderLearnView() {
 }
 
 function renderQuestionWorkspace() {
-  const cards = filteredModuleCards();
+  const cards = visibleCards();
 
   return `
     <section class="toolbar">
@@ -668,11 +715,17 @@ function renderQuestionWorkspace() {
         <input type="text" value="${escapeHtml(state.searchQuery)}" placeholder="termen, protocol, raspuns" data-search />
       </label>
       <div class="filter-chips" aria-label="Question filters">
-        ${renderFilterChip("all", "Toate")}
-        ${renderFilterChip("fresh", "Noi")}
-        ${renderFilterChip("active", "In progres")}
-        ${renderFilterChip("struggling", "De repetat")}
-        ${renderFilterChip("mastered", "Invatate")}
+        ${
+          state.reviewMode
+            ? `<button class="filter-chip active review" type="button" data-action="stop-review-mode">Doar gresite</button>`
+            : `
+              ${renderFilterChip("all", "Toate")}
+              ${renderFilterChip("fresh", "Noi")}
+              ${renderFilterChip("active", "In progres")}
+              ${renderFilterChip("struggling", "De repetat")}
+              ${renderFilterChip("mastered", "Invatate")}
+            `
+        }
       </div>
     </section>
     ${
@@ -704,7 +757,7 @@ function renderQuestionLayout(cards) {
         <div class="index-head">
           <div>
             <p class="eyebrow">Bilete</p>
-            <h3>${cards.length} vizibile</h3>
+            <h3>${cards.length} ${state.reviewMode ? "de revizuit" : "vizibile"}</h3>
           </div>
           <div class="legend">
             <span><i class="status-dot fresh"></i> Nou</span>
@@ -721,7 +774,7 @@ function renderQuestionLayout(cards) {
       <article class="question-stage">
         <div class="stage-top">
           <div>
-            <p class="eyebrow">${card.module}</p>
+            <p class="eyebrow">${state.reviewMode ? `Review mode · ${card.module}` : card.module}</p>
             <h3>Intrebarea ${card.number}</h3>
           </div>
           <div class="stage-stats">
@@ -1002,15 +1055,57 @@ function renderExamView() {
 
 function renderStatsView() {
   const summaryByModule = summarizeModules(library.cards, state.progress);
+  const snapshot = buildStatsSnapshot(library.cards, state.progress);
+  const weakestModule = snapshot.weakestModuleId ? moduleMap.get(snapshot.weakestModuleId) : null;
+  const strongestModule = snapshot.strongestModuleId ? moduleMap.get(snapshot.strongestModuleId) : null;
+  const hardest = hardestQuestions();
 
   return `
     <section class="stats-view">
       <div class="stats-overview">
-        <div class="mini-metric"><span>Total raspunsuri</span><strong>${totalAttempts(state.progress)}</strong></div>
-        <div class="mini-metric"><span>Corecte</span><strong>${totalCorrect(state.progress)}</strong></div>
-        <div class="mini-metric"><span>Gresite</span><strong>${totalWrong(state.progress)}</strong></div>
-        <div class="mini-metric"><span>Invatate</span><strong>${totalMastered(state.progress)}</strong></div>
+        <div class="mini-metric"><span>Total raspunsuri</span><strong>${snapshot.totals.attempts}</strong></div>
+        <div class="mini-metric"><span>Corecte</span><strong>${snapshot.totals.correct}</strong></div>
+        <div class="mini-metric"><span>Gresite</span><strong>${snapshot.totals.wrong}</strong></div>
+        <div class="mini-metric"><span>Invatate</span><strong>${snapshot.totals.mastered}</strong></div>
       </div>
+
+      <section class="stats-hero">
+        <div class="stats-hero-copy">
+          <p class="eyebrow">Comanda de invatare</p>
+          <h2>${snapshot.reviewCount ? `${snapshot.reviewCount} intrebari cer revizuire` : "Esti curat pe moment"}</h2>
+          <p class="section-copy">
+            ${
+              snapshot.reviewCount
+                ? `Porneste imediat un review doar pentru intrebarile gresite. Ordinea este prioritizata dupa numarul de greseli si cat de fragila este intelegerea ta.`
+                : `Continua cu Educatie sau Examen pentru a genera noi statistici. Odata ce apar greseli, aici vei avea un mod dedicat de recuperare.`
+            }
+          </p>
+        </div>
+        <div class="stats-hero-actions">
+          <button class="primary-action wide" type="button" data-action="start-wrong-review" ${snapshot.reviewCount ? "" : "disabled"}>Rehearse Wrong Answers</button>
+          <div class="hero-grid">
+            <div class="mini-metric emphasis"><span>Acuratete</span><strong>${snapshot.totals.accuracy}%</strong></div>
+            <div class="mini-metric"><span>Neatinse</span><strong>${snapshot.totals.untouched}</strong></div>
+            <div class="mini-metric"><span>De repetat</span><strong>${snapshot.totals.struggling}</strong></div>
+            <div class="mini-metric"><span>Revizuite</span><strong>${snapshot.totals.reviewed}</strong></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="stats-section insights">
+        <div class="summary-list two-up">
+          <article class="summary-item accent-good">
+            <strong>Cel mai bun modul</strong>
+            <p>${strongestModule ? strongestModule.title : "Fara date suficiente"}</p>
+            <span>${strongestModule ? `${summaryByModule[strongestModule.id].accuracy}% acuratete` : "Mai raspunde la cateva intrebari."}</span>
+          </article>
+          <article class="summary-item accent-warn">
+            <strong>Cel mai slab modul</strong>
+            <p>${weakestModule ? weakestModule.title : "Fara date suficiente"}</p>
+            <span>${weakestModule ? `${summaryByModule[weakestModule.id].accuracy}% acuratete` : "Mai raspunde la cateva intrebari."}</span>
+          </article>
+        </div>
+      </section>
 
       <section class="stats-section">
         <div class="stage-top">
@@ -1048,7 +1143,7 @@ function renderStatsView() {
           </div>
         </div>
         <div class="summary-list">
-          ${hardestQuestions().map(({ card, progress }) => `
+          ${hardest.map(({ card, progress }) => `
             <article class="summary-item">
               <strong>${card.module} · ${card.number}</strong>
               <p>${card.question}</p>
@@ -1161,6 +1256,10 @@ function wireEvents() {
         startExam();
       } else if (action === "review-mistakes") {
         reviewExamMistakes();
+      } else if (action === "start-wrong-review") {
+        startWrongReview();
+      } else if (action === "stop-review-mode") {
+        stopWrongReview();
       }
     });
   });

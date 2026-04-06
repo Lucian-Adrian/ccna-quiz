@@ -183,3 +183,74 @@ export function summarizeModules(cards, progress) {
 
   return summary;
 }
+
+export function getReviewQueue(cards, progress) {
+  return cards
+    .filter((card) => (progress[card.id]?.wrong ?? 0) > 0)
+    .sort((left, right) => {
+      const leftEntry = progress[left.id] ?? getEmptyProgressEntry();
+      const rightEntry = progress[right.id] ?? getEmptyProgressEntry();
+
+      return (rightEntry.wrong - leftEntry.wrong)
+        || ((leftEntry.correct || 0) - (rightEntry.correct || 0))
+        || String(leftEntry.lastSeenAt ?? "").localeCompare(String(rightEntry.lastSeenAt ?? ""))
+        || left.moduleId.localeCompare(right.moduleId)
+        || left.number - right.number;
+    });
+}
+
+export function buildStatsSnapshot(cards, progress) {
+  const totals = {
+    questions: cards.length,
+    reviewed: 0,
+    attempts: 0,
+    correct: 0,
+    wrong: 0,
+    mastered: 0,
+    struggling: 0,
+    untouched: 0,
+    accuracy: 0,
+  };
+
+  const summaryByModule = summarizeModules(cards, progress);
+  const modules = Object.entries(summaryByModule);
+
+  for (const card of cards) {
+    const entry = progress[card.id];
+
+    if (!entry || (entry.attempts ?? 0) === 0) {
+      totals.untouched += 1;
+      continue;
+    }
+
+    totals.reviewed += 1;
+    totals.attempts += entry.attempts ?? 0;
+    totals.correct += entry.correct ?? 0;
+    totals.wrong += entry.wrong ?? 0;
+
+    if ((entry.streak ?? 0) >= 3) {
+      totals.mastered += 1;
+    }
+
+    if ((entry.wrong ?? 0) > (entry.correct ?? 0)) {
+      totals.struggling += 1;
+    }
+  }
+
+  const denominator = totals.correct + totals.wrong;
+  totals.accuracy = denominator > 0 ? Math.round((totals.correct / denominator) * 100) : 0;
+
+  const weakest = modules
+    .slice()
+    .sort((left, right) => (left[1].accuracy - right[1].accuracy) || (right[1].wrong - left[1].wrong) || left[0].localeCompare(right[0]))[0];
+  const strongest = modules
+    .slice()
+    .sort((left, right) => (right[1].accuracy - left[1].accuracy) || (left[1].wrong - right[1].wrong) || left[0].localeCompare(right[0]))[0];
+
+  return {
+    totals,
+    weakestModuleId: weakest?.[0] ?? null,
+    strongestModuleId: strongest?.[0] ?? null,
+    reviewCount: getReviewQueue(cards, progress).length,
+  };
+}
