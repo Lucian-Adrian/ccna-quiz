@@ -5,14 +5,97 @@ export function theorySectionsForModule(moduleId) {
   return getModuleTheory(moduleId);
 }
 
+function normalizeText(text = "") {
+  return String(text).replace(/\s+/g, " ").trim();
+}
+
+function buildEli5Lead(question, selectionCount, variant = "card") {
+  if (variant === "answer") {
+    return selectionCount > 1
+      ? `For "${question}", this choice is correct`
+      : `For "${question}", this answer is correct`;
+  }
+
+  return selectionCount > 1
+    ? `For "${question}", these choices are correct`
+    : `For "${question}", this answer is correct`;
+}
+
+function toEli5(question, selectionCount, ccnaExplanation, answerText = "", variant = "card") {
+  const lead = buildEli5Lead(question, selectionCount, variant);
+  const base = normalizeText(ccnaExplanation).replace(/^Reference Topic\s+\d+(?:\.\d+)*\.?\s*/i, "");
+
+  if (!base) {
+    return answerText ? `${lead}: "${answerText}".` : lead;
+  }
+
+  const sentence = base.endsWith(".") ? base : `${base}.`;
+
+  if (variant === "answer") {
+    return `${lead}: "${answerText}". In simple terms, ${sentence.charAt(0).toLowerCase()}${sentence.slice(1)}`;
+  }
+
+  return `${lead} because ${sentence.charAt(0).toLowerCase()}${sentence.slice(1)}`;
+}
+
+function normalizeStructuredAnswers(card, ccnaExplanation) {
+  if (Array.isArray(card.answers) && card.answers.length > 0 && typeof card.answers[0] === "object") {
+    return card.answers.map((answer) => ({
+      index: answer.index,
+      text: answer.text,
+      explanation: {
+        eli5: normalizeText(answer.explanation?.eli5) || toEli5(card.question, card.selectionCount, ccnaExplanation, answer.text, "answer"),
+        ccna: normalizeText(answer.explanation?.ccna) || ccnaExplanation,
+      },
+    }));
+  }
+
+  return (card.answers ?? []).map((answerText) => {
+    const index = card.options.indexOf(answerText);
+
+    return {
+      index,
+      text: answerText,
+      explanation: {
+        eli5: toEli5(card.question, card.selectionCount, ccnaExplanation, answerText, "answer"),
+        ccna: ccnaExplanation,
+      },
+    };
+  });
+}
+
+function normalizeCard(moduleId, moduleTitle, card) {
+  const ccnaExplanation = normalizeText(
+    typeof card.explanation === "object" ? card.explanation?.ccna : card.explanation,
+  );
+  const answers = normalizeStructuredAnswers(card, ccnaExplanation);
+
+  return {
+    ...card,
+    id: card.id ?? `${moduleId}-${card.number}`,
+    moduleId,
+    module: moduleTitle,
+    answerIndices: card.answerIndices ?? answers.map((answer) => answer.index).filter((index) => index >= 0),
+    answers,
+    explanation: {
+      eli5: normalizeText(card.explanation?.eli5) || toEli5(card.question, card.selectionCount, ccnaExplanation),
+      ccna: ccnaExplanation,
+    },
+  };
+}
+
 export function buildModuleLibrary(moduleSources) {
   const modules = moduleSources.map((module) => {
     const theory = getModuleTheory(module.id);
-    const cards = hydrateCards(module.id, theory?.title ?? module.label, module.markdown);
+    const title = module.title ?? theory?.title ?? module.label;
+    const rawCards = Array.isArray(module.cards)
+      ? module.cards
+      : hydrateCards(module.id, title, module.markdown);
+    const cards = rawCards.map((card) => normalizeCard(module.id, title, card));
 
     return {
       ...module,
-      title: theory?.title ?? module.label,
+      title,
       theory,
       cards,
     };

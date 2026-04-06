@@ -1,0 +1,428 @@
+{
+  "schemaVersion": 2,
+  "moduleId": "mod5",
+  "displayName": "Module 5",
+  "title": "Number Systems",
+  "quizTitle": "5.3.2 Module Quiz – Number Systems Answers",
+  "sourceMarkdown": "mod5.md",
+  "cards": [
+    {
+      "id": "mod5-1",
+      "number": 1,
+      "question": "What is the decimal equivalent of 0xC9?",
+      "options": [
+        "185",
+        "200",
+        "201",
+        "199"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "201",
+          "explanation": {
+            "eli5": "For \"What is the decimal equivalent of 0xC9?\", this answer is correct: \"201\". In simple terms, 0x refers to the item as hexadecimal. Convert each character into its corresponding nibble. Then combine the nibbles together and calculate the resulting decimal equivalent. C has a value of 12. 12 x 16 = 192. 192 + 9 = 201.",
+            "ccna": "0x refers to the item as hexadecimal. Convert each character into its corresponding nibble. Then combine the nibbles together and calculate the resulting decimal equivalent. C has a value of 12. 12 x 16 = 192. 192 + 9 = 201."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the decimal equivalent of 0xC9?\", this answer is correct because 0x refers to the item as hexadecimal. Convert each character into its corresponding nibble. Then combine the nibbles together and calculate the resulting decimal equivalent. C has a value of 12. 12 x 16 = 192. 192 + 9 = 201.",
+        "ccna": "0x refers to the item as hexadecimal. Convert each character into its corresponding nibble. Then combine the nibbles together and calculate the resulting decimal equivalent. C has a value of 12. 12 x 16 = 192. 192 + 9 = 201."
+      }
+    },
+    {
+      "id": "mod5-2",
+      "number": 2,
+      "question": "Which is a valid hexadecimal number?",
+      "options": [
+        "f",
+        "g",
+        "h",
+        "j"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "f",
+          "explanation": {
+            "eli5": "For \"Which is a valid hexadecimal number?\", this answer is correct: \"f\". In simple terms, the hexadecimal numbers are 0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f.. The hexadecimal number 0 represents 0 in decimal and is represented as 0000 in binary. The hexadecimal number f represents 15 in decimal.",
+            "ccna": "The hexadecimal numbers are 0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f.. The hexadecimal number 0 represents 0 in decimal and is represented as 0000 in binary. The hexadecimal number f represents 15 in decimal."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which is a valid hexadecimal number?\", this answer is correct because the hexadecimal numbers are 0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f.. The hexadecimal number 0 represents 0 in decimal and is represented as 0000 in binary. The hexadecimal number f represents 15 in decimal.",
+        "ccna": "The hexadecimal numbers are 0,1,2,3,4,5,6,7,8,9,a,b,c,d,e,f.. The hexadecimal number 0 represents 0 in decimal and is represented as 0000 in binary. The hexadecimal number f represents 15 in decimal."
+      }
+    },
+    {
+      "id": "mod5-3",
+      "number": 3,
+      "question": "What is the binary representation of 0xCA?",
+      "options": [
+        "10111010",
+        "11010101",
+        "11001010",
+        "11011010"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "11001010",
+          "explanation": {
+            "eli5": "For \"What is the binary representation of 0xCA?\", this answer is correct: \"11001010\". In simple terms, hexadecimal CA converts one nibble at a time: C is 1100 and A is 1010, which together form 11001010.",
+            "ccna": "Hexadecimal CA converts one nibble at a time: C is 1100 and A is 1010, which together form 11001010."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the binary representation of 0xCA?\", this answer is correct because hexadecimal CA converts one nibble at a time: C is 1100 and A is 1010, which together form 11001010.",
+        "ccna": "Hexadecimal CA converts one nibble at a time: C is 1100 and A is 1010, which together form 11001010."
+      }
+    },
+    {
+      "id": "mod5-4",
+      "number": 4,
+      "question": "How many bits are in an IPv4 address?",
+      "options": [
+        "32",
+        "64",
+        "128",
+        "256"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "32",
+          "explanation": {
+            "eli5": "For \"How many bits are in an IPv4 address?\", this answer is correct: \"32\". In simple terms, an IPv4 address is comprised of 4 octets of binary digits, each containing 8 bits, resulting in a 32-bit address.",
+            "ccna": "An IPv4 address is comprised of 4 octets of binary digits, each containing 8 bits, resulting in a 32-bit address."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"How many bits are in an IPv4 address?\", this answer is correct because an IPv4 address is comprised of 4 octets of binary digits, each containing 8 bits, resulting in a 32-bit address.",
+        "ccna": "An IPv4 address is comprised of 4 octets of binary digits, each containing 8 bits, resulting in a 32-bit address."
+      }
+    },
+    {
+      "id": "mod5-5",
+      "number": 5,
+      "question": "Which two statements are correct about IPv4 and IPv6 addresses? (Choose two.)",
+      "options": [
+        "IPv6 addresses are represented by hexadecimal numbers.",
+        "IPv4 addresses are represented by hexadecimal numbers.",
+        "IPv6 addresses are 32 bits in length.",
+        "IPv4 addresses are 32 bits in length.",
+        "IPv4 addresses are 128 bits in length.",
+        "IPv6 addresses are 64 bits in length."
+      ],
+      "selectionCount": 2,
+      "answerIndices": [
+        0,
+        3
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "IPv6 addresses are represented by hexadecimal numbers.",
+          "explanation": {
+            "eli5": "For \"Which two statements are correct about IPv4 and IPv6 addresses? (Choose two.)\", this choice is correct: \"IPv6 addresses are represented by hexadecimal numbers.\". In simple terms, iPv4 addresses are represented as dotted decimal numbers and are 32 bits in length. IPv6 addresses are represented by hexadecimal numbers and are 128 bits in length.",
+            "ccna": "IPv4 addresses are represented as dotted decimal numbers and are 32 bits in length. IPv6 addresses are represented by hexadecimal numbers and are 128 bits in length."
+          }
+        },
+        {
+          "index": 3,
+          "text": "IPv4 addresses are 32 bits in length.",
+          "explanation": {
+            "eli5": "For \"Which two statements are correct about IPv4 and IPv6 addresses? (Choose two.)\", this choice is correct: \"IPv4 addresses are 32 bits in length.\". In simple terms, iPv4 addresses are represented as dotted decimal numbers and are 32 bits in length. IPv6 addresses are represented by hexadecimal numbers and are 128 bits in length.",
+            "ccna": "IPv4 addresses are represented as dotted decimal numbers and are 32 bits in length. IPv6 addresses are represented by hexadecimal numbers and are 128 bits in length."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which two statements are correct about IPv4 and IPv6 addresses? (Choose two.)\", these choices are correct because iPv4 addresses are represented as dotted decimal numbers and are 32 bits in length. IPv6 addresses are represented by hexadecimal numbers and are 128 bits in length.",
+        "ccna": "IPv4 addresses are represented as dotted decimal numbers and are 32 bits in length. IPv6 addresses are represented by hexadecimal numbers and are 128 bits in length."
+      }
+    },
+    {
+      "id": "mod5-6",
+      "number": 6,
+      "question": "Which IPv4 address format was created for ease of use by people and is expressed as 201.192.1.14?",
+      "options": [
+        "binary",
+        "dotted decimal",
+        "hexadecimal",
+        "ASCII"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "dotted decimal",
+          "explanation": {
+            "eli5": "For \"Which IPv4 address format was created for ease of use by people and is expressed as 201.192.1.14?\", this answer is correct: \"dotted decimal\". In simple terms, for ease of use by people, binary patterns are represented as dotted decimal. Computer systems were created to understand binary addressing.",
+            "ccna": "For ease of use by people, binary patterns are represented as dotted decimal. Computer systems were created to understand binary addressing."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which IPv4 address format was created for ease of use by people and is expressed as 201.192.1.14?\", this answer is correct because for ease of use by people, binary patterns are represented as dotted decimal. Computer systems were created to understand binary addressing.",
+        "ccna": "For ease of use by people, binary patterns are represented as dotted decimal. Computer systems were created to understand binary addressing."
+      }
+    },
+    {
+      "id": "mod5-7",
+      "number": 7,
+      "question": "What is the dotted decimal representation of the IPv4 address 11001011.00000000.01110001.11010011?",
+      "options": [
+        "192.0.0.199",
+        "198.51.100.201",
+        "203.0.113.211",
+        "209.165.201.223"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "203.0.113.211",
+          "explanation": {
+            "eli5": "For \"What is the dotted decimal representation of the IPv4 address 11001011.00000000.01110001.11010011?\", this answer is correct: \"203.0.113.211\". In simple terms, each section (octet) contains eight binary digits. Each digit represents a specific value (128, 64, 32, 16, 8, 4, 2, and 1). Everywhere there is a 1, the specific value is relevant. Add all relevant values in a particular octet to obtain the decimal value. For example binary 11001011 equals 203 in decimal.",
+            "ccna": "Each section (octet) contains eight binary digits. Each digit represents a specific value (128, 64, 32, 16, 8, 4, 2, and 1). Everywhere there is a 1, the specific value is relevant. Add all relevant values in a particular octet to obtain the decimal value. For example binary 11001011 equals 203 in decimal."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the dotted decimal representation of the IPv4 address 11001011.00000000.01110001.11010011?\", this answer is correct because each section (octet) contains eight binary digits. Each digit represents a specific value (128, 64, 32, 16, 8, 4, 2, and 1). Everywhere there is a 1, the specific value is relevant. Add all relevant values in a particular octet to obtain the decimal value. For example binary 11001011 equals 203 in decimal.",
+        "ccna": "Each section (octet) contains eight binary digits. Each digit represents a specific value (128, 64, 32, 16, 8, 4, 2, and 1). Everywhere there is a 1, the specific value is relevant. Add all relevant values in a particular octet to obtain the decimal value. For example binary 11001011 equals 203 in decimal."
+      }
+    },
+    {
+      "id": "mod5-8",
+      "number": 8,
+      "question": "What is the decimal equivalent of the binary number 10010101?",
+      "options": [
+        "149",
+        "157",
+        "168",
+        "192"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "149",
+          "explanation": {
+            "eli5": "For \"What is the decimal equivalent of the binary number 10010101?\", this answer is correct: \"149\". In simple terms, binary 10010101 maps to 149 in decimal. 128+16+4+1 = 149.",
+            "ccna": "Binary 10010101 maps to 149 in decimal. 128+16+4+1 = 149"
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the decimal equivalent of the binary number 10010101?\", this answer is correct because binary 10010101 maps to 149 in decimal. 128+16+4+1 = 149.",
+        "ccna": "Binary 10010101 maps to 149 in decimal. 128+16+4+1 = 149"
+      }
+    },
+    {
+      "id": "mod5-9",
+      "number": 9,
+      "question": "What is the decimal equivalent of the hex number 0x3F?",
+      "options": [
+        "63",
+        "77",
+        "87",
+        "93"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "63",
+          "explanation": {
+            "eli5": "For \"What is the decimal equivalent of the hex number 0x3F?\", this answer is correct: \"63\". In simple terms, hex 0x3F is 63 in decimal. (3*16)+(15*1) = 63.",
+            "ccna": "Hex 0x3F is 63 in decimal. (3*16)+(15*1) = 63"
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the decimal equivalent of the hex number 0x3F?\", this answer is correct because hex 0x3F is 63 in decimal. (3*16)+(15*1) = 63.",
+        "ccna": "Hex 0x3F is 63 in decimal. (3*16)+(15*1) = 63"
+      }
+    },
+    {
+      "id": "mod5-10",
+      "number": 10,
+      "question": "What is the dotted decimal representation of the IPv4 address which is represented as the binary string 00001010.01100100.00010101.00000001?",
+      "options": [
+        "10.100.21.1",
+        "10.10.20.1",
+        "100.10.11.1",
+        "100.21.10.1"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "10.100.21.1",
+          "explanation": {
+            "eli5": "For \"What is the dotted decimal representation of the IPv4 address which is represented as the binary string 00001010.01100100.00010101.00000001?\", this answer is correct: \"10.100.21.1\". In simple terms, converting the binary string of 00001010.01100100.00010101.00000001 to dotted decimal gives 10.100.21.1.",
+            "ccna": "Converting the binary string of 00001010.01100100.00010101.00000001 to dotted decimal gives 10.100.21.1"
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the dotted decimal representation of the IPv4 address which is represented as the binary string 00001010.01100100.00010101.00000001?\", this answer is correct because converting the binary string of 00001010.01100100.00010101.00000001 to dotted decimal gives 10.100.21.1.",
+        "ccna": "Converting the binary string of 00001010.01100100.00010101.00000001 to dotted decimal gives 10.100.21.1"
+      }
+    },
+    {
+      "id": "mod5-11",
+      "number": 11,
+      "question": "What is the binary representation for the decimal number 173?",
+      "options": [
+        "10100111",
+        "10100101",
+        "10101101",
+        "10110101"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "10100111",
+          "explanation": {
+            "eli5": "For \"What is the binary representation for the decimal number 173?\", this answer is correct: \"10100111\". In simple terms, decimal 173 = 128 + 0 + 32 + 0 + 8 + 4 + 0 + 1.",
+            "ccna": "decimal 173 = 128 + 0 + 32 + 0 + 8 + 4 + 0 + 1"
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the binary representation for the decimal number 173?\", this answer is correct because decimal 173 = 128 + 0 + 32 + 0 + 8 + 4 + 0 + 1.",
+        "ccna": "decimal 173 = 128 + 0 + 32 + 0 + 8 + 4 + 0 + 1"
+      }
+    },
+    {
+      "id": "mod5-12",
+      "number": 12,
+      "question": "Given the binary address of 11101100 00010001 00001100 00001010, which address does this represent in dotted decimal format?",
+      "options": [
+        "234.17.10.9",
+        "234.16.12.10",
+        "236.17.12.6",
+        "236.17.12.10"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "236.17.12.10",
+          "explanation": {
+            "eli5": "For \"Given the binary address of 11101100 00010001 00001100 00001010, which address does this represent in dotted decimal format?\", this answer is correct: \"236.17.12.10\". In simple terms, the binary number 11101100 00010001 00001100 00001010 translates to 236.17.12.10.",
+            "ccna": "The binary number 11101100 00010001 00001100 00001010 translates to 236.17.12.10."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Given the binary address of 11101100 00010001 00001100 00001010, which address does this represent in dotted decimal format?\", this answer is correct because the binary number 11101100 00010001 00001100 00001010 translates to 236.17.12.10.",
+        "ccna": "The binary number 11101100 00010001 00001100 00001010 translates to 236.17.12.10."
+      }
+    },
+    {
+      "id": "mod5-13",
+      "number": 13,
+      "question": "How many binary bits exist within an IPv6 address?",
+      "options": [
+        "32",
+        "48",
+        "64",
+        "128",
+        "256"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "128",
+          "explanation": {
+            "eli5": "For \"How many binary bits exist within an IPv6 address?\", this answer is correct: \"128\". In simple terms, iPv4 addressing space is exhausted by the rapid growth of the Internet and the devices connected to the Internet. IPv6 expands the IP addressing space by increasing the address length from 32 bits to 128 bits.",
+            "ccna": "IPv4 addressing space is exhausted by the rapid growth of the Internet and the devices connected to the Internet. IPv6 expands the IP addressing space by increasing the address length from 32 bits to 128 bits."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"How many binary bits exist within an IPv6 address?\", this answer is correct because iPv4 addressing space is exhausted by the rapid growth of the Internet and the devices connected to the Internet. IPv6 expands the IP addressing space by increasing the address length from 32 bits to 128 bits.",
+        "ccna": "IPv4 addressing space is exhausted by the rapid growth of the Internet and the devices connected to the Internet. IPv6 expands the IP addressing space by increasing the address length from 32 bits to 128 bits."
+      }
+    },
+    {
+      "id": "mod5-14",
+      "number": 14,
+      "question": "What is the binary equivalent of the decimal number 232?",
+      "options": [
+        "11101000",
+        "11000110",
+        "10011000",
+        "11110010"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "11101000",
+          "explanation": {
+            "eli5": "For \"What is the binary equivalent of the decimal number 232?\", this answer is correct: \"11101000\". In simple terms, 232 in binary is 11101000. 128+64+32+8 = 232.",
+            "ccna": "232 in binary is 11101000. 128+64+32+8 = 232"
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the binary equivalent of the decimal number 232?\", this answer is correct because 232 in binary is 11101000. 128+64+32+8 = 232.",
+        "ccna": "232 in binary is 11101000. 128+64+32+8 = 232"
+      }
+    }
+  ]
+}

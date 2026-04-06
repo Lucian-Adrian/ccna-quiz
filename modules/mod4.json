@@ -1,0 +1,554 @@
+{
+  "schemaVersion": 2,
+  "moduleId": "mod4",
+  "displayName": "Module 4",
+  "title": "Physical Layer",
+  "quizTitle": "4.7.4 Module Quiz – Physical Layer Answers",
+  "sourceMarkdown": "mod4.md",
+  "cards": [
+    {
+      "id": "mod4-1",
+      "number": 1,
+      "question": "Which standards organization oversees development of wireless LAN standards?",
+      "options": [
+        "IANA",
+        "IEEE",
+        "IOS",
+        "TIA"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "IEEE",
+          "explanation": {
+            "eli5": "For \"Which standards organization oversees development of wireless LAN standards?\", this answer is correct: \"IEEE\". In simple terms, iANA oversees the management of IP address allocation and domain names. ISO is the largest developer of international networking standards and is famous for the Open Systems Interconnection (OSI) model. TIA focuses on communication standards. The IEEE 802 standards are many, but the ones that affect an entry-level network professional are Ethernet (802.3), wireless LANs (802.11), and wireless PANs (802.15).",
+            "ccna": "IANA oversees the management of IP address allocation and domain names. ISO is the largest developer of international networking standards and is famous for the Open Systems Interconnection (OSI) model. TIA focuses on communication standards. The IEEE 802 standards are many, but the ones that affect an entry-level network professional are Ethernet (802.3), wireless LANs (802.11), and wireless PANs (802.15)."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which standards organization oversees development of wireless LAN standards?\", this answer is correct because iANA oversees the management of IP address allocation and domain names. ISO is the largest developer of international networking standards and is famous for the Open Systems Interconnection (OSI) model. TIA focuses on communication standards. The IEEE 802 standards are many, but the ones that affect an entry-level network professional are Ethernet (802.3), wireless LANs (802.11), and wireless PANs (802.15).",
+        "ccna": "IANA oversees the management of IP address allocation and domain names. ISO is the largest developer of international networking standards and is famous for the Open Systems Interconnection (OSI) model. TIA focuses on communication standards. The IEEE 802 standards are many, but the ones that affect an entry-level network professional are Ethernet (802.3), wireless LANs (802.11), and wireless PANs (802.15)."
+      }
+    },
+    {
+      "id": "mod4-2",
+      "number": 2,
+      "question": "A network administrator is designing a new network infrastructure that includes both wired and wireless connectivity. Under which situation would a wireless connection be recommended?",
+      "options": [
+        "The end-user device only has an Ethernet NIC.",
+        "The end-user device requires a dedicated connection because of performance requirements.",
+        "The end-user device needs mobility when connecting to the network.",
+        "The end-user device area has a high concentration of RFI."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "The end-user device needs mobility when connecting to the network.",
+          "explanation": {
+            "eli5": "For \"A network administrator is designing a new network infrastructure that includes both wired and wireless connectivity. Under which situation would a wireless connection be recommended?\", this answer is correct: \"The end-user device needs mobility when connecting to the network.\". In simple terms, when the end-user devices need mobility to connect to the network, wireless is recommended. If an end-user device only has an Ethernet NIC, the user will only be able to use Ethernet cabling. If RFI is an issue, wireless is not recommended. An end-user device that requires a dedicated connection for performance would perform better with a dedicated Ethernet cable.",
+            "ccna": "When the end-user devices need mobility to connect to the network, wireless is recommended. If an end-user device only has an Ethernet NIC, the user will only be able to use Ethernet cabling. If RFI is an issue, wireless is not recommended. An end-user device that requires a dedicated connection for performance would perform better with a dedicated Ethernet cable."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"A network administrator is designing a new network infrastructure that includes both wired and wireless connectivity. Under which situation would a wireless connection be recommended?\", this answer is correct because when the end-user devices need mobility to connect to the network, wireless is recommended. If an end-user device only has an Ethernet NIC, the user will only be able to use Ethernet cabling. If RFI is an issue, wireless is not recommended. An end-user device that requires a dedicated connection for performance would perform better with a dedicated Ethernet cable.",
+        "ccna": "When the end-user devices need mobility to connect to the network, wireless is recommended. If an end-user device only has an Ethernet NIC, the user will only be able to use Ethernet cabling. If RFI is an issue, wireless is not recommended. An end-user device that requires a dedicated connection for performance would perform better with a dedicated Ethernet cable."
+      }
+    },
+    {
+      "id": "mod4-3",
+      "number": 3,
+      "question": "A network administrator is troubleshooting connectivity issues on a server. Using a tester, the administrator notices that the signals generated by the server NIC are distorted and not usable. In which layer of the OSI model is the error categorized?",
+      "options": [
+        "presentation layer",
+        "network layer",
+        "physical layer",
+        "data link layer"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "physical layer",
+          "explanation": {
+            "eli5": "For \"A network administrator is troubleshooting connectivity issues on a server. Using a tester, the administrator notices that the signals generated by the server NIC are distorted and not usable. In which layer of the OSI model is the error categorized?\", this answer is correct: \"physical layer\". In simple terms, the NIC has responsibilities in both Layer 1 and Layer 2. The NIC encodes the frame as a series of signals that are transmitted onto the local media. This is the responsibility of the physical layer of the OSI model. The signal could be in the form of electrical, optical, or radio waves.",
+            "ccna": "The NIC has responsibilities in both Layer 1 and Layer 2. The NIC encodes the frame as a series of signals that are transmitted onto the local media. This is the responsibility of the physical layer of the OSI model. The signal could be in the form of electrical, optical, or radio waves."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"A network administrator is troubleshooting connectivity issues on a server. Using a tester, the administrator notices that the signals generated by the server NIC are distorted and not usable. In which layer of the OSI model is the error categorized?\", this answer is correct because the NIC has responsibilities in both Layer 1 and Layer 2. The NIC encodes the frame as a series of signals that are transmitted onto the local media. This is the responsibility of the physical layer of the OSI model. The signal could be in the form of electrical, optical, or radio waves.",
+        "ccna": "The NIC has responsibilities in both Layer 1 and Layer 2. The NIC encodes the frame as a series of signals that are transmitted onto the local media. This is the responsibility of the physical layer of the OSI model. The signal could be in the form of electrical, optical, or radio waves."
+      }
+    },
+    {
+      "id": "mod4-4",
+      "number": 4,
+      "question": "What type of cable is used to connect a workstation serial port to a Cisco router console port?",
+      "options": [
+        "crossover",
+        "rollover",
+        "straight-through",
+        "coaxial"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "rollover",
+          "explanation": {
+            "eli5": "For \"What type of cable is used to connect a workstation serial port to a Cisco router console port?\", this answer is correct: \"rollover\". In simple terms, uTP cable wire pairs can be terminated in different configurations for use in different applications. To use a UTP cable for consoling into a Cisco router from a PC serial port, it must be terminated as a rollover or console cable.",
+            "ccna": "UTP cable wire pairs can be terminated in different configurations for use in different applications. To use a UTP cable for consoling into a Cisco router from a PC serial port, it must be terminated as a rollover or console cable."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What type of cable is used to connect a workstation serial port to a Cisco router console port?\", this answer is correct because uTP cable wire pairs can be terminated in different configurations for use in different applications. To use a UTP cable for consoling into a Cisco router from a PC serial port, it must be terminated as a rollover or console cable.",
+        "ccna": "UTP cable wire pairs can be terminated in different configurations for use in different applications. To use a UTP cable for consoling into a Cisco router from a PC serial port, it must be terminated as a rollover or console cable."
+      }
+    },
+    {
+      "id": "mod4-5",
+      "number": 5,
+      "question": "Which type of UTP cable is used to connect a PC to a switch port?",
+      "options": [
+        "console",
+        "rollover",
+        "crossover",
+        "straight-through"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "straight-through",
+          "explanation": {
+            "eli5": "For \"Which type of UTP cable is used to connect a PC to a switch port?\", this answer is correct: \"straight-through\". In simple terms, a rollover cable is a Cisco proprietary cable used to connect to a router or switch console port. A straight-through (also called patch) cable is usually used to interconnect a host to a switch and a switch to a router. A crossover cable is used to interconnect similar devices together, for example, between two switches, two routers, and two hosts.",
+            "ccna": "A rollover cable is a Cisco proprietary cable used to connect to a router or switch console port. A straight-through (also called patch) cable is usually used to interconnect a host to a switch and a switch to a router. A crossover cable is used to interconnect similar devices together, for example, between two switches, two routers, and two hosts."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which type of UTP cable is used to connect a PC to a switch port?\", this answer is correct because a rollover cable is a Cisco proprietary cable used to connect to a router or switch console port. A straight-through (also called patch) cable is usually used to interconnect a host to a switch and a switch to a router. A crossover cable is used to interconnect similar devices together, for example, between two switches, two routers, and two hosts.",
+        "ccna": "A rollover cable is a Cisco proprietary cable used to connect to a router or switch console port. A straight-through (also called patch) cable is usually used to interconnect a host to a switch and a switch to a router. A crossover cable is used to interconnect similar devices together, for example, between two switches, two routers, and two hosts."
+      }
+    },
+    {
+      "id": "mod4-6",
+      "number": 6,
+      "question": "What is the definition of bandwidth?",
+      "options": [
+        "the measure of the transfer of bits across the media over a given period of time",
+        "the speed at which bits travel on the network",
+        "the amount of data that can flow from one place to another in a given amount of time",
+        "the measure of usable data transferred over a given period of time"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "the amount of data that can flow from one place to another in a given amount of time",
+          "explanation": {
+            "eli5": "For \"What is the definition of bandwidth?\", this answer is correct: \"the amount of data that can flow from one place to another in a given amount of time\". In simple terms, bandwidth is the measure of the capacity of a network medium to carry data. It is the amount of data that can move between two points on the network over a specific period of time, typically one second.",
+            "ccna": "Bandwidth is the measure of the capacity of a network medium to carry data. It is the amount of data that can move between two points on the network over a specific period of time, typically one second."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the definition of bandwidth?\", this answer is correct because bandwidth is the measure of the capacity of a network medium to carry data. It is the amount of data that can move between two points on the network over a specific period of time, typically one second.",
+        "ccna": "Bandwidth is the measure of the capacity of a network medium to carry data. It is the amount of data that can move between two points on the network over a specific period of time, typically one second."
+      }
+    },
+    {
+      "id": "mod4-7",
+      "number": 7,
+      "question": "Which statement correctly describes frame encoding?",
+      "options": [
+        "It uses the characteristic of one wave to modify another wave.",
+        "It transmits data signals along with a clock signal which occurs at evenly spaced time durations.",
+        "It generates the electrical, optical, or wireless signals that represent the binary numbers of the frame.",
+        "It converts bits into a predefined code in order to provide a predictable pattern to help distinguish data bits from control bits."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "It converts bits into a predefined code in order to provide a predictable pattern to help distinguish data bits from control bits.",
+          "explanation": {
+            "eli5": "For \"Which statement correctly describes frame encoding?\", this answer is correct: \"It converts bits into a predefined code in order to provide a predictable pattern to help distinguish data bits from control bits.\". In simple terms, frame encoding converts a stream of data bits into a predefined code that is recognized by both the sender and receiver. These codes are used for a variety of purposes, such as distinguishing data bits from control bits, and identifying the beginning and end of a frame.",
+            "ccna": "Frame encoding converts a stream of data bits into a predefined code that is recognized by both the sender and receiver. These codes are used for a variety of purposes, such as distinguishing data bits from control bits, and identifying the beginning and end of a frame."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which statement correctly describes frame encoding?\", this answer is correct because frame encoding converts a stream of data bits into a predefined code that is recognized by both the sender and receiver. These codes are used for a variety of purposes, such as distinguishing data bits from control bits, and identifying the beginning and end of a frame.",
+        "ccna": "Frame encoding converts a stream of data bits into a predefined code that is recognized by both the sender and receiver. These codes are used for a variety of purposes, such as distinguishing data bits from control bits, and identifying the beginning and end of a frame."
+      }
+    },
+    {
+      "id": "mod4-8",
+      "number": 8,
+      "question": "What is a characteristic of UTP cabling?",
+      "options": [
+        "cancellation",
+        "cladding",
+        "immunity to electrical hazards",
+        "woven copper braid or metallic foil"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "cancellation",
+          "explanation": {
+            "eli5": "For \"What is a characteristic of UTP cabling?\", this answer is correct: \"cancellation\". In simple terms, cladding and immunization from electrical hazards are characteristics for fiber-optic cabling. A woven copper braid or metallic foil is used as a shield for the inner coaxial cable conductor. Cancellation is a property of UTP cabling where two wires are located adjacent to one another so each magnetic field cancels out the adjacent magnetic field.",
+            "ccna": "Cladding and immunization from electrical hazards are characteristics for fiber-optic cabling. A woven copper braid or metallic foil is used as a shield for the inner coaxial cable conductor. Cancellation is a property of UTP cabling where two wires are located adjacent to one another so each magnetic field cancels out the adjacent magnetic field."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is a characteristic of UTP cabling?\", this answer is correct because cladding and immunization from electrical hazards are characteristics for fiber-optic cabling. A woven copper braid or metallic foil is used as a shield for the inner coaxial cable conductor. Cancellation is a property of UTP cabling where two wires are located adjacent to one another so each magnetic field cancels out the adjacent magnetic field.",
+        "ccna": "Cladding and immunization from electrical hazards are characteristics for fiber-optic cabling. A woven copper braid or metallic foil is used as a shield for the inner coaxial cable conductor. Cancellation is a property of UTP cabling where two wires are located adjacent to one another so each magnetic field cancels out the adjacent magnetic field."
+      }
+    },
+    {
+      "id": "mod4-9",
+      "number": 9,
+      "question": "A wireless LAN is being deployed inside the new one room office that is occupied by the park ranger. The office is located at the highest part of the national park. After network testing is complete, the technicians report that the wireless LAN signal is occasionally affected by some type of interference. What is a possible cause of the signal distortion? (Choose two.)",
+      "options": [
+        "the microwave oven",
+        "the large number of trees that surround the office",
+        "the cellular phones that are used by the employees",
+        "the elevated location where the wireless LAN was installed",
+        "the number of wireless devices that are used in the wireless LAN"
+      ],
+      "selectionCount": 2,
+      "answerIndices": [
+        0,
+        2
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "the microwave oven",
+          "explanation": {
+            "eli5": "For \"A wireless LAN is being deployed inside the new one room office that is occupied by the park ranger. The office is located at the highest part of the national park. After network testing is complete, the technicians report that the wireless LAN signal is occasionally affected by some type of interference. What is a possible cause of the signal distortion? (Choose two.)\", this choice is correct: \"the microwave oven\". In simple terms, wireless LAN connectivity is not affected by trees or the elevation of the equipment. Because this is a one room office in an isolated area, there will not be a large number of wireless devices or source of interference operating in the immediate vicinity, apart from a cellular phone or a microwave oven.",
+            "ccna": "Wireless LAN connectivity is not affected by trees or the elevation of the equipment. Because this is a one room office in an isolated area, there will not be a large number of wireless devices or source of interference operating in the immediate vicinity, apart from a cellular phone or a microwave oven."
+          }
+        },
+        {
+          "index": 2,
+          "text": "the cellular phones that are used by the employees",
+          "explanation": {
+            "eli5": "For \"A wireless LAN is being deployed inside the new one room office that is occupied by the park ranger. The office is located at the highest part of the national park. After network testing is complete, the technicians report that the wireless LAN signal is occasionally affected by some type of interference. What is a possible cause of the signal distortion? (Choose two.)\", this choice is correct: \"the cellular phones that are used by the employees\". In simple terms, wireless LAN connectivity is not affected by trees or the elevation of the equipment. Because this is a one room office in an isolated area, there will not be a large number of wireless devices or source of interference operating in the immediate vicinity, apart from a cellular phone or a microwave oven.",
+            "ccna": "Wireless LAN connectivity is not affected by trees or the elevation of the equipment. Because this is a one room office in an isolated area, there will not be a large number of wireless devices or source of interference operating in the immediate vicinity, apart from a cellular phone or a microwave oven."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"A wireless LAN is being deployed inside the new one room office that is occupied by the park ranger. The office is located at the highest part of the national park. After network testing is complete, the technicians report that the wireless LAN signal is occasionally affected by some type of interference. What is a possible cause of the signal distortion? (Choose two.)\", these choices are correct because wireless LAN connectivity is not affected by trees or the elevation of the equipment. Because this is a one room office in an isolated area, there will not be a large number of wireless devices or source of interference operating in the immediate vicinity, apart from a cellular phone or a microwave oven.",
+        "ccna": "Wireless LAN connectivity is not affected by trees or the elevation of the equipment. Because this is a one room office in an isolated area, there will not be a large number of wireless devices or source of interference operating in the immediate vicinity, apart from a cellular phone or a microwave oven."
+      }
+    },
+    {
+      "id": "mod4-10",
+      "number": 10,
+      "question": "What is indicated by the term throughput?",
+      "options": [
+        "the guaranteed data transfer rate offered by an ISP",
+        "the capacity of a particular medium to carry data",
+        "the measure of the usable data transferred across the media",
+        "the measure of the bits transferred across the media over a given period of time",
+        "the time it takes for a message to get from sender to receiver"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "the measure of the bits transferred across the media over a given period of time",
+          "explanation": {
+            "eli5": "For \"What is indicated by the term throughput?\", this answer is correct: \"the measure of the bits transferred across the media over a given period of time\". In simple terms, throughput is the measure of the transfer of bits across the media over a given period of time. Throughput is affected by a number of factors such as, EMI and latency, so it rarely matches the specified bandwidth for a network medium. The throughput measurement includes user data bits and other data bits, such as overhead, acknowledging, and encapsulation. The measure of the usable data transferred across the media is called goodput.",
+            "ccna": "Throughput is the measure of the transfer of bits across the media over a given period of time. Throughput is affected by a number of factors such as, EMI and latency, so it rarely matches the specified bandwidth for a network medium. The throughput measurement includes user data bits and other data bits, such as overhead, acknowledging, and encapsulation. The measure of the usable data transferred across the media is called goodput."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is indicated by the term throughput?\", this answer is correct because throughput is the measure of the transfer of bits across the media over a given period of time. Throughput is affected by a number of factors such as, EMI and latency, so it rarely matches the specified bandwidth for a network medium. The throughput measurement includes user data bits and other data bits, such as overhead, acknowledging, and encapsulation. The measure of the usable data transferred across the media is called goodput.",
+        "ccna": "Throughput is the measure of the transfer of bits across the media over a given period of time. Throughput is affected by a number of factors such as, EMI and latency, so it rarely matches the specified bandwidth for a network medium. The throughput measurement includes user data bits and other data bits, such as overhead, acknowledging, and encapsulation. The measure of the usable data transferred across the media is called goodput."
+      }
+    },
+    {
+      "id": "mod4-11",
+      "number": 11,
+      "question": "What is one advantage of using fiber optic cabling rather than copper cabling?",
+      "options": [
+        "It is usually cheaper than copper cabling.",
+        "It is able to be installed around sharp bends.",
+        "It is easier to terminate and install than copper cabling.",
+        "It is able to carry signals much farther than copper cabling."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "It is able to carry signals much farther than copper cabling.",
+          "explanation": {
+            "eli5": "For \"What is one advantage of using fiber optic cabling rather than copper cabling?\", this answer is correct: \"It is able to carry signals much farther than copper cabling.\". In simple terms, copper cabling is usually cheaper and easier to install than fiber optic cabling. However, fiber cables generally have a much greater signaling range than copper.",
+            "ccna": "Copper cabling is usually cheaper and easier to install than fiber optic cabling. However, fiber cables generally have a much greater signaling range than copper."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is one advantage of using fiber optic cabling rather than copper cabling?\", this answer is correct because copper cabling is usually cheaper and easier to install than fiber optic cabling. However, fiber cables generally have a much greater signaling range than copper.",
+        "ccna": "Copper cabling is usually cheaper and easier to install than fiber optic cabling. However, fiber cables generally have a much greater signaling range than copper."
+      }
+    },
+    {
+      "id": "mod4-12",
+      "number": 12,
+      "question": "What is the purpose of the OSI physical layer?",
+      "options": [
+        "controlling access to media",
+        "transmitting bits across the local media",
+        "performing error detection on received frames",
+        "exchanging frames between nodes over physical network media"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "transmitting bits across the local media",
+          "explanation": {
+            "eli5": "For \"What is the purpose of the OSI physical layer?\", this answer is correct: \"transmitting bits across the local media\". In simple terms, the physical layer is responsible for transmitting the actual signals across the physical media as bits. Exchanging frames, controlling media access, and performing error detection are all functions of the data link layer.",
+            "ccna": "The physical layer is responsible for transmitting the actual signals across the physical media as bits. Exchanging frames, controlling media access, and performing error detection are all functions of the data link layer."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the purpose of the OSI physical layer?\", this answer is correct because the physical layer is responsible for transmitting the actual signals across the physical media as bits. Exchanging frames, controlling media access, and performing error detection are all functions of the data link layer.",
+        "ccna": "The physical layer is responsible for transmitting the actual signals across the physical media as bits. Exchanging frames, controlling media access, and performing error detection are all functions of the data link layer."
+      }
+    },
+    {
+      "id": "mod4-13",
+      "number": 13,
+      "question": "Why are two strands of fiber used for a single fiber optic connection?",
+      "options": [
+        "The two strands allow the data to travel for longer distances without degrading.",
+        "They prevent crosstalk from causing interference on the connection.",
+        "They increase the speed at which the data can travel.",
+        "They allow for full-duplex connectivity."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "They allow for full-duplex connectivity.",
+          "explanation": {
+            "eli5": "For \"Why are two strands of fiber used for a single fiber optic connection?\", this answer is correct: \"They allow for full-duplex connectivity.\". In simple terms, light can only travel in one direction down a single strand of fiber. In order to allow for full-duplex communication two strands of fiber must be connected between each device.",
+            "ccna": "Light can only travel in one direction down a single strand of fiber. In order to allow for full-duplex communication two strands of fiber must be connected between each device."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Why are two strands of fiber used for a single fiber optic connection?\", this answer is correct because light can only travel in one direction down a single strand of fiber. In order to allow for full-duplex communication two strands of fiber must be connected between each device.",
+        "ccna": "Light can only travel in one direction down a single strand of fiber. In order to allow for full-duplex communication two strands of fiber must be connected between each device."
+      }
+    },
+    {
+      "id": "mod4-14",
+      "number": 14,
+      "question": "Which characteristic describes crosstalk?",
+      "options": [
+        "the distortion of the network signal from fluorescent lighting",
+        "the distortion of the transmitted messages from signals carried in adjacent wires",
+        "the weakening of the network signal over long cable lengths",
+        "the loss of wireless signal over excessive distance from the access point"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "the distortion of the transmitted messages from signals carried in adjacent wires",
+          "explanation": {
+            "eli5": "For \"Which characteristic describes crosstalk?\", this answer is correct: \"the distortion of the transmitted messages from signals carried in adjacent wires\". In simple terms, eMI and RFI can distort network signals because of interference from fluorescent lights or electric motors. Attenuation results in deterioration of the network signal as it travels along copper cabling. Wireless devices can experience loss of signals because of excessive distances from a access point, but this is not crosstalk. Crosstalk is the disturbance caused by the electric or magnetic fields of the signal carried on an adjacent wire within the same cable.",
+            "ccna": "EMI and RFI can distort network signals because of interference from fluorescent lights or electric motors. Attenuation results in deterioration of the network signal as it travels along copper cabling. Wireless devices can experience loss of signals because of excessive distances from a access point, but this is not crosstalk. Crosstalk is the disturbance caused by the electric or magnetic fields of the signal carried on an adjacent wire within the same cable."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which characteristic describes crosstalk?\", this answer is correct because eMI and RFI can distort network signals because of interference from fluorescent lights or electric motors. Attenuation results in deterioration of the network signal as it travels along copper cabling. Wireless devices can experience loss of signals because of excessive distances from a access point, but this is not crosstalk. Crosstalk is the disturbance caused by the electric or magnetic fields of the signal carried on an adjacent wire within the same cable.",
+        "ccna": "EMI and RFI can distort network signals because of interference from fluorescent lights or electric motors. Attenuation results in deterioration of the network signal as it travels along copper cabling. Wireless devices can experience loss of signals because of excessive distances from a access point, but this is not crosstalk. Crosstalk is the disturbance caused by the electric or magnetic fields of the signal carried on an adjacent wire within the same cable."
+      }
+    },
+    {
+      "id": "mod4-15",
+      "number": 15,
+      "question": "Which procedure is used to reduce the effect of crosstalk in copper cables?",
+      "options": [
+        "requiring proper grounding connections",
+        "twisting opposing circuit wire pairs together",
+        "wrapping the bundle of wires with metallic shielding",
+        "designing a cable infrastructure to avoid crosstalk interference",
+        "avoiding sharp bends during installation"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "twisting opposing circuit wire pairs together",
+          "explanation": {
+            "eli5": "For \"Which procedure is used to reduce the effect of crosstalk in copper cables?\", this answer is correct: \"twisting opposing circuit wire pairs together\". In simple terms, in copper cables, crosstalk is a disturbance caused by the electric or magnetic fields of a signal on one wire interfering with the signal in an adjacent wire. Twisting opposing circuit wire pairs together can effectively cancel the crosstalk. The other options are effective measures to counter the negative effects of EMI and RFI, but not crosstalk.",
+            "ccna": "In copper cables, crosstalk is a disturbance caused by the electric or magnetic fields of a signal on one wire interfering with the signal in an adjacent wire. Twisting opposing circuit wire pairs together can effectively cancel the crosstalk. The other options are effective measures to counter the negative effects of EMI and RFI, but not crosstalk."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which procedure is used to reduce the effect of crosstalk in copper cables?\", this answer is correct because in copper cables, crosstalk is a disturbance caused by the electric or magnetic fields of a signal on one wire interfering with the signal in an adjacent wire. Twisting opposing circuit wire pairs together can effectively cancel the crosstalk. The other options are effective measures to counter the negative effects of EMI and RFI, but not crosstalk.",
+        "ccna": "In copper cables, crosstalk is a disturbance caused by the electric or magnetic fields of a signal on one wire interfering with the signal in an adjacent wire. Twisting opposing circuit wire pairs together can effectively cancel the crosstalk. The other options are effective measures to counter the negative effects of EMI and RFI, but not crosstalk."
+      }
+    },
+    {
+      "id": "mod4-16",
+      "number": 16,
+      "question": "Which statement describes a characteristic of the frame header fields of the data link layer?",
+      "options": [
+        "They all include the flow control and logical connection fields.",
+        "Ethernet frame header fields contain Layer 3 source and destination addresses.",
+        "They vary depending on protocols.",
+        "They include information on user applications."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "They vary depending on protocols.",
+          "explanation": {
+            "eli5": "For \"Which statement describes a characteristic of the frame header fields of the data link layer?\", this answer is correct: \"They vary depending on protocols.\". In simple terms, all data link layer protocols encapsulate the Layer 3 PDU within the data field of the frame. However, the structure of the frame and the fields that are contained in the header vary according to the protocol. Different data link layer protocols may use different fields, like priority/quality of service, logical connection control, physical link control, flow control, and congestion control.",
+            "ccna": "All data link layer protocols encapsulate the Layer 3 PDU within the data field of the frame. However, the structure of the frame and the fields that are contained in the header vary according to the protocol. Different data link layer protocols may use different fields, like priority/quality of service, logical connection control, physical link control, flow control, and congestion control."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which statement describes a characteristic of the frame header fields of the data link layer?\", this answer is correct because all data link layer protocols encapsulate the Layer 3 PDU within the data field of the frame. However, the structure of the frame and the fields that are contained in the header vary according to the protocol. Different data link layer protocols may use different fields, like priority/quality of service, logical connection control, physical link control, flow control, and congestion control.",
+        "ccna": "All data link layer protocols encapsulate the Layer 3 PDU within the data field of the frame. However, the structure of the frame and the fields that are contained in the header vary according to the protocol. Different data link layer protocols may use different fields, like priority/quality of service, logical connection control, physical link control, flow control, and congestion control."
+      }
+    },
+    {
+      "id": "mod4-17",
+      "number": 17,
+      "question": "Which two factors influence the method that is used for media access control? (Choose two.)",
+      "options": [
+        "how data is generated by end devices applications",
+        "how the connection between nodes appears to the data link layer",
+        "how signals are encoded by the NICs on end devices",
+        "how nodes share the media",
+        "how the IP protocol forwards the packet to the destination"
+      ],
+      "selectionCount": 2,
+      "answerIndices": [
+        1,
+        3
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "how the connection between nodes appears to the data link layer",
+          "explanation": {
+            "eli5": "For \"Which two factors influence the method that is used for media access control? (Choose two.)\", this choice is correct: \"how the connection between nodes appears to the data link layer\". In simple terms, media access control depends on how the data link layer sees the connection between nodes and on whether the medium is shared by multiple devices.",
+            "ccna": "Media access control depends on how the data link layer sees the connection between nodes and on whether the medium is shared by multiple devices."
+          }
+        },
+        {
+          "index": 3,
+          "text": "how nodes share the media",
+          "explanation": {
+            "eli5": "For \"Which two factors influence the method that is used for media access control? (Choose two.)\", this choice is correct: \"how nodes share the media\". In simple terms, media access control depends on how the data link layer sees the connection between nodes and on whether the medium is shared by multiple devices.",
+            "ccna": "Media access control depends on how the data link layer sees the connection between nodes and on whether the medium is shared by multiple devices."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which two factors influence the method that is used for media access control? (Choose two.)\", these choices are correct because media access control depends on how the data link layer sees the connection between nodes and on whether the medium is shared by multiple devices.",
+        "ccna": "Media access control depends on how the data link layer sees the connection between nodes and on whether the medium is shared by multiple devices."
+      }
+    },
+    {
+      "id": "mod4-18",
+      "number": 18,
+      "question": "What is a characteristic of a WAN hub-and-spoke topology?",
+      "options": [
+        "It requires that some of the branch sites be interconnected through point-to-point links.",
+        "It requires that every site be interconnected to each other through point-to-point links.",
+        "All sites require a hub device that connects to a router.",
+        "The branch sites are connected to a central site through point-to-point links."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "The branch sites are connected to a central site through point-to-point links.",
+          "explanation": {
+            "eli5": "For \"What is a characteristic of a WAN hub-and-spoke topology?\", this answer is correct: \"The branch sites are connected to a central site through point-to-point links.\". In simple terms, a hub-and-spoke WAN links branch sites back to one central site through point-to-point links. Branches do not connect directly to one another.",
+            "ccna": "A hub-and-spoke WAN links branch sites back to one central site through point-to-point links. Branches do not connect directly to one another."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is a characteristic of a WAN hub-and-spoke topology?\", this answer is correct because a hub-and-spoke WAN links branch sites back to one central site through point-to-point links. Branches do not connect directly to one another.",
+        "ccna": "A hub-and-spoke WAN links branch sites back to one central site through point-to-point links. Branches do not connect directly to one another."
+      }
+    }
+  ]
+}

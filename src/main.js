@@ -3,7 +3,8 @@ import { MODULE_SOURCES } from "./module-sources.js";
 import { shuffleCards } from "./parser.js";
 import { buildModuleLibrary, getProgressEntry, recordAttempt, summarizeModules, theorySectionsForModule } from "./progress.js";
 
-const STORAGE_KEY = "ccna-study-workspace-v3";
+const STORAGE_KEY = "ccna-study-workspace-v4";
+const LEGACY_STORAGE_KEY = "ccna-study-workspace-v3";
 const library = buildModuleLibrary(MODULE_SOURCES);
 const moduleMap = new Map(library.modules.map((module) => [module.id, module]));
 const cardMap = new Map(library.cards.map((card) => [card.id, card]));
@@ -29,15 +30,16 @@ const initialCard = initialModule.cards[0];
 
 const state = {
   activeTab: "learn",
-  learnView: "tickets",
+  learnView: "questions",
   currentModuleId: initialModule.id,
   selectedCardId: initialCard.id,
   searchQuery: "",
+  questionFilter: "all",
   selectedOptions: [],
   learnChecked: false,
   learnResult: null,
   progress: loadProgress(),
-  notice: "Alege un bilet, raspunde, apoi verifica. Statisticile se salveaza local pentru fiecare intrebare.",
+  notice: "Alege o intrebare, raspunde, apoi verifica. Progresul se salveaza local pentru fiecare item.",
   exam: {
     scope: "module",
     length: 20,
@@ -55,11 +57,13 @@ const state = {
 let timerId = null;
 
 function loadProgress() {
+  const raw = localStorage.getItem(STORAGE_KEY) ?? localStorage.getItem(LEGACY_STORAGE_KEY);
+
+  if (!raw) {
+    return {};
+  }
+
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      return {};
-    }
     const parsed = JSON.parse(raw);
     const normalized = {};
 
@@ -89,13 +93,46 @@ function saveProgress() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state.progress));
 }
 
-function normalize(text) {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
+function normalize(text = "") {
+  return String(text)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function escapeHtml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#39;");
+}
+
+function unescapeHtml(value = "") {
+  const parser = new DOMParser();
+  return parser.parseFromString(`<!doctype html><body>${value}`, "text/html").body.textContent || "";
+}
+
+function getAnswerTexts(card) {
+  return card.answers.map((answer) => answer.text);
+}
+
+function getCardSearchBlob(card) {
+  return [
+    card.number,
+    card.question,
+    ...card.options,
+    ...getAnswerTexts(card),
+    card.explanation.eli5,
+    card.explanation.ccna,
+  ].join(" ");
 }
 
 function selectedMatches(card, selectedOptions) {
   const selected = new Set(selectedOptions.map(normalize));
-  const answers = new Set(card.answers.map(normalize));
+  const answers = new Set(getAnswerTexts(card).map(normalize));
 
   if (selected.size !== answers.size) {
     return false;
@@ -118,20 +155,6 @@ function currentCard() {
   return cardMap.get(state.selectedCardId) ?? currentModule().cards[0];
 }
 
-function filteredModuleCards() {
-  const query = normalize(state.searchQuery);
-  const cards = currentModule().cards;
-
-  if (!query) {
-    return cards;
-  }
-
-  return cards.filter((card) => {
-    const haystack = `${card.number} ${card.question} ${card.answers.join(" ")} ${card.explanation}`.toLowerCase();
-    return haystack.includes(query);
-  });
-}
-
 function questionStatus(card) {
   const progress = getProgressEntry(state.progress, card.id);
 
@@ -150,9 +173,37 @@ function questionStatus(card) {
   return "active";
 }
 
+function filteredModuleCards() {
+  const query = normalize(state.searchQuery);
+  const cards = currentModule().cards;
+
+  return cards.filter((card) => {
+    const matchesQuery = !query || normalize(getCardSearchBlob(card)).includes(query);
+    const matchesFilter = state.questionFilter === "all" || questionStatus(card) === state.questionFilter;
+    return matchesQuery && matchesFilter;
+  });
+}
+
+function ensureVisibleSelection() {
+  const visible = filteredModuleCards();
+
+  if (!visible.length) {
+    state.selectedCardId = currentModule().cards[0]?.id ?? null;
+    return;
+  }
+
+  if (!visible.some((card) => card.id === state.selectedCardId)) {
+    state.selectedCardId = visible[0].id;
+    state.selectedOptions = [];
+    state.learnChecked = false;
+    state.learnResult = null;
+  }
+}
+
 function setModule(moduleId) {
   state.currentModuleId = moduleId;
   state.searchQuery = "";
+  state.questionFilter = "all";
   state.selectedOptions = [];
   state.learnChecked = false;
   state.learnResult = null;
@@ -169,8 +220,15 @@ function selectCard(cardId) {
   render();
 }
 
+function setQuestionFilter(filter) {
+  state.questionFilter = filter;
+  ensureVisibleSelection();
+  render();
+}
+
 function toggleLearnOption(option) {
   const card = currentCard();
+
   if (state.learnChecked) {
     return;
   }
@@ -212,7 +270,9 @@ function checkLearnAnswer(recordStats = true) {
   if (!hasSelection) {
     state.notice = "Ai deschis explicatia fara sa trimiti un raspuns.";
   } else {
-    state.notice = isCorrect ? "Raspuns corect. Continua cu urmatorul bilet." : "Raspuns gresit. Citeste explicatia si incearca din nou mai tarziu.";
+    state.notice = isCorrect
+      ? "Raspuns corect. Continua cat timp informatia este proaspata."
+      : "Raspuns gresit. Citeste explicatia si repeta intrebarea.";
   }
 
   render();
@@ -222,6 +282,7 @@ function nextLearnCard() {
   const cards = filteredModuleCards();
   const currentIndex = cards.findIndex((card) => card.id === state.selectedCardId);
   const next = cards[currentIndex + 1] ?? cards[0];
+
   if (next) {
     selectCard(next.id);
   }
@@ -276,7 +337,7 @@ function startExam() {
   state.exam.running = true;
   state.exam.completed = false;
   state.exam.startedAt = Date.now();
-  state.notice = "Examen pornit. Raspunde, verifica si continua.";
+  state.notice = "Examenul a pornit.";
   ensureTimer();
   render();
 }
@@ -296,6 +357,7 @@ function stopExam() {
 
 function toggleExamOption(option) {
   const card = currentExamCard();
+
   if (!card || state.exam.checked) {
     return;
   }
@@ -316,8 +378,9 @@ function toggleExamOption(option) {
 
 function checkExamAnswer() {
   const card = currentExamCard();
+
   if (!card || state.exam.selectedOptions.length === 0) {
-    state.notice = "Selecteaza macar un raspuns inainte sa verifici.";
+    state.notice = "Selecteaza cel putin un raspuns inainte sa verifici.";
     render();
     return;
   }
@@ -340,7 +403,7 @@ function checkExamAnswer() {
     },
   ];
   state.exam.checked = true;
-  state.notice = isCorrect ? "Corect. Verifica explicatia si continua." : "Gresit. Citeste explicatia si continua.";
+  state.notice = isCorrect ? "Corect. Continua." : "Gresit. Citeste explicatia si continua.";
   render();
 }
 
@@ -355,6 +418,31 @@ function nextExamCard() {
     ensureTimer();
   }
 
+  render();
+}
+
+function reviewExamMistakes() {
+  const firstWrong = state.exam.results.find((result) => !result.isCorrect);
+
+  if (!firstWrong) {
+    state.activeTab = "learn";
+    state.learnView = "questions";
+    state.notice = "Nu exista intrebari gresite de revizuit.";
+    render();
+    return;
+  }
+
+  const card = cardMap.get(firstWrong.cardId);
+  state.activeTab = "learn";
+  state.learnView = "questions";
+  state.currentModuleId = card.moduleId;
+  state.selectedCardId = card.id;
+  state.searchQuery = "";
+  state.questionFilter = "all";
+  state.selectedOptions = [];
+  state.learnChecked = true;
+  state.learnResult = false;
+  state.notice = `Ai revenit la ${card.module}, intrebarea ${card.number}.`;
   render();
 }
 
@@ -374,18 +462,21 @@ function totalMastered(progress) {
   return Object.values(progress).filter((entry) => (entry.streak ?? 0) >= 3).length;
 }
 
-function hardestQuestions() {
-  return library.cards
-    .map((card) => ({ card, progress: getProgressEntry(state.progress, card.id) }))
-    .filter(({ progress }) => progress.wrong > 0)
-    .sort((left, right) => right.progress.wrong - left.progress.wrong || left.card.module.localeCompare(right.card.module))
-    .slice(0, 8);
+function totalReviewed(progress) {
+  return Object.values(progress).filter((entry) => (entry.attempts ?? 0) > 0).length;
+}
+
+function overallAccuracy() {
+  const correct = totalCorrect(state.progress);
+  const wrong = totalWrong(state.progress);
+  return correct + wrong > 0 ? Math.round((correct / (correct + wrong)) * 100) : 0;
 }
 
 function elapsedExamSeconds() {
   if (!state.exam.startedAt) {
     return 0;
   }
+
   return Math.max(Math.floor((Date.now() - state.exam.startedAt) / 1000), 0);
 }
 
@@ -395,10 +486,49 @@ function formatDuration(totalSeconds) {
   return `${minutes}:${seconds}`;
 }
 
-function overallAccuracy() {
-  const correct = totalCorrect(state.progress);
-  const wrong = totalWrong(state.progress);
-  return correct + wrong > 0 ? Math.round((correct / (correct + wrong)) * 100) : 0;
+function formatRelativeTime(value) {
+  if (!value) {
+    return "inca neexersata";
+  }
+
+  const diff = Date.now() - new Date(value).getTime();
+  const minutes = Math.max(Math.floor(diff / 60000), 0);
+
+  if (minutes < 1) {
+    return "acum";
+  }
+
+  if (minutes < 60) {
+    return `${minutes} min`;
+  }
+
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) {
+    return `${hours} h`;
+  }
+
+  const days = Math.floor(hours / 24);
+  return `${days} z`;
+}
+
+function questionMetrics(card) {
+  const progress = getProgressEntry(state.progress, card.id);
+  const total = progress.correct + progress.wrong;
+  const accuracy = total > 0 ? Math.round((progress.correct / total) * 100) : 0;
+
+  return {
+    ...progress,
+    accuracy,
+    status: questionStatus(card),
+  };
+}
+
+function hardestQuestions() {
+  return library.cards
+    .map((card) => ({ card, progress: questionMetrics(card) }))
+    .filter(({ progress }) => progress.wrong > 0)
+    .sort((left, right) => right.progress.wrong - left.progress.wrong || left.card.module.localeCompare(right.card.module))
+    .slice(0, 10);
 }
 
 function siteSwitcher() {
@@ -417,86 +547,90 @@ function siteSwitcher() {
 }
 
 function render() {
+  ensureVisibleSelection();
+
   app.innerHTML = `
-    <main class="workspace">
-      <header class="header">
-        <div>
-          <p class="kicker">Testare online</p>
-          <h1>CCNA Learning Workspace</h1>
-          <p class="lede">Minimal, precise, and built for repetition. Every answer updates your local learning analytics question by question.</p>
+    <main class="app-shell">
+      <header class="app-header">
+        <div class="brand">
+          <p class="eyebrow">CCNA Study System</p>
+          <h1>CCNA Focus</h1>
+          <p class="subcopy">Structured questions, clearer explanations, and local stats that keep pace with your practice.</p>
         </div>
-        <div class="header-meta">
+        <div class="header-side">
           ${siteSwitcher()}
-          <div class="stat-strip">
-            <span><strong>${library.cards.length}</strong> intrebari</span>
-            <span><strong>${totalAttempts(state.progress)}</strong> raspunsuri salvate</span>
-            <span><strong>${overallAccuracy()}%</strong> acuratete</span>
+          <div class="metric-row">
+            <div class="metric-pill"><span>Questions</span><strong>${library.cards.length}</strong></div>
+            <div class="metric-pill"><span>Reviewed</span><strong>${totalReviewed(state.progress)}</strong></div>
+            <div class="metric-pill"><span>Accuracy</span><strong>${overallAccuracy()}%</strong></div>
           </div>
         </div>
       </header>
 
-      <nav class="top-tabs" aria-label="Primary sections">
-        ${renderTopTab("learn", "Educatie")}
-        ${renderTopTab("exam", "Examen")}
-        ${renderTopTab("stats", "Statistici")}
+      <nav class="primary-nav" aria-label="Primary sections">
+        ${renderPrimaryTab("learn", "Educatie")}
+        ${renderPrimaryTab("exam", "Examen")}
+        ${renderPrimaryTab("stats", "Statistici")}
       </nav>
 
-      <section class="shell">
-        <aside class="sidebar">
-          <div class="module-list">
-            <p class="section-label">Module</p>
+      <section class="workspace-frame">
+        <aside class="module-rail">
+          <div class="rail-block">
+            <p class="eyebrow">Module</p>
             ${library.modules.map((module) => renderModuleButton(module)).join("")}
           </div>
-          <div class="mini-theory">
-            ${renderMiniTheory()}
+          <div class="rail-block rail-theory">
+            ${renderRailTheory()}
           </div>
         </aside>
 
-        <section class="content">
-          ${renderMainContent()}
+        <section class="workspace-main">
+          ${renderActiveView()}
         </section>
       </section>
 
-      <footer class="notice" aria-live="polite">${state.notice}</footer>
+      <footer class="status-strip" aria-live="polite">${state.notice}</footer>
     </main>
   `;
 
   wireEvents();
 }
 
-function renderTopTab(value, label) {
-  return `<button class="tab ${state.activeTab === value ? "active" : ""}" type="button" data-tab="${value}">${label}</button>`;
+function renderPrimaryTab(value, label) {
+  return `<button class="primary-tab ${state.activeTab === value ? "active" : ""}" type="button" data-tab="${value}">${label}</button>`;
 }
 
 function renderModuleButton(module) {
   const active = module.id === state.currentModuleId ? "active" : "";
-  const moduleStats = summarizeModules(module.cards, state.progress)[module.id] ?? {
+  const summary = summarizeModules(module.cards, state.progress)[module.id] ?? {
     attempted: 0,
     questions: module.cards.length,
     accuracy: 0,
+    mastered: 0,
   };
 
   return `
     <button class="module-button ${active}" type="button" data-module="${module.id}">
-      <span class="module-name">${module.title}</span>
-      <span class="module-meta">${moduleStats.attempted}/${module.cards.length} lucrate · ${moduleStats.accuracy}%</span>
+      <span class="module-label">${module.title}</span>
+      <span class="module-meta">${summary.attempted}/${module.cards.length} lucrate · ${summary.accuracy}%</span>
     </button>
   `;
 }
 
-function renderMiniTheory() {
+function renderRailTheory() {
   const theory = theorySectionsForModule(state.currentModuleId);
+
   return `
-    <p class="section-label">Nucleu de teorie</p>
+    <p class="eyebrow">Fara zgomot</p>
     <h2>${theory.title}</h2>
-    <p>${theory.overview}</p>
-    <ul class="bullet-list">
+    <p class="rail-copy">${theory.overview}</p>
+    <ul class="compact-list">
       ${theory.keyIdeas.slice(0, 3).map((idea) => `<li>${idea}</li>`).join("")}
     </ul>
   `;
 }
 
-function renderMainContent() {
+function renderActiveView() {
   if (state.activeTab === "learn") {
     return renderLearnView();
   }
@@ -509,117 +643,178 @@ function renderMainContent() {
 }
 
 function renderLearnView() {
-  const cards = filteredModuleCards();
-
   return `
-    <div class="subtabs">
-      <button class="subtab ${state.learnView === "tickets" ? "active" : ""}" type="button" data-learn-view="tickets">Bilete</button>
-      <button class="subtab ${state.learnView === "theory" ? "active" : ""}" type="button" data-learn-view="theory">Teorie</button>
-    </div>
-
-    ${state.learnView === "tickets" ? renderTicketWorkspace(cards) : renderTheoryWorkspace()}
+    <section class="view-header">
+      <div>
+        <p class="eyebrow">Mod curent</p>
+        <h2>${currentModule().title}</h2>
+      </div>
+      <div class="secondary-nav">
+        <button class="secondary-tab ${state.learnView === "questions" ? "active" : ""}" type="button" data-learn-view="questions">Intrebari</button>
+        <button class="secondary-tab ${state.learnView === "theory" ? "active" : ""}" type="button" data-learn-view="theory">Teorie</button>
+      </div>
+    </section>
+    ${state.learnView === "questions" ? renderQuestionWorkspace() : renderTheoryWorkspace()}
   `;
 }
 
-function renderTicketWorkspace(cards) {
-  const card = currentCard();
-  const progress = getProgressEntry(state.progress, card.id);
-  const theory = theorySectionsForModule(card.moduleId);
-  const selectedLookup = new Set(state.selectedOptions.map(normalize));
-  const answerLookup = new Set(card.answers.map(normalize));
+function renderQuestionWorkspace() {
+  const cards = filteredModuleCards();
 
   return `
-    <div class="toolbar-row">
-      <label class="search">
+    <section class="toolbar">
+      <label class="search-field">
         <span>Cauta</span>
-        <input type="text" value="${escapeHtml(state.searchQuery)}" placeholder="cuvant cheie, concept, raspuns" data-search />
+        <input type="text" value="${escapeHtml(state.searchQuery)}" placeholder="termen, protocol, raspuns" data-search />
       </label>
-      <div class="legend">
-        <span class="legend-item"><i class="dot fresh"></i> Nou</span>
-        <span class="legend-item"><i class="dot active"></i> In progres</span>
-        <span class="legend-item"><i class="dot mastered"></i> Invatat</span>
-        <span class="legend-item"><i class="dot struggling"></i> De repetat</span>
+      <div class="filter-chips" aria-label="Question filters">
+        ${renderFilterChip("all", "Toate")}
+        ${renderFilterChip("fresh", "Noi")}
+        ${renderFilterChip("active", "In progres")}
+        ${renderFilterChip("struggling", "De repetat")}
+        ${renderFilterChip("mastered", "Invatate")}
       </div>
-    </div>
+    </section>
+    ${
+      cards.length
+        ? renderQuestionLayout(cards)
+        : `
+          <section class="empty-state">
+            <h3>Nicio intrebare pentru filtrul curent</h3>
+            <p>Scoate filtrul sau cautarea pentru a reveni la setul complet.</p>
+          </section>
+        `
+    }
+  `;
+}
 
-    <div class="tickets-layout">
-      <section class="ticket-grid" aria-label="Question navigator">
-        ${cards.map((item) => renderTicket(item)).join("")}
-      </section>
+function renderFilterChip(value, label) {
+  return `<button class="filter-chip ${state.questionFilter === value ? "active" : ""}" type="button" data-filter="${value}">${label}</button>`;
+}
 
-      <section class="detail-pane">
-        <div class="detail-head">
+function renderQuestionLayout(cards) {
+  const card = currentCard();
+  const metrics = questionMetrics(card);
+  const selectedLookup = new Set(state.selectedOptions.map(normalize));
+  const answerLookup = new Set(getAnswerTexts(card).map(normalize));
+
+  return `
+    <section class="question-layout">
+      <aside class="question-index">
+        <div class="index-head">
           <div>
-            <p class="detail-kicker">${card.module}</p>
-            <h2>Intrebarea ${card.number}</h2>
+            <p class="eyebrow">Bilete</p>
+            <h3>${cards.length} vizibile</h3>
           </div>
-          <div class="detail-stats">
-            <span>${progress.attempts} raspunsuri</span>
-            <span>${progress.correct} bune</span>
-            <span>${progress.wrong} gresite</span>
-            <span>${progress.streak} streak</span>
+          <div class="legend">
+            <span><i class="status-dot fresh"></i> Nou</span>
+            <span><i class="status-dot active"></i> Activ</span>
+            <span><i class="status-dot mastered"></i> Invatat</span>
+            <span><i class="status-dot struggling"></i> Revino</span>
+          </div>
+        </div>
+        <div class="number-grid">
+          ${cards.map((item) => renderQuestionButton(item)).join("")}
+        </div>
+      </aside>
+
+      <article class="question-stage">
+        <div class="stage-top">
+          <div>
+            <p class="eyebrow">${card.module}</p>
+            <h3>Intrebarea ${card.number}</h3>
+          </div>
+          <div class="stage-stats">
+            <span>${metrics.attempts} incercari</span>
+            <span>${metrics.accuracy}% corect</span>
+            <span>${metrics.streak} streak</span>
+            <span>${formatRelativeTime(metrics.lastSeenAt)}</span>
           </div>
         </div>
 
-        <p class="question-copy">${card.question}</p>
+        <p class="question-text">${card.question}</p>
 
-        <div class="option-list">
+        <div class="helper-line">
+          <span>${card.selectionCount === 1 ? "Alege un raspuns" : `Alege ${card.selectionCount} raspunsuri`}</span>
+          <span class="status-tag ${metrics.status}">${statusLabel(metrics.status)}</span>
+        </div>
+
+        <div class="answer-list">
           ${card.options.map((option, index) => {
             const selected = selectedLookup.has(normalize(option));
             const correct = state.learnChecked && answerLookup.has(normalize(option));
             const wrong = state.learnChecked && selected && !correct;
 
             return `
-              <button class="option ${selected ? "selected" : ""} ${correct ? "correct" : ""} ${wrong ? "wrong" : ""}" type="button" data-learn-option="${escapeHtml(option)}">
-                <span class="option-index">${index + 1}</span>
+              <button class="answer-option ${selected ? "selected" : ""} ${correct ? "correct" : ""} ${wrong ? "wrong" : ""}" type="button" data-learn-option="${escapeHtml(option)}">
+                <span class="answer-index">${index + 1}</span>
                 <span>${option}</span>
               </button>
             `;
           }).join("")}
         </div>
 
-        <div class="action-row">
-          <button class="primary-action" type="button" data-action="check-learn">Verifica raspunsul</button>
-          <button class="secondary-action" type="button" data-action="show-theory">Arata explicatia</button>
-          <button class="secondary-action" type="button" data-action="next-learn">Urmatorul bilet</button>
-          <button class="secondary-action" type="button" data-action="reset-learn">Reseteaza</button>
+        <div class="action-bar">
+          <button class="primary-action" type="button" data-action="check-learn">Verifica</button>
+          <button class="ghost-action" type="button" data-action="show-theory">Arata explicatia</button>
+          <button class="ghost-action" type="button" data-action="next-learn">Urmatoarea</button>
+          <button class="ghost-action" type="button" data-action="reset-learn">Reset</button>
         </div>
 
-        <div class="result-line ${state.learnChecked ? "show" : ""}">
+        <div class="feedback-band ${state.learnChecked ? "show" : ""} ${state.learnResult === false ? "wrong" : "correct"}">
           ${
             state.learnChecked
               ? state.learnResult === null
-                ? "Ai deschis explicatia fara verificare."
+                ? "Explicatia este deschisa fara verificare."
                 : state.learnResult
-                  ? "Raspuns corect."
-                  : "Raspuns gresit."
-              : "Selecteaza raspunsul si verifica pentru a salva progresul."
+                  ? "Corect. Intareste acum logica raspunsului."
+                  : "Gresit. Citeste logica si mai treci o data prin intrebare."
+              : "Verifica raspunsul pentru a salva statistica acestei intrebari."
           }
         </div>
 
-        <section class="explanation-pane ${state.learnChecked ? "show" : ""}">
-          <h3>Explicatie</h3>
-          <p>${card.explanation}</p>
-          <h3>Context de baza</h3>
-          <p>${theory.overview}</p>
-          <ul class="bullet-list">
-            ${theory.keyIdeas.slice(0, 2).map((idea) => `<li>${idea}</li>`).join("")}
-          </ul>
+        <section class="explanation-grid ${state.learnChecked ? "show" : ""}">
+          <div class="explanation-block">
+            <p class="eyebrow">Raspuns corect</p>
+            <ul class="answer-key-list">
+              ${card.answers.map((answer) => `<li>${answer.text}</li>`).join("")}
+            </ul>
+          </div>
+          <div class="explanation-block">
+            <p class="eyebrow">ELI5</p>
+            <p>${card.explanation.eli5}</p>
+          </div>
+          <div class="explanation-block">
+            <p class="eyebrow">CCNA</p>
+            <p>${card.explanation.ccna}</p>
+          </div>
+          <div class="explanation-block span-two">
+            <p class="eyebrow">Detaliu pe raspuns</p>
+            <div class="rationale-list">
+              ${card.answers.map((answer) => `
+                <article class="rationale-item">
+                  <strong>${answer.text}</strong>
+                  <p>${answer.explanation.eli5}</p>
+                  <p class="rationale-ccna">${answer.explanation.ccna}</p>
+                </article>
+              `).join("")}
+            </div>
+          </div>
         </section>
-      </section>
-    </div>
+      </article>
+    </section>
   `;
 }
 
-function renderTicket(card) {
+function renderQuestionButton(card) {
   const active = card.id === state.selectedCardId ? "active" : "";
   const status = questionStatus(card);
-  return `<button class="ticket ${active} ${status}" type="button" data-card="${card.id}">${card.number}</button>`;
+  return `<button class="question-chip ${active} ${status}" type="button" data-card="${card.id}">${card.number}</button>`;
 }
 
 function renderTheoryWorkspace() {
-  const theory = theorySectionsForModule(state.currentModuleId);
   const module = currentModule();
+  const theory = theorySectionsForModule(module.id);
   const stats = summarizeModules(module.cards, state.progress)[module.id] ?? {
     questions: module.cards.length,
     attempted: 0,
@@ -629,36 +824,32 @@ function renderTheoryWorkspace() {
 
   return `
     <article class="theory-layout">
-      <div class="theory-header">
+      <section class="theory-hero">
         <div>
-          <p class="detail-kicker">Fundament</p>
-          <h2>${theory.title}</h2>
+          <p class="eyebrow">Fundament</p>
+          <h3>${theory.title}</h3>
+          <p>${theory.overview}</p>
         </div>
-        <div class="detail-stats">
-          <span>${stats.questions} intrebari</span>
-          <span>${stats.attempted} incercate</span>
-          <span>${stats.mastered} invatate</span>
-          <span>${stats.accuracy}% acuratete</span>
+        <div class="metric-column">
+          <div class="mini-metric"><span>Intrebari</span><strong>${stats.questions}</strong></div>
+          <div class="mini-metric"><span>Incercate</span><strong>${stats.attempted}</strong></div>
+          <div class="mini-metric"><span>Invatate</span><strong>${stats.mastered}</strong></div>
+          <div class="mini-metric"><span>Acuratete</span><strong>${stats.accuracy}%</strong></div>
         </div>
-      </div>
-
-      <section class="theory-block">
-        <h3>Panorama</h3>
-        <p>${theory.overview}</p>
       </section>
 
-      <section class="theory-block">
-        <h3>Idei-cheie</h3>
-        <ul class="bullet-list">
+      <section class="theory-section">
+        <p class="eyebrow">Idei-cheie</p>
+        <ul class="compact-list large">
           ${theory.keyIdeas.map((idea) => `<li>${idea}</li>`).join("")}
         </ul>
       </section>
 
-      <section class="theory-block">
-        <h3>Glosar rapid</h3>
-        <div class="glossary">
+      <section class="theory-section">
+        <p class="eyebrow">Glosar</p>
+        <div class="glossary-list">
           ${theory.glossary.map((item) => `
-            <div class="glossary-row">
+            <div class="glossary-item">
               <strong>${item.term}</strong>
               <span>${item.definition}</span>
             </div>
@@ -673,30 +864,32 @@ function renderExamView() {
   if (!state.exam.running && !state.exam.completed) {
     return `
       <section class="exam-setup">
-        <div class="setup-block">
-          <p class="section-label">Configurare examen</p>
-          <h2>Simulare minimalista</h2>
-          <p>Foloseste modulul curent sau toate modulele, alege lungimea sesiunii si incepe un examen cronometrat. Fiecare raspuns se salveaza separat in statistici.</p>
+        <div class="view-header compact">
+          <div>
+            <p class="eyebrow">Simulare</p>
+            <h2>Examen rapid</h2>
+          </div>
         </div>
-        <div class="setup-grid">
-          <label class="select-group">
+        <p class="subcopy section-copy">Ruleaza o sesiune cronometrata, salveaza fiecare raspuns si revino imediat la intrebarile ratate.</p>
+        <div class="setup-row">
+          <label class="select-field">
             <span>Scop</span>
             <select data-exam-scope>
               <option value="module" ${state.exam.scope === "module" ? "selected" : ""}>Modul curent</option>
               <option value="all" ${state.exam.scope === "all" ? "selected" : ""}>Toate modulele</option>
             </select>
           </label>
-          <label class="select-group">
+          <label class="select-field">
             <span>Lungime</span>
             <select data-exam-length>
-              <option value="10" ${state.exam.length === 10 ? "selected" : ""}>10 intrebari</option>
-              <option value="20" ${state.exam.length === 20 ? "selected" : ""}>20 intrebari</option>
-              <option value="30" ${state.exam.length === 30 ? "selected" : ""}>30 intrebari</option>
-              <option value="0" ${state.exam.length === 0 ? "selected" : ""}>Tot setul</option>
+              <option value="10" ${state.exam.length === 10 ? "selected" : ""}>10</option>
+              <option value="20" ${state.exam.length === 20 ? "selected" : ""}>20</option>
+              <option value="30" ${state.exam.length === 30 ? "selected" : ""}>30</option>
+              <option value="0" ${state.exam.length === 0 ? "selected" : ""}>Tot</option>
             </select>
           </label>
         </div>
-        <div class="action-row">
+        <div class="action-bar">
           <button class="primary-action" type="button" data-action="start-exam">Porneste examenul</button>
         </div>
       </section>
@@ -710,32 +903,35 @@ function renderExamView() {
 
     return `
       <section class="exam-summary">
-        <div class="theory-header">
+        <div class="stage-top">
           <div>
-            <p class="section-label">Rezultat examen</p>
+            <p class="eyebrow">Rezultat</p>
             <h2>${correct}/${state.exam.results.length} corecte</h2>
           </div>
-          <div class="detail-stats">
+          <div class="stage-stats">
             <span>${accuracy}% acuratete</span>
             <span>${wrong} gresite</span>
             <span>${formatDuration(elapsedExamSeconds())}</span>
           </div>
         </div>
+
         <div class="summary-list">
           ${state.exam.results.filter((result) => !result.isCorrect).map((result) => {
             const card = cardMap.get(result.cardId);
             return `
-              <div class="summary-row">
+              <article class="summary-item">
                 <strong>${card.module} · ${card.number}</strong>
-                <span>${card.question}</span>
-                <span>Raspuns corect: ${card.answers.join(" • ")}</span>
-              </div>
+                <p>${card.question}</p>
+                <span>Corect: ${getAnswerTexts(card).join(" • ")}</span>
+              </article>
             `;
-          }).join("") || `<p>Ai terminat fara raspunsuri gresite.</p>`}
+          }).join("") || `<p class="subcopy">Ai terminat fara raspunsuri gresite.</p>`}
         </div>
-        <div class="action-row">
+
+        <div class="action-bar">
           <button class="primary-action" type="button" data-action="restart-exam">Examen nou</button>
-          <button class="secondary-action" type="button" data-action="close-exam">Inchide</button>
+          <button class="ghost-action" type="button" data-action="review-mistakes">Revino la greseli</button>
+          <button class="ghost-action" type="button" data-action="close-exam">Inchide</button>
         </div>
       </section>
     `;
@@ -743,101 +939,142 @@ function renderExamView() {
 
   const card = currentExamCard();
   const selectedLookup = new Set(state.exam.selectedOptions.map(normalize));
-  const answerLookup = new Set(card.answers.map(normalize));
+  const answerLookup = new Set(getAnswerTexts(card).map(normalize));
 
   return `
     <section class="exam-live">
-      <div class="theory-header">
+      <div class="stage-top">
         <div>
-          <p class="section-label">Examen in curs</p>
-          <h2>${card.module} · Intrebarea ${state.exam.index + 1}/${state.exam.order.length}</h2>
+          <p class="eyebrow">Examen in curs</p>
+          <h2>${card.module} · ${state.exam.index + 1}/${state.exam.order.length}</h2>
         </div>
-        <div class="detail-stats">
+        <div class="stage-stats">
           <span>${formatDuration(elapsedExamSeconds())}</span>
           <span>${card.selectionCount === 1 ? "un raspuns" : `${card.selectionCount} raspunsuri`}</span>
         </div>
       </div>
 
-      <p class="question-copy">${card.question}</p>
+      <p class="question-text">${card.question}</p>
 
-      <div class="option-list">
+      <div class="answer-list">
         ${card.options.map((option, index) => {
           const selected = selectedLookup.has(normalize(option));
           const correct = state.exam.checked && answerLookup.has(normalize(option));
           const wrong = state.exam.checked && selected && !correct;
 
           return `
-            <button class="option ${selected ? "selected" : ""} ${correct ? "correct" : ""} ${wrong ? "wrong" : ""}" type="button" data-exam-option="${escapeHtml(option)}">
-              <span class="option-index">${index + 1}</span>
+            <button class="answer-option ${selected ? "selected" : ""} ${correct ? "correct" : ""} ${wrong ? "wrong" : ""}" type="button" data-exam-option="${escapeHtml(option)}">
+              <span class="answer-index">${index + 1}</span>
               <span>${option}</span>
             </button>
           `;
         }).join("")}
       </div>
 
-      <div class="action-row">
+      <div class="action-bar">
         ${
           state.exam.checked
             ? `<button class="primary-action" type="button" data-action="next-exam">Continua</button>`
             : `<button class="primary-action" type="button" data-action="check-exam">Verifica</button>`
         }
-        <button class="secondary-action" type="button" data-action="close-exam">Inchide examenul</button>
+        <button class="ghost-action" type="button" data-action="close-exam">Inchide</button>
       </div>
 
-      <div class="explanation-pane ${state.exam.checked ? "show" : ""}">
-        <h3>Explicatie</h3>
-        <p>${card.explanation}</p>
-      </div>
+      <section class="explanation-grid ${state.exam.checked ? "show" : ""}">
+        <div class="explanation-block">
+          <p class="eyebrow">Raspuns corect</p>
+          <ul class="answer-key-list">
+            ${card.answers.map((answer) => `<li>${answer.text}</li>`).join("")}
+          </ul>
+        </div>
+        <div class="explanation-block">
+          <p class="eyebrow">ELI5</p>
+          <p>${card.explanation.eli5}</p>
+        </div>
+        <div class="explanation-block">
+          <p class="eyebrow">CCNA</p>
+          <p>${card.explanation.ccna}</p>
+        </div>
+      </section>
     </section>
   `;
 }
 
 function renderStatsView() {
   const summaryByModule = summarizeModules(library.cards, state.progress);
-  const hardest = hardestQuestions();
 
   return `
-    <section class="stats-layout">
+    <section class="stats-view">
       <div class="stats-overview">
-        <div class="metric-line"><span>Total raspunsuri</span><strong>${totalAttempts(state.progress)}</strong></div>
-        <div class="metric-line"><span>Corecte</span><strong>${totalCorrect(state.progress)}</strong></div>
-        <div class="metric-line"><span>Gresite</span><strong>${totalWrong(state.progress)}</strong></div>
-        <div class="metric-line"><span>Invatate</span><strong>${totalMastered(state.progress)}</strong></div>
+        <div class="mini-metric"><span>Total raspunsuri</span><strong>${totalAttempts(state.progress)}</strong></div>
+        <div class="mini-metric"><span>Corecte</span><strong>${totalCorrect(state.progress)}</strong></div>
+        <div class="mini-metric"><span>Gresite</span><strong>${totalWrong(state.progress)}</strong></div>
+        <div class="mini-metric"><span>Invatate</span><strong>${totalMastered(state.progress)}</strong></div>
       </div>
 
-      <section class="stats-table">
-        <h2>Statistici pe module</h2>
-        <div class="table-head">
-          <span>Modul</span>
-          <span>Incercate</span>
-          <span>Acuratete</span>
-          <span>Invatate</span>
+      <section class="stats-section">
+        <div class="stage-top">
+          <div>
+            <p class="eyebrow">Module</p>
+            <h2>Rezumat pe module</h2>
+          </div>
         </div>
-        ${library.modules.map((module) => {
-          const stats = summaryByModule[module.id] ?? { attempted: 0, accuracy: 0, mastered: 0 };
-          return `
-            <div class="table-row">
-              <span>${module.title}</span>
-              <span>${stats.attempted}/${module.cards.length}</span>
-              <span>${stats.accuracy}%</span>
-              <span>${stats.mastered}</span>
-            </div>
-          `;
-        }).join("")}
+        <div class="table-list">
+          <div class="table-row table-head">
+            <span>Modul</span>
+            <span>Incercate</span>
+            <span>Acuratete</span>
+            <span>Invatate</span>
+          </div>
+          ${library.modules.map((module) => {
+            const stats = summaryByModule[module.id] ?? { attempted: 0, accuracy: 0, mastered: 0 };
+            return `
+              <div class="table-row">
+                <span>${module.title}</span>
+                <span>${stats.attempted}/${module.cards.length}</span>
+                <span>${stats.accuracy}%</span>
+                <span>${stats.mastered}</span>
+              </div>
+            `;
+          }).join("")}
+        </div>
       </section>
 
-      <section class="stats-table">
-        <h2>Intrebari dificile</h2>
-        ${hardest.map(({ card, progress }) => `
-          <div class="summary-row">
-            <strong>${card.module} · ${card.number}</strong>
-            <span>${card.question}</span>
-            <span>${progress.wrong} raspunsuri gresite · corect: ${card.answers.join(" • ")}</span>
+      <section class="stats-section">
+        <div class="stage-top">
+          <div>
+            <p class="eyebrow">Focus</p>
+            <h2>Intrebari dificile</h2>
           </div>
-        `).join("") || `<p>Inca nu exista intrebari dificile salvate.</p>`}
+        </div>
+        <div class="summary-list">
+          ${hardestQuestions().map(({ card, progress }) => `
+            <article class="summary-item">
+              <strong>${card.module} · ${card.number}</strong>
+              <p>${card.question}</p>
+              <span>${progress.wrong} gresite · ${progress.accuracy}% corect · ${formatRelativeTime(progress.lastSeenAt)}</span>
+            </article>
+          `).join("") || `<p class="subcopy">Inca nu exista intrebari marcate ca dificile.</p>`}
+        </div>
       </section>
     </section>
   `;
+}
+
+function statusLabel(status) {
+  if (status === "fresh") {
+    return "noua";
+  }
+
+  if (status === "mastered") {
+    return "invatata";
+  }
+
+  if (status === "struggling") {
+    return "de repetat";
+  }
+
+  return "activ";
 }
 
 function wireEvents() {
@@ -861,6 +1098,12 @@ function wireEvents() {
     });
   });
 
+  app.querySelectorAll("[data-filter]").forEach((button) => {
+    button.addEventListener("click", () => {
+      setQuestionFilter(button.dataset.filter);
+    });
+  });
+
   app.querySelectorAll("[data-card]").forEach((button) => {
     button.addEventListener("click", () => {
       selectCard(button.dataset.card);
@@ -869,13 +1112,7 @@ function wireEvents() {
 
   app.querySelector("[data-search]")?.addEventListener("input", (event) => {
     state.searchQuery = event.target.value;
-    const cards = filteredModuleCards();
-    if (cards.length && !cards.some((card) => card.id === state.selectedCardId)) {
-      state.selectedCardId = cards[0].id;
-      state.selectedOptions = [];
-      state.learnChecked = false;
-      state.learnResult = null;
-    }
+    ensureVisibleSelection();
     render();
   });
 
@@ -922,23 +1159,11 @@ function wireEvents() {
       } else if (action === "restart-exam") {
         state.exam.completed = false;
         startExam();
+      } else if (action === "review-mistakes") {
+        reviewExamMistakes();
       }
     });
   });
-}
-
-function escapeHtml(value) {
-  return value
-    .replaceAll("&", "&amp;")
-    .replaceAll("<", "&lt;")
-    .replaceAll(">", "&gt;")
-    .replaceAll('"', "&quot;")
-    .replaceAll("'", "&#39;");
-}
-
-function unescapeHtml(value = "") {
-  const parser = new DOMParser();
-  return parser.parseFromString(`<!doctype html><body>${value}`, "text/html").body.textContent || "";
 }
 
 render();

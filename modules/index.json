@@ -1,0 +1,75 @@
+{
+  "schemaVersion": 2,
+  "modules": [
+    {
+      "id": "mod1",
+      "displayName": "Module 1",
+      "title": "Networking Today",
+      "quizTitle": "1.10.2 Module Quiz – Networking Today Answers – CCNA 1 v7 Module 1 Quiz",
+      "file": "mod1.json",
+      "sourceMarkdown": "mod1.md",
+      "cardCount": 15,
+      "schemaVersion": 2
+    },
+    {
+      "id": "mod2",
+      "displayName": "Module 2",
+      "title": "Basic Switch and End Device Configuration",
+      "quizTitle": "2.9.4 Module Quiz – Basic Switch and End Device Configuration Answers",
+      "file": "mod2.json",
+      "sourceMarkdown": "mod2.md",
+      "cardCount": 14,
+      "schemaVersion": 2
+    },
+    {
+      "id": "mod3",
+      "displayName": "Module 3",
+      "title": "Protocols and Models",
+      "quizTitle": "3.8.2 Module Quiz – Protocols and Models Answers",
+      "file": "mod3.json",
+      "sourceMarkdown": "mod3.md",
+      "cardCount": 18,
+      "schemaVersion": 2
+    },
+    {
+      "id": "mod4",
+      "displayName": "Module 4",
+      "title": "Physical Layer",
+      "quizTitle": "4.7.4 Module Quiz – Physical Layer Answers",
+      "file": "mod4.json",
+      "sourceMarkdown": "mod4.md",
+      "cardCount": 18,
+      "schemaVersion": 2
+    },
+    {
+      "id": "mod5",
+      "displayName": "Module 5",
+      "title": "Number Systems",
+      "quizTitle": "5.3.2 Module Quiz – Number Systems Answers",
+      "file": "mod5.json",
+      "sourceMarkdown": "mod5.md",
+      "cardCount": 14,
+      "schemaVersion": 2
+    },
+    {
+      "id": "mod6",
+      "displayName": "Module 6",
+      "title": "Data Link Layer",
+      "quizTitle": "6.4.2 Module Quiz – Data Link Layer Answers",
+      "file": "mod6.json",
+      "sourceMarkdown": "mod6.md",
+      "cardCount": 15,
+      "schemaVersion": 2
+    },
+    {
+      "id": "mod7",
+      "displayName": "Module 7",
+      "title": "Ethernet Switching",
+      "quizTitle": "7.5.2 Module Quiz – Ethernet Switching Answers",
+      "file": "mod7.json",
+      "sourceMarkdown": "mod7.md",
+      "cardCount": 14,
+      "schemaVersion": 2
+    }
+  ]
+}

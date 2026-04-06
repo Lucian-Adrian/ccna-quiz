@@ -1,0 +1,594 @@
+{
+  "schemaVersion": 2,
+  "moduleId": "mod3",
+  "displayName": "Module 3",
+  "title": "Protocols and Models",
+  "quizTitle": "3.8.2 Module Quiz – Protocols and Models Answers",
+  "sourceMarkdown": "mod3.md",
+  "cards": [
+    {
+      "id": "mod3-1",
+      "number": 1,
+      "question": "What process is used to receive transmitted data and convert it into a readable message?",
+      "options": [
+        "access control",
+        "decoding",
+        "encapsulation",
+        "flow control"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "decoding",
+          "explanation": {
+            "eli5": "For \"What process is used to receive transmitted data and convert it into a readable message?\", this answer is correct: \"decoding\". In simple terms, decoding is the process of receiving transmitted data and reversing the encoding process to interpret the information. An example is a person that listens to a voicemail and decodes the sounds to understand the received message.",
+            "ccna": "Decoding is the process of receiving transmitted data and reversing the encoding process to interpret the information. An example is a person that listens to a voicemail and decodes the sounds to understand the received message."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What process is used to receive transmitted data and convert it into a readable message?\", this answer is correct because decoding is the process of receiving transmitted data and reversing the encoding process to interpret the information. An example is a person that listens to a voicemail and decodes the sounds to understand the received message.",
+        "ccna": "Decoding is the process of receiving transmitted data and reversing the encoding process to interpret the information. An example is a person that listens to a voicemail and decodes the sounds to understand the received message."
+      }
+    },
+    {
+      "id": "mod3-2",
+      "number": 2,
+      "question": "What is done to an IP packet before it is transmitted over the physical medium?",
+      "options": [
+        "It is tagged with information guaranteeing reliable delivery.",
+        "It is segmented into smaller individual pieces.",
+        "It is encapsulated into a TCP segment.",
+        "It is encapsulated in a Layer 2 frame."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "It is encapsulated in a Layer 2 frame.",
+          "explanation": {
+            "eli5": "For \"What is done to an IP packet before it is transmitted over the physical medium?\", this answer is correct: \"It is encapsulated in a Layer 2 frame.\". In simple terms, when messages are sent on a network, the encapsulation process works from the top of the OSI or TCP/IP model to the bottom. At each layer of the model, the upper layer information is encapsulated into the data field of the next protocol. For example, before an IP packet can be sent, it is encapsulated in a data link frame at Layer 2 so that it can be sent over the physical medium.",
+            "ccna": "When messages are sent on a network, the encapsulation process works from the top of the OSI or TCP/IP model to the bottom. At each layer of the model, the upper layer information is encapsulated into the data field of the next protocol. For example, before an IP packet can be sent, it is encapsulated in a data link frame at Layer 2 so that it can be sent over the physical medium."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is done to an IP packet before it is transmitted over the physical medium?\", this answer is correct because when messages are sent on a network, the encapsulation process works from the top of the OSI or TCP/IP model to the bottom. At each layer of the model, the upper layer information is encapsulated into the data field of the next protocol. For example, before an IP packet can be sent, it is encapsulated in a data link frame at Layer 2 so that it can be sent over the physical medium.",
+        "ccna": "When messages are sent on a network, the encapsulation process works from the top of the OSI or TCP/IP model to the bottom. At each layer of the model, the upper layer information is encapsulated into the data field of the next protocol. For example, before an IP packet can be sent, it is encapsulated in a data link frame at Layer 2 so that it can be sent over the physical medium."
+      }
+    },
+    {
+      "id": "mod3-3",
+      "number": 3,
+      "question": "What process is used to place one message inside another message for transfer from the source to the destination?",
+      "options": [
+        "access control",
+        "decoding",
+        "encapsulation",
+        "flow control"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "encapsulation",
+          "explanation": {
+            "eli5": "For \"What process is used to place one message inside another message for transfer from the source to the destination?\", this answer is correct: \"encapsulation\". In simple terms, encapsulation is the process of placing one message format into another message format. An example is how a packet is placed in its entirety into the data field as it is encapsulated into a frame.",
+            "ccna": "Encapsulation is the process of placing one message format into another message format. An example is how a packet is placed in its entirety into the data field as it is encapsulated into a frame."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What process is used to place one message inside another message for transfer from the source to the destination?\", this answer is correct because encapsulation is the process of placing one message format into another message format. An example is how a packet is placed in its entirety into the data field as it is encapsulated into a frame.",
+        "ccna": "Encapsulation is the process of placing one message format into another message format. An example is how a packet is placed in its entirety into the data field as it is encapsulated into a frame."
+      }
+    },
+    {
+      "id": "mod3-4",
+      "number": 4,
+      "question": "A web client is sending a request for a webpage to a web server. From the perspective of the client, what is the correct order of the protocol stack that is used to prepare the request for transmission?",
+      "options": [
+        "HTTP, IP, TCP, Ethernet",
+        "HTTP, TCP, IP, Ethernet",
+        "Ethernet, TCP, IP, HTTP",
+        "Ethernet, IP, TCP, HTTP"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "HTTP, TCP, IP, Ethernet",
+          "explanation": {
+            "eli5": "For \"A web client is sending a request for a webpage to a web server. From the perspective of the client, what is the correct order of the protocol stack that is used to prepare the request for transmission?\", this answer is correct: \"HTTP, TCP, IP, Ethernet\". In simple terms, 1. HTTP governs the way that a web server and client interact. 2. TCP manages individual conversations between web servers and clients. 3. IP is responsible for delivery across the best path to the destination. 4. Ethernet takes the packet from IP and formats it for transmission.",
+            "ccna": "1. HTTP governs the way that a web server and client interact. 2. TCP manages individual conversations between web servers and clients. 3. IP is responsible for delivery across the best path to the destination. 4. Ethernet takes the packet from IP and formats it for transmission."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"A web client is sending a request for a webpage to a web server. From the perspective of the client, what is the correct order of the protocol stack that is used to prepare the request for transmission?\", this answer is correct because 1. HTTP governs the way that a web server and client interact. 2. TCP manages individual conversations between web servers and clients. 3. IP is responsible for delivery across the best path to the destination. 4. Ethernet takes the packet from IP and formats it for transmission.",
+        "ccna": "1. HTTP governs the way that a web server and client interact. 2. TCP manages individual conversations between web servers and clients. 3. IP is responsible for delivery across the best path to the destination. 4. Ethernet takes the packet from IP and formats it for transmission."
+      }
+    },
+    {
+      "id": "mod3-5",
+      "number": 5,
+      "question": "What are two benefits of using a layered network model? (Choose two.)",
+      "options": [
+        "It assists in protocol design.",
+        "It speeds up packet delivery.",
+        "It prevents designers from creating their own model.",
+        "It prevents technology in one layer from affecting other layers.",
+        "It ensures a device at one layer can function at the next higher layer."
+      ],
+      "selectionCount": 2,
+      "answerIndices": [
+        0,
+        3
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "It assists in protocol design.",
+          "explanation": {
+            "eli5": "For \"What are two benefits of using a layered network model? (Choose two.)\", this choice is correct: \"It assists in protocol design.\". In simple terms, some vendors have developed their own reference models and protocols. Today, if a device is to communicate on the Internet, the device must use the TCP/IP model. The benefits of using a layered model are as follows: assists in protocol design fosters competition between vendors prevents a technology that functions at one layer from affecting any other layer provides a common language for describing network functionality helps in visualizing the interaction between each layer and protocols between each layer.",
+            "ccna": "Some vendors have developed their own reference models and protocols. Today, if a device is to communicate on the Internet, the device must use the TCP/IP model. The benefits of using a layered model are as follows: assists in protocol design fosters competition between vendors prevents a technology that functions at one layer from affecting any other layer provides a common language for describing network functionality helps in visualizing the interaction between each layer and protocols between each layer"
+          }
+        },
+        {
+          "index": 3,
+          "text": "It prevents technology in one layer from affecting other layers.",
+          "explanation": {
+            "eli5": "For \"What are two benefits of using a layered network model? (Choose two.)\", this choice is correct: \"It prevents technology in one layer from affecting other layers.\". In simple terms, some vendors have developed their own reference models and protocols. Today, if a device is to communicate on the Internet, the device must use the TCP/IP model. The benefits of using a layered model are as follows: assists in protocol design fosters competition between vendors prevents a technology that functions at one layer from affecting any other layer provides a common language for describing network functionality helps in visualizing the interaction between each layer and protocols between each layer.",
+            "ccna": "Some vendors have developed their own reference models and protocols. Today, if a device is to communicate on the Internet, the device must use the TCP/IP model. The benefits of using a layered model are as follows: assists in protocol design fosters competition between vendors prevents a technology that functions at one layer from affecting any other layer provides a common language for describing network functionality helps in visualizing the interaction between each layer and protocols between each layer"
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What are two benefits of using a layered network model? (Choose two.)\", these choices are correct because some vendors have developed their own reference models and protocols. Today, if a device is to communicate on the Internet, the device must use the TCP/IP model. The benefits of using a layered model are as follows: assists in protocol design fosters competition between vendors prevents a technology that functions at one layer from affecting any other layer provides a common language for describing network functionality helps in visualizing the interaction between each layer and protocols between each layer.",
+        "ccna": "Some vendors have developed their own reference models and protocols. Today, if a device is to communicate on the Internet, the device must use the TCP/IP model. The benefits of using a layered model are as follows: assists in protocol design fosters competition between vendors prevents a technology that functions at one layer from affecting any other layer provides a common language for describing network functionality helps in visualizing the interaction between each layer and protocols between each layer"
+      }
+    },
+    {
+      "id": "mod3-6",
+      "number": 6,
+      "question": "What is the purpose of protocols in data communications?",
+      "options": [
+        "specifying the bandwidth of the channel or medium for each type of communication",
+        "specifying the device operating systems that will support the communication",
+        "providing the rules required for a specific type of communication to occur",
+        "dictating the content of the message sent during communication"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "providing the rules required for a specific type of communication to occur",
+          "explanation": {
+            "eli5": "For \"What is the purpose of protocols in data communications?\", this answer is correct: \"providing the rules required for a specific type of communication to occur\". In simple terms, protocols provide rules that define how a message is transmitted across a network. Implementation requirements such as electronic and bandwidth details for data communication are specified by standards. Operating systems are not specified by protocols, but will implement protocols. Protocols determine how and when to send a message but they do not control the contents of a message.",
+            "ccna": "Protocols provide rules that define how a message is transmitted across a network. Implementation requirements such as electronic and bandwidth details for data communication are specified by standards. Operating systems are not specified by protocols, but will implement protocols. Protocols determine how and when to send a message but they do not control the contents of a message."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the purpose of protocols in data communications?\", this answer is correct because protocols provide rules that define how a message is transmitted across a network. Implementation requirements such as electronic and bandwidth details for data communication are specified by standards. Operating systems are not specified by protocols, but will implement protocols. Protocols determine how and when to send a message but they do not control the contents of a message.",
+        "ccna": "Protocols provide rules that define how a message is transmitted across a network. Implementation requirements such as electronic and bandwidth details for data communication are specified by standards. Operating systems are not specified by protocols, but will implement protocols. Protocols determine how and when to send a message but they do not control the contents of a message."
+      }
+    },
+    {
+      "id": "mod3-7",
+      "number": 7,
+      "question": "Which logical address is used for delivery of data to a remote network?",
+      "options": [
+        "destination MAC address",
+        "destination IP address",
+        "destination port number",
+        "source MAC address",
+        "source IP address"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "destination IP address",
+          "explanation": {
+            "eli5": "For \"Which logical address is used for delivery of data to a remote network?\", this answer is correct: \"destination IP address\". In simple terms, the destination IP address is used for end-to-end delivery of data to a remote network. The destination MAC address is used for delivery on a local network. The destination port number identifies the application that should process the data at the destination. Source addresses identify the sender of the data.",
+            "ccna": "The destination IP address is used for end-to-end delivery of data to a remote network. The destination MAC address is used for delivery on a local network. The destination port number identifies the application that should process the data at the destination. Source addresses identify the sender of the data."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which logical address is used for delivery of data to a remote network?\", this answer is correct because the destination IP address is used for end-to-end delivery of data to a remote network. The destination MAC address is used for delivery on a local network. The destination port number identifies the application that should process the data at the destination. Source addresses identify the sender of the data.",
+        "ccna": "The destination IP address is used for end-to-end delivery of data to a remote network. The destination MAC address is used for delivery on a local network. The destination port number identifies the application that should process the data at the destination. Source addresses identify the sender of the data."
+      }
+    },
+    {
+      "id": "mod3-8",
+      "number": 8,
+      "question": "What is the general term that is used to describe a piece of data at any layer of a networking model?",
+      "options": [
+        "frame",
+        "packet",
+        "protocol data unit",
+        "segment"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "protocol data unit",
+          "explanation": {
+            "eli5": "For \"What is the general term that is used to describe a piece of data at any layer of a networking model?\", this answer is correct: \"protocol data unit\". In simple terms, the term protocol data unit (PDU) is used to describe a piece of data at any layer of a networking model. A packet is the PDU at the network layer. A frame is the data link layer PDU. A segment is the PDU at the transport layer.",
+            "ccna": "The term protocol data unit (PDU) is used to describe a piece of data at any layer of a networking model. A packet is the PDU at the network layer. A frame is the data link layer PDU. A segment is the PDU at the transport layer."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the general term that is used to describe a piece of data at any layer of a networking model?\", this answer is correct because the term protocol data unit (PDU) is used to describe a piece of data at any layer of a networking model. A packet is the PDU at the network layer. A frame is the data link layer PDU. A segment is the PDU at the transport layer.",
+        "ccna": "The term protocol data unit (PDU) is used to describe a piece of data at any layer of a networking model. A packet is the PDU at the network layer. A frame is the data link layer PDU. A segment is the PDU at the transport layer."
+      }
+    },
+    {
+      "id": "mod3-9",
+      "number": 9,
+      "question": "Which two protocols function at the internet layer? (Choose two.)",
+      "options": [
+        "POP",
+        "BOOTP",
+        "ICMP",
+        "IP",
+        "PPP"
+      ],
+      "selectionCount": 2,
+      "answerIndices": [
+        2,
+        3
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "ICMP",
+          "explanation": {
+            "eli5": "For \"Which two protocols function at the internet layer? (Choose two.)\", this choice is correct: \"ICMP\". In simple terms, iCMP and IP both function at the internet layer, whereas PPP is a network access layer protocol, and POP and BOOTP are application layer protocols.",
+            "ccna": "ICMP and IP both function at the internet layer, whereas PPP is a network access layer protocol, and POP and BOOTP are application layer protocols."
+          }
+        },
+        {
+          "index": 3,
+          "text": "IP",
+          "explanation": {
+            "eli5": "For \"Which two protocols function at the internet layer? (Choose two.)\", this choice is correct: \"IP\". In simple terms, iCMP and IP both function at the internet layer, whereas PPP is a network access layer protocol, and POP and BOOTP are application layer protocols.",
+            "ccna": "ICMP and IP both function at the internet layer, whereas PPP is a network access layer protocol, and POP and BOOTP are application layer protocols."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which two protocols function at the internet layer? (Choose two.)\", these choices are correct because iCMP and IP both function at the internet layer, whereas PPP is a network access layer protocol, and POP and BOOTP are application layer protocols.",
+        "ccna": "ICMP and IP both function at the internet layer, whereas PPP is a network access layer protocol, and POP and BOOTP are application layer protocols."
+      }
+    },
+    {
+      "id": "mod3-10",
+      "number": 10,
+      "question": "Which layer of the OSI model defines services to segment and reassemble data for individual communications between end devices?",
+      "options": [
+        "application",
+        "presentation",
+        "session",
+        "transport",
+        "network"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "transport",
+          "explanation": {
+            "eli5": "For \"Which layer of the OSI model defines services to segment and reassemble data for individual communications between end devices?\", this answer is correct: \"transport\". In simple terms, the OSI model consists of seven layers: application, presentation, session, transport, network, data link, and physical. The transport layer defines services to segment, transfer, and reassemble the data for individual communications between the end devices.",
+            "ccna": "The OSI model consists of seven layers: application, presentation, session, transport, network, data link, and physical. The transport layer defines services to segment, transfer, and reassemble the data for individual communications between the end devices."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which layer of the OSI model defines services to segment and reassemble data for individual communications between end devices?\", this answer is correct because the OSI model consists of seven layers: application, presentation, session, transport, network, data link, and physical. The transport layer defines services to segment, transfer, and reassemble the data for individual communications between the end devices.",
+        "ccna": "The OSI model consists of seven layers: application, presentation, session, transport, network, data link, and physical. The transport layer defines services to segment, transfer, and reassemble the data for individual communications between the end devices."
+      }
+    },
+    {
+      "id": "mod3-11",
+      "number": 11,
+      "question": "Which type of communication will send a message to a group of host destinations simultaneously?",
+      "options": [
+        "broadcast",
+        "multicast",
+        "unicast",
+        "anycast"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "multicast",
+          "explanation": {
+            "eli5": "For \"Which type of communication will send a message to a group of host destinations simultaneously?\", this answer is correct: \"multicast\". In simple terms, multicast is a one-to-many communication where the message is delivered to a specific group of hosts. Broadcast communication is a one-to-all communication. A unicast communication is a one-to-one communication. Anycast is an IPv6 term and is the sending of data in a one-to-nearest communication.",
+            "ccna": "Multicast is a one-to-many communication where the message is delivered to a specific group of hosts. Broadcast communication is a one-to-all communication. A unicast communication is a one-to-one communication. Anycast is an IPv6 term and is the sending of data in a one-to-nearest communication."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which type of communication will send a message to a group of host destinations simultaneously?\", this answer is correct because multicast is a one-to-many communication where the message is delivered to a specific group of hosts. Broadcast communication is a one-to-all communication. A unicast communication is a one-to-one communication. Anycast is an IPv6 term and is the sending of data in a one-to-nearest communication.",
+        "ccna": "Multicast is a one-to-many communication where the message is delivered to a specific group of hosts. Broadcast communication is a one-to-all communication. A unicast communication is a one-to-one communication. Anycast is an IPv6 term and is the sending of data in a one-to-nearest communication."
+      }
+    },
+    {
+      "id": "mod3-12",
+      "number": 12,
+      "question": "Which three acronyms/initialisms represent standards organizations? (Choose three.)",
+      "options": [
+        "IANA",
+        "TCP/IP",
+        "IEEE",
+        "IETF",
+        "OSI",
+        "MAC"
+      ],
+      "selectionCount": 3,
+      "answerIndices": [
+        0,
+        2,
+        3
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "IANA",
+          "explanation": {
+            "eli5": "For \"Which three acronyms/initialisms represent standards organizations? (Choose three.)\", this choice is correct: \"IANA\". In simple terms, tCP/IP is a protocol stack that contains a lot of other protocols such as HTTP, FTP, and DNS. The TCP/IP protocol stack is required to be used when communicating on the Internet. A MAC address is an address that is burned into an Ethernet network card. OSI is the 7 layer model that is used to explain how networking works.",
+            "ccna": "TCP/IP is a protocol stack that contains a lot of other protocols such as HTTP, FTP, and DNS. The TCP/IP protocol stack is required to be used when communicating on the Internet. A MAC address is an address that is burned into an Ethernet network card. OSI is the 7 layer model that is used to explain how networking works."
+          }
+        },
+        {
+          "index": 2,
+          "text": "IEEE",
+          "explanation": {
+            "eli5": "For \"Which three acronyms/initialisms represent standards organizations? (Choose three.)\", this choice is correct: \"IEEE\". In simple terms, tCP/IP is a protocol stack that contains a lot of other protocols such as HTTP, FTP, and DNS. The TCP/IP protocol stack is required to be used when communicating on the Internet. A MAC address is an address that is burned into an Ethernet network card. OSI is the 7 layer model that is used to explain how networking works.",
+            "ccna": "TCP/IP is a protocol stack that contains a lot of other protocols such as HTTP, FTP, and DNS. The TCP/IP protocol stack is required to be used when communicating on the Internet. A MAC address is an address that is burned into an Ethernet network card. OSI is the 7 layer model that is used to explain how networking works."
+          }
+        },
+        {
+          "index": 3,
+          "text": "IETF",
+          "explanation": {
+            "eli5": "For \"Which three acronyms/initialisms represent standards organizations? (Choose three.)\", this choice is correct: \"IETF\". In simple terms, tCP/IP is a protocol stack that contains a lot of other protocols such as HTTP, FTP, and DNS. The TCP/IP protocol stack is required to be used when communicating on the Internet. A MAC address is an address that is burned into an Ethernet network card. OSI is the 7 layer model that is used to explain how networking works.",
+            "ccna": "TCP/IP is a protocol stack that contains a lot of other protocols such as HTTP, FTP, and DNS. The TCP/IP protocol stack is required to be used when communicating on the Internet. A MAC address is an address that is burned into an Ethernet network card. OSI is the 7 layer model that is used to explain how networking works."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which three acronyms/initialisms represent standards organizations? (Choose three.)\", these choices are correct because tCP/IP is a protocol stack that contains a lot of other protocols such as HTTP, FTP, and DNS. The TCP/IP protocol stack is required to be used when communicating on the Internet. A MAC address is an address that is burned into an Ethernet network card. OSI is the 7 layer model that is used to explain how networking works.",
+        "ccna": "TCP/IP is a protocol stack that contains a lot of other protocols such as HTTP, FTP, and DNS. The TCP/IP protocol stack is required to be used when communicating on the Internet. A MAC address is an address that is burned into an Ethernet network card. OSI is the 7 layer model that is used to explain how networking works."
+      }
+    },
+    {
+      "id": "mod3-13",
+      "number": 13,
+      "question": "What type of communication will send a message to all devices on a local area network?",
+      "options": [
+        "broadcast",
+        "multicast",
+        "unicast",
+        "allcast"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "broadcast",
+          "explanation": {
+            "eli5": "For \"What type of communication will send a message to all devices on a local area network?\", this answer is correct: \"broadcast\". In simple terms, broadcast communication is a one-to-all communication. A unicast communication is a one-to-one communication. Multicast is a one-to-many communication where the message is delivered to a specific group of hosts. Allcast is not a standard term to describe message delivery.",
+            "ccna": "Broadcast communication is a one-to-all communication. A unicast communication is a one-to-one communication. Multicast is a one-to-many communication where the message is delivered to a specific group of hosts. Allcast is not a standard term to describe message delivery."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What type of communication will send a message to all devices on a local area network?\", this answer is correct because broadcast communication is a one-to-all communication. A unicast communication is a one-to-one communication. Multicast is a one-to-many communication where the message is delivered to a specific group of hosts. Allcast is not a standard term to describe message delivery.",
+        "ccna": "Broadcast communication is a one-to-all communication. A unicast communication is a one-to-one communication. Multicast is a one-to-many communication where the message is delivered to a specific group of hosts. Allcast is not a standard term to describe message delivery."
+      }
+    },
+    {
+      "id": "mod3-14",
+      "number": 14,
+      "question": "In computer communication, what is the purpose of message encoding?",
+      "options": [
+        "to convert information to the appropriate form for transmission",
+        "to interpret information",
+        "to break large messages into smaller frames",
+        "negotiate correct timing for successful communication"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "to convert information to the appropriate form for transmission",
+          "explanation": {
+            "eli5": "For \"In computer communication, what is the purpose of message encoding?\", this answer is correct: \"to convert information to the appropriate form for transmission\". In simple terms, before a message is sent across a network it must first be encoded. Encoding is the process of converting the data message into another format suitable for transmission across the physical medium. Each bit of the message is encoded into a pattern of sounds, light waves, or electrical impulses depending on the network media over which the bits are transmitted. The destination host receives and decodes the signals in order to interpret the message.",
+            "ccna": "Before a message is sent across a network it must first be encoded. Encoding is the process of converting the data message into another format suitable for transmission across the physical medium. Each bit of the message is encoded into a pattern of sounds, light waves, or electrical impulses depending on the network media over which the bits are transmitted. The destination host receives and decodes the signals in order to interpret the message."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"In computer communication, what is the purpose of message encoding?\", this answer is correct because before a message is sent across a network it must first be encoded. Encoding is the process of converting the data message into another format suitable for transmission across the physical medium. Each bit of the message is encoded into a pattern of sounds, light waves, or electrical impulses depending on the network media over which the bits are transmitted. The destination host receives and decodes the signals in order to interpret the message.",
+        "ccna": "Before a message is sent across a network it must first be encoded. Encoding is the process of converting the data message into another format suitable for transmission across the physical medium. Each bit of the message is encoded into a pattern of sounds, light waves, or electrical impulses depending on the network media over which the bits are transmitted. The destination host receives and decodes the signals in order to interpret the message."
+      }
+    },
+    {
+      "id": "mod3-15",
+      "number": 15,
+      "question": "Which message delivery option is used when all devices need to receive the same message simultaneously?",
+      "options": [
+        "duplex",
+        "unicast",
+        "multicast",
+        "broadcast"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "broadcast",
+          "explanation": {
+            "eli5": "For \"Which message delivery option is used when all devices need to receive the same message simultaneously?\", this answer is correct: \"broadcast\". In simple terms, when all devices need to receive the same message simultaneously, the message would be delivered as a broadcast. Unicast delivery occurs when one source host sends a message to one destination host. The sending of the same message from a host to a group of destination hosts is multicast delivery. Duplex communications refers to the ability of the medium to carry messages in both directions.",
+            "ccna": "When all devices need to receive the same message simultaneously, the message would be delivered as a broadcast. Unicast delivery occurs when one source host sends a message to one destination host. The sending of the same message from a host to a group of destination hosts is multicast delivery. Duplex communications refers to the ability of the medium to carry messages in both directions."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which message delivery option is used when all devices need to receive the same message simultaneously?\", this answer is correct because when all devices need to receive the same message simultaneously, the message would be delivered as a broadcast. Unicast delivery occurs when one source host sends a message to one destination host. The sending of the same message from a host to a group of destination hosts is multicast delivery. Duplex communications refers to the ability of the medium to carry messages in both directions.",
+        "ccna": "When all devices need to receive the same message simultaneously, the message would be delivered as a broadcast. Unicast delivery occurs when one source host sends a message to one destination host. The sending of the same message from a host to a group of destination hosts is multicast delivery. Duplex communications refers to the ability of the medium to carry messages in both directions."
+      }
+    },
+    {
+      "id": "mod3-16",
+      "number": 16,
+      "question": "What three requirements are defined by the protocols used in network communcations to allow message transmission across a network? (Choose three.)",
+      "options": [
+        "connector specifications",
+        "message encoding",
+        "media selection",
+        "message size",
+        "delivery options",
+        "end-device installation"
+      ],
+      "selectionCount": 3,
+      "answerIndices": [
+        1,
+        3,
+        4
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "message encoding",
+          "explanation": {
+            "eli5": "For \"What three requirements are defined by the protocols used in network communcations to allow message transmission across a network? (Choose three.)\", this choice is correct: \"message encoding\". In simple terms, protocols define message encoding, message size, and delivery options so devices can exchange data using shared rules.",
+            "ccna": "Protocols define message encoding, message size, and delivery options so devices can exchange data using shared rules."
+          }
+        },
+        {
+          "index": 3,
+          "text": "message size",
+          "explanation": {
+            "eli5": "For \"What three requirements are defined by the protocols used in network communcations to allow message transmission across a network? (Choose three.)\", this choice is correct: \"message size\". In simple terms, protocols define message encoding, message size, and delivery options so devices can exchange data using shared rules.",
+            "ccna": "Protocols define message encoding, message size, and delivery options so devices can exchange data using shared rules."
+          }
+        },
+        {
+          "index": 4,
+          "text": "delivery options",
+          "explanation": {
+            "eli5": "For \"What three requirements are defined by the protocols used in network communcations to allow message transmission across a network? (Choose three.)\", this choice is correct: \"delivery options\". In simple terms, protocols define message encoding, message size, and delivery options so devices can exchange data using shared rules.",
+            "ccna": "Protocols define message encoding, message size, and delivery options so devices can exchange data using shared rules."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What three requirements are defined by the protocols used in network communcations to allow message transmission across a network? (Choose three.)\", these choices are correct because protocols define message encoding, message size, and delivery options so devices can exchange data using shared rules.",
+        "ccna": "Protocols define message encoding, message size, and delivery options so devices can exchange data using shared rules."
+      }
+    },
+    {
+      "id": "mod3-17",
+      "number": 17,
+      "question": "What type of delivery uses data link layer addresses?",
+      "options": [
+        "remote delivery",
+        "local and remote delivery",
+        "local delivery",
+        "remote delivery using routers"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "local delivery",
+          "explanation": {
+            "eli5": "For \"What type of delivery uses data link layer addresses?\", this answer is correct: \"local delivery\". In simple terms, data link layer addresses are used for local delivery. Routers are needed only when traffic must leave the local network.",
+            "ccna": "Data link layer addresses are used for local delivery. Routers are needed only when traffic must leave the local network."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What type of delivery uses data link layer addresses?\", this answer is correct because data link layer addresses are used for local delivery. Routers are needed only when traffic must leave the local network.",
+        "ccna": "Data link layer addresses are used for local delivery. Routers are needed only when traffic must leave the local network."
+      }
+    },
+    {
+      "id": "mod3-18",
+      "number": 18,
+      "question": "What layer of the TCP/IP protocol model determines the best path through the network?",
+      "options": [
+        "application",
+        "transport",
+        "internet",
+        "network access"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "internet",
+          "explanation": {
+            "eli5": "For \"What layer of the TCP/IP protocol model determines the best path through the network?\", this answer is correct: \"internet\". In simple terms, in the TCP/IP model, the internet layer handles logical addressing and routing, so it chooses the best path through the network.",
+            "ccna": "In the TCP/IP model, the internet layer handles logical addressing and routing, so it chooses the best path through the network."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What layer of the TCP/IP protocol model determines the best path through the network?\", this answer is correct because in the TCP/IP model, the internet layer handles logical addressing and routing, so it chooses the best path through the network.",
+        "ccna": "In the TCP/IP model, the internet layer handles logical addressing and routing, so it chooses the best path through the network."
+      }
+    }
+  ]
+}

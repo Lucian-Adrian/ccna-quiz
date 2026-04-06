@@ -93,6 +93,45 @@ test("builds a seven-module library with theory sections", () => {
   }
 });
 
+test("exposes structured answer and explanation content for the runtime UI", () => {
+  const moduleSources = [
+    { id: "mod1", label: "Module 1", markdown: fs.readFileSync(new URL("../modules/mod1.md", import.meta.url), "utf8") },
+  ];
+  const library = buildModuleLibrary(moduleSources);
+  const firstCard = library.modules[0].cards[0];
+
+  assert.equal(typeof firstCard.explanation, "object");
+  assert.equal(typeof firstCard.explanation.eli5, "string");
+  assert.equal(typeof firstCard.explanation.ccna, "string");
+  assert.ok(firstCard.explanation.eli5.length > 20);
+  assert.ok(firstCard.explanation.ccna.length > 20);
+
+  const firstAnswer = firstCard.answers[0];
+  assert.equal(typeof firstAnswer, "object");
+  assert.equal(typeof firstAnswer.text, "string");
+  assert.equal(typeof firstAnswer.explanation.eli5, "string");
+  assert.equal(typeof firstAnswer.explanation.ccna, "string");
+});
+
+test("can build the study library directly from exported JSON modules", () => {
+  const manifest = JSON.parse(fs.readFileSync(new URL("../modules/index.json", import.meta.url), "utf8"));
+  const moduleSources = manifest.modules.map((entry) => {
+    const data = JSON.parse(fs.readFileSync(new URL(`../modules/${entry.file}`, import.meta.url), "utf8"));
+    return {
+      id: entry.id,
+      label: entry.displayName,
+      title: entry.title,
+      cards: data.cards,
+    };
+  });
+  const library = buildModuleLibrary(moduleSources);
+
+  assert.equal(library.modules.length, 7);
+  assert.ok(library.cards.length >= 100);
+  assert.equal(library.modules[0].cards[0].answers[0].text.length > 0, true);
+  assert.equal(library.modules[0].cards[0].explanation.ccna.length > 20, true);
+});
+
 test("records per-question progress with timestamps and last choice", () => {
   const before = {};
   const after = recordAttempt(before, {

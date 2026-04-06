@@ -1,0 +1,446 @@
+{
+  "schemaVersion": 2,
+  "moduleId": "mod7",
+  "displayName": "Module 7",
+  "title": "Ethernet Switching",
+  "quizTitle": "7.5.2 Module Quiz – Ethernet Switching Answers",
+  "sourceMarkdown": "mod7.md",
+  "cards": [
+    {
+      "id": "mod7-1",
+      "number": 1,
+      "question": "What will a host on an Ethernet network do if it receives a frame with a unicast destination MAC address that does not match its own MAC address?",
+      "options": [
+        "It will discard the frame.",
+        "It will forward the frame to the next host.",
+        "It will remove the frame from the media.",
+        "It will strip off the data-link frame to check the destination IP address."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "It will discard the frame.",
+          "explanation": {
+            "eli5": "For \"What will a host on an Ethernet network do if it receives a frame with a unicast destination MAC address that does not match its own MAC address?\", this answer is correct: \"It will discard the frame.\". In simple terms, in an Ethernet network, each NIC in the network checks every arriving frame to see if the destination MAC address in the frame matches its own MAC address. If there is no match, the device discards the frame. If there is a match, the NIC passes the frame up to the next OSI layer.",
+            "ccna": "In an Ethernet network, each NIC in the network checks every arriving frame to see if the destination MAC address in the frame matches its own MAC address. If there is no match, the device discards the frame. If there is a match, the NIC passes the frame up to the next OSI layer."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What will a host on an Ethernet network do if it receives a frame with a unicast destination MAC address that does not match its own MAC address?\", this answer is correct because in an Ethernet network, each NIC in the network checks every arriving frame to see if the destination MAC address in the frame matches its own MAC address. If there is no match, the device discards the frame. If there is a match, the NIC passes the frame up to the next OSI layer.",
+        "ccna": "In an Ethernet network, each NIC in the network checks every arriving frame to see if the destination MAC address in the frame matches its own MAC address. If there is no match, the device discards the frame. If there is a match, the NIC passes the frame up to the next OSI layer."
+      }
+    },
+    {
+      "id": "mod7-2",
+      "number": 2,
+      "question": "What is auto-MDIX?",
+      "options": [
+        "a type of Cisco switch",
+        "an Ethernet connector type",
+        "a type of port on a Cisco switch",
+        "a feature that detects Ethernet cable type"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "a feature that detects Ethernet cable type",
+          "explanation": {
+            "eli5": "For \"What is auto-MDIX?\", this answer is correct: \"a feature that detects Ethernet cable type\". In simple terms, auto-MDIX is a feature that is enabled on the latest Cisco switches and that allows the switch to detect and use whatever type of cable is attached to a specific port.​​.",
+            "ccna": "Auto-MDIX is a feature that is enabled on the latest Cisco switches and that allows the switch to detect and use whatever type of cable is attached to a specific port.​​"
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is auto-MDIX?\", this answer is correct because auto-MDIX is a feature that is enabled on the latest Cisco switches and that allows the switch to detect and use whatever type of cable is attached to a specific port.​​.",
+        "ccna": "Auto-MDIX is a feature that is enabled on the latest Cisco switches and that allows the switch to detect and use whatever type of cable is attached to a specific port.​​"
+      }
+    },
+    {
+      "id": "mod7-3",
+      "number": 3,
+      "question": "Which two functions or operations are performed by the MAC sublayer? (Choose two.)",
+      "options": [
+        "It is responsible for Media Access Control.",
+        "It performs the function of NIC driver software.",
+        "It adds a header and trailer to form an OSI Layer 2 PDU.",
+        "It handles communication between upper and lower layers.",
+        "It adds control information to network protocol layer data."
+      ],
+      "selectionCount": 2,
+      "answerIndices": [
+        0,
+        2
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "It is responsible for Media Access Control.",
+          "explanation": {
+            "eli5": "For \"Which two functions or operations are performed by the MAC sublayer? (Choose two.)\", this choice is correct: \"It is responsible for Media Access Control.\". In simple terms, the MAC sublayer is the lower of the two data link sublayers and is closest to the physical layer. The two primary functions of the MAC sublayer are to encapsulate the data from the upper layer protocols and to control access to the media.",
+            "ccna": "The MAC sublayer is the lower of the two data link sublayers and is closest to the physical layer. The two primary functions of the MAC sublayer are to encapsulate the data from the upper layer protocols and to control access to the media."
+          }
+        },
+        {
+          "index": 2,
+          "text": "It adds a header and trailer to form an OSI Layer 2 PDU.",
+          "explanation": {
+            "eli5": "For \"Which two functions or operations are performed by the MAC sublayer? (Choose two.)\", this choice is correct: \"It adds a header and trailer to form an OSI Layer 2 PDU.\". In simple terms, the MAC sublayer is the lower of the two data link sublayers and is closest to the physical layer. The two primary functions of the MAC sublayer are to encapsulate the data from the upper layer protocols and to control access to the media.",
+            "ccna": "The MAC sublayer is the lower of the two data link sublayers and is closest to the physical layer. The two primary functions of the MAC sublayer are to encapsulate the data from the upper layer protocols and to control access to the media."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which two functions or operations are performed by the MAC sublayer? (Choose two.)\", these choices are correct because the MAC sublayer is the lower of the two data link sublayers and is closest to the physical layer. The two primary functions of the MAC sublayer are to encapsulate the data from the upper layer protocols and to control access to the media.",
+        "ccna": "The MAC sublayer is the lower of the two data link sublayers and is closest to the physical layer. The two primary functions of the MAC sublayer are to encapsulate the data from the upper layer protocols and to control access to the media."
+      }
+    },
+    {
+      "id": "mod7-4",
+      "number": 4,
+      "question": "What type of address is 01-00-5E-0A-00-02?",
+      "options": [
+        "an address that reaches every host inside a local subnet",
+        "an address that reaches one specific host",
+        "an address that reaches every host in the network",
+        "an address that reaches a specific group of hosts"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "an address that reaches a specific group of hosts",
+          "explanation": {
+            "eli5": "For \"What type of address is 01-00-5E-0A-00-02?\", this answer is correct: \"an address that reaches a specific group of hosts\". In simple terms, the multicast MAC address is a special value that begins with 01-00-5E in hexadecimal. It allows a source device to send a packet to a group of devices.",
+            "ccna": "The multicast MAC address is a special value that begins with 01-00-5E in hexadecimal. It allows a source device to send a packet to a group of devices."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What type of address is 01-00-5E-0A-00-02?\", this answer is correct because the multicast MAC address is a special value that begins with 01-00-5E in hexadecimal. It allows a source device to send a packet to a group of devices.",
+        "ccna": "The multicast MAC address is a special value that begins with 01-00-5E in hexadecimal. It allows a source device to send a packet to a group of devices."
+      }
+    },
+    {
+      "id": "mod7-5",
+      "number": 5,
+      "question": "What happens to runt frames received by a Cisco Ethernet switch?",
+      "options": [
+        "The frame is dropped.",
+        "The frame is returned to the originating network device.",
+        "The frame is broadcast to all other devices on the same network.",
+        "The frame is sent to the default gateway."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "The frame is dropped.",
+          "explanation": {
+            "eli5": "For \"What happens to runt frames received by a Cisco Ethernet switch?\", this answer is correct: \"The frame is dropped.\". In simple terms, in an attempt to conserve bandwidth and not forward useless frames, Ethernet devices drop frames that are considered to be runt (less than 64 bytes) or jumbo (greater than 1500 bytes) frames.",
+            "ccna": "In an attempt to conserve bandwidth and not forward useless frames, Ethernet devices drop frames that are considered to be runt (less than 64 bytes) or jumbo (greater than 1500 bytes) frames."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What happens to runt frames received by a Cisco Ethernet switch?\", this answer is correct because in an attempt to conserve bandwidth and not forward useless frames, Ethernet devices drop frames that are considered to be runt (less than 64 bytes) or jumbo (greater than 1500 bytes) frames.",
+        "ccna": "In an attempt to conserve bandwidth and not forward useless frames, Ethernet devices drop frames that are considered to be runt (less than 64 bytes) or jumbo (greater than 1500 bytes) frames."
+      }
+    },
+    {
+      "id": "mod7-6",
+      "number": 6,
+      "question": "What are the two sizes (minimum and expected maximum) of an Ethernet frame? (Choose two.)",
+      "options": [
+        "56 bytes",
+        "64 bytes",
+        "128 bytes",
+        "1024 bytes",
+        "1518 bytes"
+      ],
+      "selectionCount": 2,
+      "answerIndices": [
+        1,
+        4
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "64 bytes",
+          "explanation": {
+            "eli5": "For \"What are the two sizes (minimum and expected maximum) of an Ethernet frame? (Choose two.)\", this choice is correct: \"64 bytes\". In simple terms, the minimum Ethernet frame is 64 bytes. The maximum Ethernet frame is 1518 bytes. A network technician must know the minimum and maximum frame size in order to recognize runt and jumbo frames.",
+            "ccna": "The minimum Ethernet frame is 64 bytes. The maximum Ethernet frame is 1518 bytes. A network technician must know the minimum and maximum frame size in order to recognize runt and jumbo frames."
+          }
+        },
+        {
+          "index": 4,
+          "text": "1518 bytes",
+          "explanation": {
+            "eli5": "For \"What are the two sizes (minimum and expected maximum) of an Ethernet frame? (Choose two.)\", this choice is correct: \"1518 bytes\". In simple terms, the minimum Ethernet frame is 64 bytes. The maximum Ethernet frame is 1518 bytes. A network technician must know the minimum and maximum frame size in order to recognize runt and jumbo frames.",
+            "ccna": "The minimum Ethernet frame is 64 bytes. The maximum Ethernet frame is 1518 bytes. A network technician must know the minimum and maximum frame size in order to recognize runt and jumbo frames."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What are the two sizes (minimum and expected maximum) of an Ethernet frame? (Choose two.)\", these choices are correct because the minimum Ethernet frame is 64 bytes. The maximum Ethernet frame is 1518 bytes. A network technician must know the minimum and maximum frame size in order to recognize runt and jumbo frames.",
+        "ccna": "The minimum Ethernet frame is 64 bytes. The maximum Ethernet frame is 1518 bytes. A network technician must know the minimum and maximum frame size in order to recognize runt and jumbo frames."
+      }
+    },
+    {
+      "id": "mod7-7",
+      "number": 7,
+      "question": "What addressing information is recorded by a switch to build its MAC address table?",
+      "options": [
+        "the destination Layer 3 address of incoming packets",
+        "the destination Layer 2 address of outgoing frames",
+        "the source Layer 3 address of outgoing packets",
+        "the source Layer 2 address of incoming frames"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "the source Layer 2 address of incoming frames",
+          "explanation": {
+            "eli5": "For \"What addressing information is recorded by a switch to build its MAC address table?\", this answer is correct: \"the source Layer 2 address of incoming frames\". In simple terms, a switch builds a MAC address table by inspecting incoming Layer 2 frames and recording the source MAC address found in the frame header. The discovered and recorded MAC address is then associated with the port used to receive the frame.",
+            "ccna": "A switch builds a MAC address table by inspecting incoming Layer 2 frames and recording the source MAC address found in the frame header. The discovered and recorded MAC address is then associated with the port used to receive the frame."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What addressing information is recorded by a switch to build its MAC address table?\", this answer is correct because a switch builds a MAC address table by inspecting incoming Layer 2 frames and recording the source MAC address found in the frame header. The discovered and recorded MAC address is then associated with the port used to receive the frame.",
+        "ccna": "A switch builds a MAC address table by inspecting incoming Layer 2 frames and recording the source MAC address found in the frame header. The discovered and recorded MAC address is then associated with the port used to receive the frame."
+      }
+    },
+    {
+      "id": "mod7-8",
+      "number": 8,
+      "question": "Which two characteristics describe Ethernet technology? (Choose two.)",
+      "options": [
+        "It is supported by IEEE 802.3 standards.",
+        "It is supported by IEEE 802.5 standards.",
+        "It typically uses an average of 16 Mbps for data transfer rates.",
+        "It uses unique MAC addresses to ensure that data is sent to the appropriate destination.",
+        "It uses a ring topology."
+      ],
+      "selectionCount": 2,
+      "answerIndices": [
+        0,
+        3
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "It is supported by IEEE 802.3 standards.",
+          "explanation": {
+            "eli5": "For \"Which two characteristics describe Ethernet technology? (Choose two.)\", this choice is correct: \"It is supported by IEEE 802.3 standards.\". In simple terms, ethernet is defined by IEEE 802.3 and relies on unique MAC addresses so frames can be delivered to the correct destination on a LAN.",
+            "ccna": "Ethernet is defined by IEEE 802.3 and relies on unique MAC addresses so frames can be delivered to the correct destination on a LAN."
+          }
+        },
+        {
+          "index": 3,
+          "text": "It uses unique MAC addresses to ensure that data is sent to the appropriate destination.",
+          "explanation": {
+            "eli5": "For \"Which two characteristics describe Ethernet technology? (Choose two.)\", this choice is correct: \"It uses unique MAC addresses to ensure that data is sent to the appropriate destination.\". In simple terms, ethernet is defined by IEEE 802.3 and relies on unique MAC addresses so frames can be delivered to the correct destination on a LAN.",
+            "ccna": "Ethernet is defined by IEEE 802.3 and relies on unique MAC addresses so frames can be delivered to the correct destination on a LAN."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which two characteristics describe Ethernet technology? (Choose two.)\", these choices are correct because ethernet is defined by IEEE 802.3 and relies on unique MAC addresses so frames can be delivered to the correct destination on a LAN.",
+        "ccna": "Ethernet is defined by IEEE 802.3 and relies on unique MAC addresses so frames can be delivered to the correct destination on a LAN."
+      }
+    },
+    {
+      "id": "mod7-9",
+      "number": 9,
+      "question": "What statement describes a characteristic of MAC addresses?",
+      "options": [
+        "They must be globally unique.",
+        "They are only routable within the private network.",
+        "They are added as part of a Layer 3 PDU.",
+        "They have a 32-bit binary value."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "They must be globally unique.",
+          "explanation": {
+            "eli5": "For \"What statement describes a characteristic of MAC addresses?\", this answer is correct: \"They must be globally unique.\". In simple terms, any vendor selling Ethernet devices must register with the IEEE to ensure the vendor is assigned a unique 24-bit code, which becomes the first 24 bits of the MAC address. The last 24 bits of the MAC address are generated per hardware device. This helps to ensure globally unique addresses for each Ethernet device.",
+            "ccna": "Any vendor selling Ethernet devices must register with the IEEE to ensure the vendor is assigned a unique 24-bit code, which becomes the first 24 bits of the MAC address. The last 24 bits of the MAC address are generated per hardware device. This helps to ensure globally unique addresses for each Ethernet device."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What statement describes a characteristic of MAC addresses?\", this answer is correct because any vendor selling Ethernet devices must register with the IEEE to ensure the vendor is assigned a unique 24-bit code, which becomes the first 24 bits of the MAC address. The last 24 bits of the MAC address are generated per hardware device. This helps to ensure globally unique addresses for each Ethernet device.",
+        "ccna": "Any vendor selling Ethernet devices must register with the IEEE to ensure the vendor is assigned a unique 24-bit code, which becomes the first 24 bits of the MAC address. The last 24 bits of the MAC address are generated per hardware device. This helps to ensure globally unique addresses for each Ethernet device."
+      }
+    },
+    {
+      "id": "mod7-10",
+      "number": 10,
+      "question": "What is the special value assigned to the first 24 bits of a multicast MAC address transporting an IPv4 packet?",
+      "options": [
+        "01-5E-00",
+        "FF-00-5E",
+        "FF-FF-FF",
+        "01-00-5E"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "01-00-5E",
+          "explanation": {
+            "eli5": "For \"What is the special value assigned to the first 24 bits of a multicast MAC address transporting an IPv4 packet?\", this answer is correct: \"01-00-5E\". In simple terms, just as with multicast IP addresses, there is a special assigned value for multicast MAC addresses. The first 24 bits are set in hex to: 01-00-5E. The remaining 6 hex digits are derived from the lower 23 bits of the IP multicast.",
+            "ccna": "Just as with multicast IP addresses, there is a special assigned value for multicast MAC addresses. The first 24 bits are set in hex to: 01-00-5E. The remaining 6 hex digits are derived from the lower 23 bits of the IP multicast."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the special value assigned to the first 24 bits of a multicast MAC address transporting an IPv4 packet?\", this answer is correct because just as with multicast IP addresses, there is a special assigned value for multicast MAC addresses. The first 24 bits are set in hex to: 01-00-5E. The remaining 6 hex digits are derived from the lower 23 bits of the IP multicast.",
+        "ccna": "Just as with multicast IP addresses, there is a special assigned value for multicast MAC addresses. The first 24 bits are set in hex to: 01-00-5E. The remaining 6 hex digits are derived from the lower 23 bits of the IP multicast."
+      }
+    },
+    {
+      "id": "mod7-11",
+      "number": 11,
+      "question": "Which network device makes forwarding decisions based on the destination MAC address that is contained in the frame?",
+      "options": [
+        "repeater",
+        "hub",
+        "switch",
+        "router"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "switch",
+          "explanation": {
+            "eli5": "For \"Which network device makes forwarding decisions based on the destination MAC address that is contained in the frame?\", this answer is correct: \"switch\". In simple terms, switches are the central connection point for a LAN and they maintain a MAC address table. The MAC address table has a port number associated with a MAC address for each particular device. The switch inspects a frame to look at the destination MAC address. The switch then looks in its MAC address table and if that MAC address is found, the switch forwards the data to the port that is associated with that particular MAC address.",
+            "ccna": "Switches are the central connection point for a LAN and they maintain a MAC address table. The MAC address table has a port number associated with a MAC address for each particular device. The switch inspects a frame to look at the destination MAC address. The switch then looks in its MAC address table and if that MAC address is found, the switch forwards the data to the port that is associated with that particular MAC address."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which network device makes forwarding decisions based on the destination MAC address that is contained in the frame?\", this answer is correct because switches are the central connection point for a LAN and they maintain a MAC address table. The MAC address table has a port number associated with a MAC address for each particular device. The switch inspects a frame to look at the destination MAC address. The switch then looks in its MAC address table and if that MAC address is found, the switch forwards the data to the port that is associated with that particular MAC address.",
+        "ccna": "Switches are the central connection point for a LAN and they maintain a MAC address table. The MAC address table has a port number associated with a MAC address for each particular device. The switch inspects a frame to look at the destination MAC address. The switch then looks in its MAC address table and if that MAC address is found, the switch forwards the data to the port that is associated with that particular MAC address."
+      }
+    },
+    {
+      "id": "mod7-12",
+      "number": 12,
+      "question": "Which network device has the primary function to send data to a specific destination based on the information found in the MAC address table?",
+      "options": [
+        "hub",
+        "router",
+        "switch",
+        "modem"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "switch",
+          "explanation": {
+            "eli5": "For \"Which network device has the primary function to send data to a specific destination based on the information found in the MAC address table?\", this answer is correct: \"switch\". In simple terms, if a MAC address is found in the MAC address table, then data is sent to the associated switch port. If the MAC address is not found in the MAC address table, the data is sent to all switch ports that have devices attached to the same network.",
+            "ccna": "If a MAC address is found in the MAC address table, then data is sent to the associated switch port. If the MAC address is not found in the MAC address table, the data is sent to all switch ports that have devices attached to the same network."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which network device has the primary function to send data to a specific destination based on the information found in the MAC address table?\", this answer is correct because if a MAC address is found in the MAC address table, then data is sent to the associated switch port. If the MAC address is not found in the MAC address table, the data is sent to all switch ports that have devices attached to the same network.",
+        "ccna": "If a MAC address is found in the MAC address table, then data is sent to the associated switch port. If the MAC address is not found in the MAC address table, the data is sent to all switch ports that have devices attached to the same network."
+      }
+    },
+    {
+      "id": "mod7-13",
+      "number": 13,
+      "question": "Which function or operation is performed by the LLC sublayer?",
+      "options": [
+        "It performs data encapsulation.",
+        "It communicates with upper protocol layers.",
+        "It is responsible for media access control.",
+        "It adds a header and trailer to a packet to form an OSI Layer 2 PDU."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "It communicates with upper protocol layers.",
+          "explanation": {
+            "eli5": "For \"Which function or operation is performed by the LLC sublayer?\", this answer is correct: \"It communicates with upper protocol layers.\". In simple terms, the Ethernet LLC sublayer has the responsibility to handle communication between the upper layers and the lower layers of the protocol stack. The LLC is implemented in software and communicates with the upper layers of the application to transition the packet to the lower layers for delivery.",
+            "ccna": "The Ethernet LLC sublayer has the responsibility to handle communication between the upper layers and the lower layers of the protocol stack. The LLC is implemented in software and communicates with the upper layers of the application to transition the packet to the lower layers for delivery."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which function or operation is performed by the LLC sublayer?\", this answer is correct because the Ethernet LLC sublayer has the responsibility to handle communication between the upper layers and the lower layers of the protocol stack. The LLC is implemented in software and communicates with the upper layers of the application to transition the packet to the lower layers for delivery.",
+        "ccna": "The Ethernet LLC sublayer has the responsibility to handle communication between the upper layers and the lower layers of the protocol stack. The LLC is implemented in software and communicates with the upper layers of the application to transition the packet to the lower layers for delivery."
+      }
+    },
+    {
+      "id": "mod7-14",
+      "number": 14,
+      "question": "Which statement is true about MAC addresses?",
+      "options": [
+        "MAC addresses are implemented by software.",
+        "A NIC only needs a MAC address if connected to a WAN.",
+        "The first three bytes are used by the vendor assigned OUI.",
+        "The ISO is responsible for MAC addresses regulations."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "The first three bytes are used by the vendor assigned OUI.",
+          "explanation": {
+            "eli5": "For \"Which statement is true about MAC addresses?\", this answer is correct: \"The first three bytes are used by the vendor assigned OUI.\". In simple terms, a MAC address is composed of 6 bytes. The first 3 bytes are used for vendor identification and the last 3 bytes must be assigned a unique value within the same OUI. MAC addresses are implemented in hardware. A NIC needs a MAC address to communicate over the LAN. The IEEE regulates the MAC addresses.",
+            "ccna": "A MAC address is composed of 6 bytes. The first 3 bytes are used for vendor identification and the last 3 bytes must be assigned a unique value within the same OUI. MAC addresses are implemented in hardware. A NIC needs a MAC address to communicate over the LAN. The IEEE regulates the MAC addresses."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which statement is true about MAC addresses?\", this answer is correct because a MAC address is composed of 6 bytes. The first 3 bytes are used for vendor identification and the last 3 bytes must be assigned a unique value within the same OUI. MAC addresses are implemented in hardware. A NIC needs a MAC address to communicate over the LAN. The IEEE regulates the MAC addresses.",
+        "ccna": "A MAC address is composed of 6 bytes. The first 3 bytes are used for vendor identification and the last 3 bytes must be assigned a unique value within the same OUI. MAC addresses are implemented in hardware. A NIC needs a MAC address to communicate over the LAN. The IEEE regulates the MAC addresses."
+      }
+    }
+  ]
+}

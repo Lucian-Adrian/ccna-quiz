@@ -1,0 +1,455 @@
+{
+  "schemaVersion": 2,
+  "moduleId": "mod2",
+  "displayName": "Module 2",
+  "title": "Basic Switch and End Device Configuration",
+  "quizTitle": "2.9.4 Module Quiz – Basic Switch and End Device Configuration Answers",
+  "sourceMarkdown": "mod2.md",
+  "cards": [
+    {
+      "id": "mod2-1",
+      "number": 1,
+      "question": "Which functionality is provided by DHCP?",
+      "options": [
+        "automatic assignment of an IP address to each host",
+        "remote switch management",
+        "translation of IP addresses to domain names",
+        "end-to-end connectivity test"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "automatic assignment of an IP address to each host",
+          "explanation": {
+            "eli5": "For \"Which functionality is provided by DHCP?\", this answer is correct: \"automatic assignment of an IP address to each host\". In simple terms, dHCP provides dynamic and automatic IP address assignment to hosts.",
+            "ccna": "DHCP provides dynamic and automatic IP address assignment to hosts."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which functionality is provided by DHCP?\", this answer is correct because dHCP provides dynamic and automatic IP address assignment to hosts.",
+        "ccna": "DHCP provides dynamic and automatic IP address assignment to hosts."
+      }
+    },
+    {
+      "id": "mod2-2",
+      "number": 2,
+      "question": "Which two functions are provided to users by the context-sensitive help feature of the Cisco IOS CLI? (Choose two.)",
+      "options": [
+        "providing an error message when a wrong command is submitted",
+        "displaying a list of all available commands within the current mode",
+        "allowing the user to complete the remainder of an abbreviated command with the TAB key",
+        "determining which option, keyword, or argument is available for the entered command",
+        "selecting the best command to accomplish a task"
+      ],
+      "selectionCount": 2,
+      "answerIndices": [
+        1,
+        3
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "displaying a list of all available commands within the current mode",
+          "explanation": {
+            "eli5": "For \"Which two functions are provided to users by the context-sensitive help feature of the Cisco IOS CLI? (Choose two.)\", this choice is correct: \"displaying a list of all available commands within the current mode\". In simple terms, context-sensitive help provides the user with a list of commands and the arguments associated with those commands within the current mode of a networking device. A syntax checker provides error checks on submitted commands and the TAB key can be used for command completion if a partial command is entered.",
+            "ccna": "Context-sensitive help provides the user with a list of commands and the arguments associated with those commands within the current mode of a networking device. A syntax checker provides error checks on submitted commands and the TAB key can be used for command completion if a partial command is entered."
+          }
+        },
+        {
+          "index": 3,
+          "text": "determining which option, keyword, or argument is available for the entered command",
+          "explanation": {
+            "eli5": "For \"Which two functions are provided to users by the context-sensitive help feature of the Cisco IOS CLI? (Choose two.)\", this choice is correct: \"determining which option, keyword, or argument is available for the entered command\". In simple terms, context-sensitive help provides the user with a list of commands and the arguments associated with those commands within the current mode of a networking device. A syntax checker provides error checks on submitted commands and the TAB key can be used for command completion if a partial command is entered.",
+            "ccna": "Context-sensitive help provides the user with a list of commands and the arguments associated with those commands within the current mode of a networking device. A syntax checker provides error checks on submitted commands and the TAB key can be used for command completion if a partial command is entered."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which two functions are provided to users by the context-sensitive help feature of the Cisco IOS CLI? (Choose two.)\", these choices are correct because context-sensitive help provides the user with a list of commands and the arguments associated with those commands within the current mode of a networking device. A syntax checker provides error checks on submitted commands and the TAB key can be used for command completion if a partial command is entered.",
+        "ccna": "Context-sensitive help provides the user with a list of commands and the arguments associated with those commands within the current mode of a networking device. A syntax checker provides error checks on submitted commands and the TAB key can be used for command completion if a partial command is entered."
+      }
+    },
+    {
+      "id": "mod2-3",
+      "number": 3,
+      "question": "Which memory location on a Cisco router or switch stores the startup configuration file?",
+      "options": [
+        "RAM",
+        "ROM",
+        "NVRAM",
+        "flash"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "NVRAM",
+          "explanation": {
+            "eli5": "For \"Which memory location on a Cisco router or switch stores the startup configuration file?\", this answer is correct: \"NVRAM\". In simple terms, the startup configuration file of a Cisco router or switch is stored in NVRAM, which is nonvolatile memory.",
+            "ccna": "The startup configuration file of a Cisco router or switch is stored in NVRAM, which is nonvolatile memory."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which memory location on a Cisco router or switch stores the startup configuration file?\", this answer is correct because the startup configuration file of a Cisco router or switch is stored in NVRAM, which is nonvolatile memory.",
+        "ccna": "The startup configuration file of a Cisco router or switch is stored in NVRAM, which is nonvolatile memory."
+      }
+    },
+    {
+      "id": "mod2-4",
+      "number": 4,
+      "question": "To what subnet does the IP address 10.1.100.50 belong if a subnet mask of 255.255.0.0 is used?",
+      "options": [
+        "10.1.0.0",
+        "10.0.0.0",
+        "10.1.100.32",
+        "10.1.100.0"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "10.1.0.0",
+          "explanation": {
+            "eli5": "For \"To what subnet does the IP address 10.1.100.50 belong if a subnet mask of 255.255.0.0 is used?\", this answer is correct: \"10.1.0.0\". In simple terms, the purpose of a subnet mask is to separate the network portion of the address from the host portion of the IP address. The network portion of the IP address is identified by all binary 1s in the subnet mask. Using a subnet mask of 255.255.0.0 identifies the first two octets of the IP address as the network portion.",
+            "ccna": "The purpose of a subnet mask is to separate the network portion of the address from the host portion of the IP address. The network portion of the IP address is identified by all binary 1s in the subnet mask. Using a subnet mask of 255.255.0.0 identifies the first two octets of the IP address as the network portion."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"To what subnet does the IP address 10.1.100.50 belong if a subnet mask of 255.255.0.0 is used?\", this answer is correct because the purpose of a subnet mask is to separate the network portion of the address from the host portion of the IP address. The network portion of the IP address is identified by all binary 1s in the subnet mask. Using a subnet mask of 255.255.0.0 identifies the first two octets of the IP address as the network portion.",
+        "ccna": "The purpose of a subnet mask is to separate the network portion of the address from the host portion of the IP address. The network portion of the IP address is identified by all binary 1s in the subnet mask. Using a subnet mask of 255.255.0.0 identifies the first two octets of the IP address as the network portion."
+      }
+    },
+    {
+      "id": "mod2-5",
+      "number": 5,
+      "question": "When a hostname is configured through the Cisco CLI, which three naming conventions are part of the guidelines? (Choose three.)",
+      "options": [
+        "the hostname should be fewer than 64 characters in length",
+        "the hostname should be written in all lower case characters",
+        "the hostname should contain no spaces",
+        "the hostname should end with a special character",
+        "the hostname should begin with a letter"
+      ],
+      "selectionCount": 3,
+      "answerIndices": [
+        0,
+        2,
+        4
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "the hostname should be fewer than 64 characters in length",
+          "explanation": {
+            "eli5": "For \"When a hostname is configured through the Cisco CLI, which three naming conventions are part of the guidelines? (Choose three.)\", this choice is correct: \"the hostname should be fewer than 64 characters in length\". In simple terms, a hostname can be configured with upper or lower case characters and should end with a letter or digit, not a special character. A hostname should start with a letter and no space is allowed for a hostname.",
+            "ccna": "A hostname can be configured with upper or lower case characters and should end with a letter or digit, not a special character. A hostname should start with a letter and no space is allowed for a hostname."
+          }
+        },
+        {
+          "index": 2,
+          "text": "the hostname should contain no spaces",
+          "explanation": {
+            "eli5": "For \"When a hostname is configured through the Cisco CLI, which three naming conventions are part of the guidelines? (Choose three.)\", this choice is correct: \"the hostname should contain no spaces\". In simple terms, a hostname can be configured with upper or lower case characters and should end with a letter or digit, not a special character. A hostname should start with a letter and no space is allowed for a hostname.",
+            "ccna": "A hostname can be configured with upper or lower case characters and should end with a letter or digit, not a special character. A hostname should start with a letter and no space is allowed for a hostname."
+          }
+        },
+        {
+          "index": 4,
+          "text": "the hostname should begin with a letter",
+          "explanation": {
+            "eli5": "For \"When a hostname is configured through the Cisco CLI, which three naming conventions are part of the guidelines? (Choose three.)\", this choice is correct: \"the hostname should begin with a letter\". In simple terms, a hostname can be configured with upper or lower case characters and should end with a letter or digit, not a special character. A hostname should start with a letter and no space is allowed for a hostname.",
+            "ccna": "A hostname can be configured with upper or lower case characters and should end with a letter or digit, not a special character. A hostname should start with a letter and no space is allowed for a hostname."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"When a hostname is configured through the Cisco CLI, which three naming conventions are part of the guidelines? (Choose three.)\", these choices are correct because a hostname can be configured with upper or lower case characters and should end with a letter or digit, not a special character. A hostname should start with a letter and no space is allowed for a hostname.",
+        "ccna": "A hostname can be configured with upper or lower case characters and should end with a letter or digit, not a special character. A hostname should start with a letter and no space is allowed for a hostname."
+      }
+    },
+    {
+      "id": "mod2-6",
+      "number": 6,
+      "question": "What is the function of the shell in an OS?",
+      "options": [
+        "It interacts with the device hardware.",
+        "It interfaces between the users and the kernel.",
+        "It provides dedicated firewall services.",
+        "It provides the intrusion protection services for the device."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "It interfaces between the users and the kernel.",
+          "explanation": {
+            "eli5": "For \"What is the function of the shell in an OS?\", this answer is correct: \"It interfaces between the users and the kernel.\". In simple terms, most operating systems contain a shell and a kernel. The kernel interacts with the hardware and the shell interfaces between the kernel and the users.",
+            "ccna": "Most operating systems contain a shell and a kernel. The kernel interacts with the hardware and the shell interfaces between the kernel and the users."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the function of the shell in an OS?\", this answer is correct because most operating systems contain a shell and a kernel. The kernel interacts with the hardware and the shell interfaces between the kernel and the users.",
+        "ccna": "Most operating systems contain a shell and a kernel. The kernel interacts with the hardware and the shell interfaces between the kernel and the users."
+      }
+    },
+    {
+      "id": "mod2-7",
+      "number": 7,
+      "question": "A router with a valid operating system contains a configuration file stored in NVRAM. The configuration file has an enable secret password but no console password. When the router boots up, which mode will display?",
+      "options": [
+        "global configuration mode",
+        "setup mode",
+        "Oprivileged EXEC mode",
+        "user EXEC mode"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "user EXEC mode",
+          "explanation": {
+            "eli5": "For \"A router with a valid operating system contains a configuration file stored in NVRAM. The configuration file has an enable secret password but no console password. When the router boots up, which mode will display?\", this answer is correct: \"user EXEC mode\". In simple terms, if a Cisco IOS device has a valid IOS and a valid configuration file, it will boot into user EXEC mode. A password will be required to enter privileged EXEC mode.",
+            "ccna": "If a Cisco IOS device has a valid IOS and a valid configuration file, it will boot into user EXEC mode. A password will be required to enter privileged EXEC mode."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"A router with a valid operating system contains a configuration file stored in NVRAM. The configuration file has an enable secret password but no console password. When the router boots up, which mode will display?\", this answer is correct because if a Cisco IOS device has a valid IOS and a valid configuration file, it will boot into user EXEC mode. A password will be required to enter privileged EXEC mode.",
+        "ccna": "If a Cisco IOS device has a valid IOS and a valid configuration file, it will boot into user EXEC mode. A password will be required to enter privileged EXEC mode."
+      }
+    },
+    {
+      "id": "mod2-8",
+      "number": 8,
+      "question": "An administrator has just changed the IP address of an interface on an IOS device. What else must be done in order to apply those changes to the device?",
+      "options": [
+        "Copy the running configuration to the startup configuration file.",
+        "Copy the information in the startup configuration file to the running configuration.",
+        "Reload the device and type yes when prompted to save the configuration.",
+        "Nothing must be done. Changes to the configuration on an IOS device take effect as soon as the command is typed correctly and the Enter key has been pressed."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "Nothing must be done. Changes to the configuration on an IOS device take effect as soon as the command is typed correctly and the Enter key has been pressed.",
+          "explanation": {
+            "eli5": "For \"An administrator has just changed the IP address of an interface on an IOS device. What else must be done in order to apply those changes to the device?\", this answer is correct: \"Nothing must be done. Changes to the configuration on an IOS device take effect as soon as the command is typed correctly and the Enter key has been pressed.\". In simple terms, changes to router and switch configurations take effect as soon as the command is entered. For this reason, it is very important that changes to live production devices are always carefully planned before being implemented. If commands are entered that render the device unstable or inaccessible, the device may have to be reloaded, resulting in network downtime.",
+            "ccna": "Changes to router and switch configurations take effect as soon as the command is entered. For this reason, it is very important that changes to live production devices are always carefully planned before being implemented. If commands are entered that render the device unstable or inaccessible, the device may have to be reloaded, resulting in network downtime."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"An administrator has just changed the IP address of an interface on an IOS device. What else must be done in order to apply those changes to the device?\", this answer is correct because changes to router and switch configurations take effect as soon as the command is entered. For this reason, it is very important that changes to live production devices are always carefully planned before being implemented. If commands are entered that render the device unstable or inaccessible, the device may have to be reloaded, resulting in network downtime.",
+        "ccna": "Changes to router and switch configurations take effect as soon as the command is entered. For this reason, it is very important that changes to live production devices are always carefully planned before being implemented. If commands are entered that render the device unstable or inaccessible, the device may have to be reloaded, resulting in network downtime."
+      }
+    },
+    {
+      "id": "mod2-9",
+      "number": 9,
+      "question": "Which memory location on a Cisco router or switch will lose all content when the device is restarted?",
+      "options": [
+        "ROM",
+        "flash",
+        "NVRAM",
+        "RAM"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "RAM",
+          "explanation": {
+            "eli5": "For \"Which memory location on a Cisco router or switch will lose all content when the device is restarted?\", this answer is correct: \"RAM\". In simple terms, rAM is volatile memory and will lose all contents if the router or switch is restarted or shutdown.",
+            "ccna": "RAM is volatile memory and will lose all contents if the router or switch is restarted or shutdown."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which memory location on a Cisco router or switch will lose all content when the device is restarted?\", this answer is correct because rAM is volatile memory and will lose all contents if the router or switch is restarted or shutdown.",
+        "ccna": "RAM is volatile memory and will lose all contents if the router or switch is restarted or shutdown."
+      }
+    },
+    {
+      "id": "mod2-10",
+      "number": 10,
+      "question": "Why would a technician enter the command copy startup-config running-config?",
+      "options": [
+        "to remove all configurations from the switch",
+        "to save an active configuration to NVRAM",
+        "to copy an existing configuration into RAM",
+        "to make a changed configuration the new startup configuration"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "to copy an existing configuration into RAM",
+          "explanation": {
+            "eli5": "For \"Why would a technician enter the command copy startup-config running-config?\", this answer is correct: \"to copy an existing configuration into RAM\". In simple terms, usually, changes are made to a running configuration in RAM and copied to NVRAM. However, in this case, the technician wants to copy a previously saved configuration from NVRAM into RAM in order to make changes to it.?.",
+            "ccna": "Usually, changes are made to a running configuration in RAM and copied to NVRAM. However, in this case, the technician wants to copy a previously saved configuration from NVRAM into RAM in order to make changes to it.?"
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Why would a technician enter the command copy startup-config running-config?\", this answer is correct because usually, changes are made to a running configuration in RAM and copied to NVRAM. However, in this case, the technician wants to copy a previously saved configuration from NVRAM into RAM in order to make changes to it.?.",
+        "ccna": "Usually, changes are made to a running configuration in RAM and copied to NVRAM. However, in this case, the technician wants to copy a previously saved configuration from NVRAM into RAM in order to make changes to it.?"
+      }
+    },
+    {
+      "id": "mod2-11",
+      "number": 11,
+      "question": "Which statement is true about the running configuration file in a Cisco IOS device?",
+      "options": [
+        "It affects the operation of the device immediately when modified.",
+        "It is stored in NVRAM.",
+        "It should be deleted using the erase running-config command.",
+        "It is automatically saved when the router reboots."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "It affects the operation of the device immediately when modified.",
+          "explanation": {
+            "eli5": "For \"Which statement is true about the running configuration file in a Cisco IOS device?\", this answer is correct: \"It affects the operation of the device immediately when modified.\". In simple terms, as soon as configuration commands are entered into a router, they modify the device immediately. Running configuration files can not be deleted nor are they saved automatically.",
+            "ccna": "As soon as configuration commands are entered into a router, they modify the device immediately. Running configuration files can not be deleted nor are they saved automatically."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which statement is true about the running configuration file in a Cisco IOS device?\", this answer is correct because as soon as configuration commands are entered into a router, they modify the device immediately. Running configuration files can not be deleted nor are they saved automatically.",
+        "ccna": "As soon as configuration commands are entered into a router, they modify the device immediately. Running configuration files can not be deleted nor are they saved automatically."
+      }
+    },
+    {
+      "id": "mod2-12",
+      "number": 12,
+      "question": "Which two statements are true regarding the user EXEC mode? (Choose two.)",
+      "options": [
+        "All router commands are available.",
+        "Global configuration mode can be accessed by entering the enable command.",
+        "The device prompt for this mode ends with the “>” symbol.",
+        "Interfaces and routing protocols can be configured.",
+        "Only some aspects of the router configuration can be viewed."
+      ],
+      "selectionCount": 2,
+      "answerIndices": [
+        2,
+        4
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "The device prompt for this mode ends with the “>” symbol.",
+          "explanation": {
+            "eli5": "For \"Which two statements are true regarding the user EXEC mode? (Choose two.)\", this choice is correct: \"The device prompt for this mode ends with the “>” symbol.\". In simple terms, user EXEC mode limits access to some show and debug commands. It is the first level of user interface encountered when configuring a router and is intended for investigation of certain functions of the device. The User EXEC prompt is identified with the “>” symbol.",
+            "ccna": "User EXEC mode limits access to some show and debug commands. It is the first level of user interface encountered when configuring a router and is intended for investigation of certain functions of the device. The User EXEC prompt is identified with the “>” symbol."
+          }
+        },
+        {
+          "index": 4,
+          "text": "Only some aspects of the router configuration can be viewed.",
+          "explanation": {
+            "eli5": "For \"Which two statements are true regarding the user EXEC mode? (Choose two.)\", this choice is correct: \"Only some aspects of the router configuration can be viewed.\". In simple terms, user EXEC mode limits access to some show and debug commands. It is the first level of user interface encountered when configuring a router and is intended for investigation of certain functions of the device. The User EXEC prompt is identified with the “>” symbol.",
+            "ccna": "User EXEC mode limits access to some show and debug commands. It is the first level of user interface encountered when configuring a router and is intended for investigation of certain functions of the device. The User EXEC prompt is identified with the “>” symbol."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which two statements are true regarding the user EXEC mode? (Choose two.)\", these choices are correct because user EXEC mode limits access to some show and debug commands. It is the first level of user interface encountered when configuring a router and is intended for investigation of certain functions of the device. The User EXEC prompt is identified with the “>” symbol.",
+        "ccna": "User EXEC mode limits access to some show and debug commands. It is the first level of user interface encountered when configuring a router and is intended for investigation of certain functions of the device. The User EXEC prompt is identified with the “>” symbol."
+      }
+    },
+    {
+      "id": "mod2-13",
+      "number": 13,
+      "question": "Which type of access is secured on a Cisco router or switch with the enable secret command?",
+      "options": [
+        "virtual terminal",
+        "privileged EXEC",
+        "AUX port",
+        "console line"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "privileged EXEC",
+          "explanation": {
+            "eli5": "For \"Which type of access is secured on a Cisco router or switch with the enable secret command?\", this answer is correct: \"privileged EXEC\". In simple terms, the enable secret command secures access to the privileged EXEC mode of a Cisco router or switch.",
+            "ccna": "The enable secret command secures access to the privileged EXEC mode of a Cisco router or switch."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which type of access is secured on a Cisco router or switch with the enable secret command?\", this answer is correct because the enable secret command secures access to the privileged EXEC mode of a Cisco router or switch.",
+        "ccna": "The enable secret command secures access to the privileged EXEC mode of a Cisco router or switch."
+      }
+    },
+    {
+      "id": "mod2-14",
+      "number": 14,
+      "question": "What is the default SVI on a Cisco switch?",
+      "options": [
+        "VLAN1",
+        "VLAN99",
+        "VLAN100",
+        "VLAN999"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "VLAN1",
+          "explanation": {
+            "eli5": "For \"What is the default SVI on a Cisco switch?\", this answer is correct: \"VLAN1\". In simple terms, layer 2 switches use switch virtual interfaces (SVIs) to provide a means for remote access over IP. The default SVI on a Cisco switch is VLAN1.",
+            "ccna": "Layer 2 switches use switch virtual interfaces (SVIs) to provide a means for remote access over IP. The default SVI on a Cisco switch is VLAN1."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the default SVI on a Cisco switch?\", this answer is correct because layer 2 switches use switch virtual interfaces (SVIs) to provide a means for remote access over IP. The default SVI on a Cisco switch is VLAN1.",
+        "ccna": "Layer 2 switches use switch virtual interfaces (SVIs) to provide a means for remote access over IP. The default SVI on a Cisco switch is VLAN1."
+      }
+    }
+  ]
+}

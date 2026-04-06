@@ -1,0 +1,476 @@
+{
+  "schemaVersion": 2,
+  "moduleId": "mod1",
+  "displayName": "Module 1",
+  "title": "Networking Today",
+  "quizTitle": "1.10.2 Module Quiz – Networking Today Answers – CCNA 1 v7 Module 1 Quiz",
+  "sourceMarkdown": "mod1.md",
+  "cards": [
+    {
+      "id": "mod1-1",
+      "number": 1,
+      "question": "How does BYOD change the way in which businesses implement networks?​",
+      "options": [
+        "BYOD requires organizations to purchase laptops rather than desktops.",
+        "BYOD users are responsible for their own network security, thus reducing the need for organizational security policies.",
+        "BYOD devices are more expensive than devices that are purchased by an organization.",
+        "BYOD provides flexibility in where and how users can access network resources."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "BYOD provides flexibility in where and how users can access network resources.",
+          "explanation": {
+            "eli5": "For \"How does BYOD change the way in which businesses implement networks?​\", this answer is correct: \"BYOD provides flexibility in where and how users can access network resources.\". In simple terms, a BYOD environment requires an organization to accommodate a variety of devices and access methods. Personal devices, which are not under company control, may be involved, so security is critical. Onsite hardware costs will be reduced, allowing a business to focus on delivering collaboration tools and other software to BYOD users.",
+            "ccna": "Reference Topic 1.8.0. A BYOD environment requires an organization to accommodate a variety of devices and access methods. Personal devices, which are not under company control, may be involved, so security is critical. Onsite hardware costs will be reduced, allowing a business to focus on delivering collaboration tools and other software to BYOD users."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"How does BYOD change the way in which businesses implement networks?​\", this answer is correct because a BYOD environment requires an organization to accommodate a variety of devices and access methods. Personal devices, which are not under company control, may be involved, so security is critical. Onsite hardware costs will be reduced, allowing a business to focus on delivering collaboration tools and other software to BYOD users.",
+        "ccna": "Reference Topic 1.8.0. A BYOD environment requires an organization to accommodate a variety of devices and access methods. Personal devices, which are not under company control, may be involved, so security is critical. Onsite hardware costs will be reduced, allowing a business to focus on delivering collaboration tools and other software to BYOD users."
+      }
+    },
+    {
+      "id": "mod1-2",
+      "number": 2,
+      "question": "An employee wants to access the network of the organization remotely, in the safest possible way. What network feature would allow an employee to gain secure remote access to a company network?",
+      "options": [
+        "ACL",
+        "IPS",
+        "VPN",
+        "BYOD"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "VPN",
+          "explanation": {
+            "eli5": "For \"An employee wants to access the network of the organization remotely, in the safest possible way. What network feature would allow an employee to gain secure remote access to a company network?\", this answer is correct: \"VPN\". In simple terms, virtual private networks (VPN) are used to provide secure access to remote workers.",
+            "ccna": "Virtual private networks (VPN) are used to provide secure access to remote workers."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"An employee wants to access the network of the organization remotely, in the safest possible way. What network feature would allow an employee to gain secure remote access to a company network?\", this answer is correct because virtual private networks (VPN) are used to provide secure access to remote workers.",
+        "ccna": "Virtual private networks (VPN) are used to provide secure access to remote workers."
+      }
+    },
+    {
+      "id": "mod1-3",
+      "number": 3,
+      "question": "What is the Internet?",
+      "options": [
+        "It is a network based on Ethernet technology.",
+        "It provides network access for mobile devices.",
+        "It provides connections through interconnected global networks.",
+        "It is a private network for an organization with LAN and WAN connections."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "It provides connections through interconnected global networks.",
+          "explanation": {
+            "eli5": "For \"What is the Internet?\", this answer is correct: \"It provides connections through interconnected global networks.\". In simple terms, the Internet provides global connections that enable networked devices (workstations and mobile devices) with different network technologies, such as Ethernet, DSL/cable, and serial connections, to communicate. A private network for an organization with LAN and WAN connections is an intranet.",
+            "ccna": "The Internet provides global connections that enable networked devices (workstations and mobile devices) with different network technologies, such as Ethernet, DSL/cable, and serial connections, to communicate. A private network for an organization with LAN and WAN connections is an intranet."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is the Internet?\", this answer is correct because the Internet provides global connections that enable networked devices (workstations and mobile devices) with different network technologies, such as Ethernet, DSL/cable, and serial connections, to communicate. A private network for an organization with LAN and WAN connections is an intranet.",
+        "ccna": "The Internet provides global connections that enable networked devices (workstations and mobile devices) with different network technologies, such as Ethernet, DSL/cable, and serial connections, to communicate. A private network for an organization with LAN and WAN connections is an intranet."
+      }
+    },
+    {
+      "id": "mod1-4",
+      "number": 4,
+      "question": "What are two functions of end devices on a network? (Choose two.)",
+      "options": [
+        "They originate the data that flows through the network.",
+        "They direct data over alternate paths in the event of link failures.",
+        "They filter the flow of data to enhance security.",
+        "They are the interface between humans and the communication network.",
+        "They provide the channel over which the network message travels."
+      ],
+      "selectionCount": 2,
+      "answerIndices": [
+        0,
+        3
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "They originate the data that flows through the network.",
+          "explanation": {
+            "eli5": "For \"What are two functions of end devices on a network? (Choose two.)\", this choice is correct: \"They originate the data that flows through the network.\". In simple terms, end devices originate the data that flows through the network. Intermediary devices direct data over alternate paths in the event of link failures and filter the flow of data to enhance security. Network media provide the channel through which network messages travel.",
+            "ccna": "End devices originate the data that flows through the network. Intermediary devices direct data over alternate paths in the event of link failures and filter the flow of data to enhance security. Network media provide the channel through which network messages travel."
+          }
+        },
+        {
+          "index": 3,
+          "text": "They are the interface between humans and the communication network.",
+          "explanation": {
+            "eli5": "For \"What are two functions of end devices on a network? (Choose two.)\", this choice is correct: \"They are the interface between humans and the communication network.\". In simple terms, end devices originate the data that flows through the network. Intermediary devices direct data over alternate paths in the event of link failures and filter the flow of data to enhance security. Network media provide the channel through which network messages travel.",
+            "ccna": "End devices originate the data that flows through the network. Intermediary devices direct data over alternate paths in the event of link failures and filter the flow of data to enhance security. Network media provide the channel through which network messages travel."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What are two functions of end devices on a network? (Choose two.)\", these choices are correct because end devices originate the data that flows through the network. Intermediary devices direct data over alternate paths in the event of link failures and filter the flow of data to enhance security. Network media provide the channel through which network messages travel.",
+        "ccna": "End devices originate the data that flows through the network. Intermediary devices direct data over alternate paths in the event of link failures and filter the flow of data to enhance security. Network media provide the channel through which network messages travel."
+      }
+    },
+    {
+      "id": "mod1-5",
+      "number": 5,
+      "question": "In which scenario would the use of a WISP be recommended?",
+      "options": [
+        "an Internet cafe in a city",
+        "a farm in a rural area without wired broadband access",
+        "any home with multiple wireless devices",
+        "an apartment in a building with cable access to the Internet"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "a farm in a rural area without wired broadband access",
+          "explanation": {
+            "eli5": "For \"In which scenario would the use of a WISP be recommended?\", this answer is correct: \"a farm in a rural area without wired broadband access\". In simple terms, wireless Internet Service Providers (WISPs) are typically found in rural areas where DSL or cable access is not available. A dish or antenna on the property of the subscriber connects wirelessly to a WISP transmitter, eliminating the need for physical cabling outside the building.",
+            "ccna": "Wireless Internet Service Providers (WISPs) are typically found in rural areas where DSL or cable access is not available. A dish or antenna on the property of the subscriber connects wirelessly to a WISP transmitter, eliminating the need for physical cabling outside the building."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"In which scenario would the use of a WISP be recommended?\", this answer is correct because wireless Internet Service Providers (WISPs) are typically found in rural areas where DSL or cable access is not available. A dish or antenna on the property of the subscriber connects wirelessly to a WISP transmitter, eliminating the need for physical cabling outside the building.",
+        "ccna": "Wireless Internet Service Providers (WISPs) are typically found in rural areas where DSL or cable access is not available. A dish or antenna on the property of the subscriber connects wirelessly to a WISP transmitter, eliminating the need for physical cabling outside the building."
+      }
+    },
+    {
+      "id": "mod1-6",
+      "number": 6,
+      "question": "What characteristic of a network enables it to quickly grow to support new users and applications without impacting the performance of the service being delivered to existing users?",
+      "options": [
+        "reliability",
+        "scalability",
+        "quality of service",
+        "accessibility"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "scalability",
+          "explanation": {
+            "eli5": "For \"What characteristic of a network enables it to quickly grow to support new users and applications without impacting the performance of the service being delivered to existing users?\", this answer is correct: \"scalability\". In simple terms, networks must be able to quickly grow to support new users and services, without impacting existing users and services. This ability to grow is known as scalability.",
+            "ccna": "Networks must be able to quickly grow to support new users and services, without impacting existing users and services. This ability to grow is known as scalability."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What characteristic of a network enables it to quickly grow to support new users and applications without impacting the performance of the service being delivered to existing users?\", this answer is correct because networks must be able to quickly grow to support new users and services, without impacting existing users and services. This ability to grow is known as scalability.",
+        "ccna": "Networks must be able to quickly grow to support new users and services, without impacting existing users and services. This ability to grow is known as scalability."
+      }
+    },
+    {
+      "id": "mod1-7",
+      "number": 7,
+      "question": "A college is building a new dormitory on its campus. Workers are digging in the ground to install a new water pipe for the dormitory. A worker accidentally damages a fiber optic cable that connects two of the existing dormitories to the campus data center. Although the cable has been cut, students in the dormitories only experience a very short interruption of network services. What characteristic of the network is shown here?",
+      "options": [
+        "quality of service (QoS)",
+        "scalability",
+        "security",
+        "fault tolerance",
+        "integrity"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        3
+      ],
+      "answers": [
+        {
+          "index": 3,
+          "text": "fault tolerance",
+          "explanation": {
+            "eli5": "For \"A college is building a new dormitory on its campus. Workers are digging in the ground to install a new water pipe for the dormitory. A worker accidentally damages a fiber optic cable that connects two of the existing dormitories to the campus data center. Although the cable has been cut, students in the dormitories only experience a very short interruption of network services. What characteristic of the network is shown here?\", this answer is correct: \"fault tolerance\". In simple terms, fault tolerance is the characteristic of a network which allows it to quickly respond to failures of network devices, media, or services. Quality of service refers to the measures taken to ensure that network traffic requiring higher throughput receives the required network resources. Scalability refers to the ability of the network to grow to accommodate new requirements. Security refers to protecting networks and data from theft, alteration, or destruction. Integrity refers to the completeness of something and is generally not used as a characteristic of networks in the same way as the other terms.",
+            "ccna": "Fault tolerance is the characteristic of a network which allows it to quickly respond to failures of network devices, media, or services. Quality of service refers to the measures taken to ensure that network traffic requiring higher throughput receives the required network resources. Scalability refers to the ability of the network to grow to accommodate new requirements. Security refers to protecting networks and data from theft, alteration, or destruction. Integrity refers to the completeness of something and is generally not used as a characteristic of networks in the same way as the other terms."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"A college is building a new dormitory on its campus. Workers are digging in the ground to install a new water pipe for the dormitory. A worker accidentally damages a fiber optic cable that connects two of the existing dormitories to the campus data center. Although the cable has been cut, students in the dormitories only experience a very short interruption of network services. What characteristic of the network is shown here?\", this answer is correct because fault tolerance is the characteristic of a network which allows it to quickly respond to failures of network devices, media, or services. Quality of service refers to the measures taken to ensure that network traffic requiring higher throughput receives the required network resources. Scalability refers to the ability of the network to grow to accommodate new requirements. Security refers to protecting networks and data from theft, alteration, or destruction. Integrity refers to the completeness of something and is generally not used as a characteristic of networks in the same way as the other terms.",
+        "ccna": "Fault tolerance is the characteristic of a network which allows it to quickly respond to failures of network devices, media, or services. Quality of service refers to the measures taken to ensure that network traffic requiring higher throughput receives the required network resources. Scalability refers to the ability of the network to grow to accommodate new requirements. Security refers to protecting networks and data from theft, alteration, or destruction. Integrity refers to the completeness of something and is generally not used as a characteristic of networks in the same way as the other terms."
+      }
+    },
+    {
+      "id": "mod1-8",
+      "number": 8,
+      "question": "What are two characteristics of a scalable network? (Choose two.)",
+      "options": [
+        "easily overloaded with increased traffic",
+        "grows in size without impacting existing users",
+        "is not as reliable as a small network",
+        "suitable for modular devices that allow for expansion",
+        "offers limited number of applications"
+      ],
+      "selectionCount": 2,
+      "answerIndices": [
+        1,
+        3
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "grows in size without impacting existing users",
+          "explanation": {
+            "eli5": "For \"What are two characteristics of a scalable network? (Choose two.)\", this choice is correct: \"grows in size without impacting existing users\". In simple terms, scalable networks are networks that can grow without requiring costly replacement of existing network devices. One way to make a network scalable is to buy networking devices that are modular.",
+            "ccna": "Scalable networks are networks that can grow without requiring costly replacement of existing network devices. One way to make a network scalable is to buy networking devices that are modular."
+          }
+        },
+        {
+          "index": 3,
+          "text": "suitable for modular devices that allow for expansion",
+          "explanation": {
+            "eli5": "For \"What are two characteristics of a scalable network? (Choose two.)\", this choice is correct: \"suitable for modular devices that allow for expansion\". In simple terms, scalable networks are networks that can grow without requiring costly replacement of existing network devices. One way to make a network scalable is to buy networking devices that are modular.",
+            "ccna": "Scalable networks are networks that can grow without requiring costly replacement of existing network devices. One way to make a network scalable is to buy networking devices that are modular."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What are two characteristics of a scalable network? (Choose two.)\", these choices are correct because scalable networks are networks that can grow without requiring costly replacement of existing network devices. One way to make a network scalable is to buy networking devices that are modular.",
+        "ccna": "Scalable networks are networks that can grow without requiring costly replacement of existing network devices. One way to make a network scalable is to buy networking devices that are modular."
+      }
+    },
+    {
+      "id": "mod1-9",
+      "number": 9,
+      "question": "Which device performs the function of determining the path that messages should take through internetworks?",
+      "options": [
+        "a router",
+        "a firewall",
+        "a web server",
+        "a DSL modem"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        0
+      ],
+      "answers": [
+        {
+          "index": 0,
+          "text": "a router",
+          "explanation": {
+            "eli5": "For \"Which device performs the function of determining the path that messages should take through internetworks?\", this answer is correct: \"a router\". In simple terms, a router is used to determine the path that the messages should take through the network. A firewall is used to filter incoming and outgoing traffic. A DSL modem is used to provide Internet connection for a home or an organization.",
+            "ccna": "A router is used to determine the path that the messages should take through the network. A firewall is used to filter incoming and outgoing traffic. A DSL modem is used to provide Internet connection for a home or an organization."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which device performs the function of determining the path that messages should take through internetworks?\", this answer is correct because a router is used to determine the path that the messages should take through the network. A firewall is used to filter incoming and outgoing traffic. A DSL modem is used to provide Internet connection for a home or an organization.",
+        "ccna": "A router is used to determine the path that the messages should take through the network. A firewall is used to filter incoming and outgoing traffic. A DSL modem is used to provide Internet connection for a home or an organization."
+      }
+    },
+    {
+      "id": "mod1-10",
+      "number": 10,
+      "question": "Which two Internet connection options do not require that physical cables be run to the building? (Choose two.)",
+      "options": [
+        "DSL",
+        "cellular",
+        "satellite",
+        "dialup",
+        "dedicated leased line"
+      ],
+      "selectionCount": 2,
+      "answerIndices": [
+        1,
+        2
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "cellular",
+          "explanation": {
+            "eli5": "For \"Which two Internet connection options do not require that physical cables be run to the building? (Choose two.)\", this choice is correct: \"cellular\". In simple terms, cellular connectivity requires the use of the cell phone network. Satellite connectivity is often used where physical cabling is not available outside the home or business.",
+            "ccna": "Cellular connectivity requires the use of the cell phone network. Satellite connectivity is often used where physical cabling is not available outside the home or business."
+          }
+        },
+        {
+          "index": 2,
+          "text": "satellite",
+          "explanation": {
+            "eli5": "For \"Which two Internet connection options do not require that physical cables be run to the building? (Choose two.)\", this choice is correct: \"satellite\". In simple terms, cellular connectivity requires the use of the cell phone network. Satellite connectivity is often used where physical cabling is not available outside the home or business.",
+            "ccna": "Cellular connectivity requires the use of the cell phone network. Satellite connectivity is often used where physical cabling is not available outside the home or business."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which two Internet connection options do not require that physical cables be run to the building? (Choose two.)\", these choices are correct because cellular connectivity requires the use of the cell phone network. Satellite connectivity is often used where physical cabling is not available outside the home or business.",
+        "ccna": "Cellular connectivity requires the use of the cell phone network. Satellite connectivity is often used where physical cabling is not available outside the home or business."
+      }
+    },
+    {
+      "id": "mod1-11",
+      "number": 11,
+      "question": "What type of network must a home user access in order to do online shopping?",
+      "options": [
+        "an intranet",
+        "the Internet",
+        "an extranet",
+        "a local area network"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        1
+      ],
+      "answers": [
+        {
+          "index": 1,
+          "text": "the Internet",
+          "explanation": {
+            "eli5": "For \"What type of network must a home user access in order to do online shopping?\", this answer is correct: \"the Internet\". In simple terms, home users will go online shopping over the Internet because online vendors are accessed through the Internet. An intranet is basically a local area network for internal use only. An extranet is a network for external partners to access certain resources inside an organization. A home user does not necessarily need a LAN to access the Internet. For example, a PC connects directly to the ISP through a modem.",
+            "ccna": "Home users will go online shopping over the Internet because online vendors are accessed through the Internet. An intranet is basically a local area network for internal use only. An extranet is a network for external partners to access certain resources inside an organization. A home user does not necessarily need a LAN to access the Internet. For example, a PC connects directly to the ISP through a modem."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What type of network must a home user access in order to do online shopping?\", this answer is correct because home users will go online shopping over the Internet because online vendors are accessed through the Internet. An intranet is basically a local area network for internal use only. An extranet is a network for external partners to access certain resources inside an organization. A home user does not necessarily need a LAN to access the Internet. For example, a PC connects directly to the ISP through a modem.",
+        "ccna": "Home users will go online shopping over the Internet because online vendors are accessed through the Internet. An intranet is basically a local area network for internal use only. An extranet is a network for external partners to access certain resources inside an organization. A home user does not necessarily need a LAN to access the Internet. For example, a PC connects directly to the ISP through a modem."
+      }
+    },
+    {
+      "id": "mod1-12",
+      "number": 12,
+      "question": "During a routine inspection, a technician discovered that software that was installed on a computer was secretly collecting data about websites that were visited by users of the computer. Which type of threat is affecting this computer?",
+      "options": [
+        "DoS attack",
+        "identity theft",
+        "spyware",
+        "zero-day attack"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "spyware",
+          "explanation": {
+            "eli5": "For \"During a routine inspection, a technician discovered that software that was installed on a computer was secretly collecting data about websites that were visited by users of the computer. Which type of threat is affecting this computer?\", this answer is correct: \"spyware\". In simple terms, spyware is software that is installed on a network device and that collects information.",
+            "ccna": "Spyware is software that is installed on a network device and that collects information."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"During a routine inspection, a technician discovered that software that was installed on a computer was secretly collecting data about websites that were visited by users of the computer. Which type of threat is affecting this computer?\", this answer is correct because spyware is software that is installed on a network device and that collects information.",
+        "ccna": "Spyware is software that is installed on a network device and that collects information."
+      }
+    },
+    {
+      "id": "mod1-13",
+      "number": 13,
+      "question": "Which term refers to a network that provides secure access to the corporate offices by suppliers, customers and collaborators?",
+      "options": [
+        "Internet",
+        "intranet",
+        "extranet",
+        "extendednet"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "extranet",
+          "explanation": {
+            "eli5": "For \"Which term refers to a network that provides secure access to the corporate offices by suppliers, customers and collaborators?\", this answer is correct: \"extranet\". In simple terms, the term Internet refers to the worldwide collection of connected networks. Intranet refers to a private connection of LANs and WANS that belong to an organization and is designed to be accessible to the members of the organization, employees, or others with authorization.​ Extranets provide secure and safe access to ​suppliers, customers, and collaborators. Extendednet is not a type of network.",
+            "ccna": "The term Internet refers to the worldwide collection of connected networks. Intranet refers to a private connection of LANs and WANS that belong to an organization and is designed to be accessible to the members of the organization, employees, or others with authorization.​ Extranets provide secure and safe access to ​suppliers, customers, and collaborators. Extendednet is not a type of network."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"Which term refers to a network that provides secure access to the corporate offices by suppliers, customers and collaborators?\", this answer is correct because the term Internet refers to the worldwide collection of connected networks. Intranet refers to a private connection of LANs and WANS that belong to an organization and is designed to be accessible to the members of the organization, employees, or others with authorization.​ Extranets provide secure and safe access to ​suppliers, customers, and collaborators. Extendednet is not a type of network.",
+        "ccna": "The term Internet refers to the worldwide collection of connected networks. Intranet refers to a private connection of LANs and WANS that belong to an organization and is designed to be accessible to the members of the organization, employees, or others with authorization.​ Extranets provide secure and safe access to ​suppliers, customers, and collaborators. Extendednet is not a type of network."
+      }
+    },
+    {
+      "id": "mod1-14",
+      "number": 14,
+      "question": "A large corporation has modified its network to allow users to access network resources from their personal laptops and smart phones. Which networking trend does this describe?",
+      "options": [
+        "cloud computing",
+        "online collaboration",
+        "bring your own device",
+        "video conferencing"
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "bring your own device",
+          "explanation": {
+            "eli5": "For \"A large corporation has modified its network to allow users to access network resources from their personal laptops and smart phones. Which networking trend does this describe?\", this answer is correct: \"bring your own device\". In simple terms, bYOD allows end users to use personal tools to access the corporate network. Allowing this trend can have major impacts on a network, such as security and compatibility with corporate software and devices.",
+            "ccna": "BYOD allows end users to use personal tools to access the corporate network. Allowing this trend can have major impacts on a network, such as security and compatibility with corporate software and devices."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"A large corporation has modified its network to allow users to access network resources from their personal laptops and smart phones. Which networking trend does this describe?\", this answer is correct because bYOD allows end users to use personal tools to access the corporate network. Allowing this trend can have major impacts on a network, such as security and compatibility with corporate software and devices.",
+        "ccna": "BYOD allows end users to use personal tools to access the corporate network. Allowing this trend can have major impacts on a network, such as security and compatibility with corporate software and devices."
+      }
+    },
+    {
+      "id": "mod1-15",
+      "number": 15,
+      "question": "What is an ISP?",
+      "options": [
+        "It is a standards body that develops cabling and wiring standards for networking.",
+        "It is a protocol that establishes how computers within a local network communicate.",
+        "It is an organization that enables individuals and businesses to connect to the Internet.",
+        "It is a networking device that combines the functionality of several different networking devices in one."
+      ],
+      "selectionCount": 1,
+      "answerIndices": [
+        2
+      ],
+      "answers": [
+        {
+          "index": 2,
+          "text": "It is an organization that enables individuals and businesses to connect to the Internet.",
+          "explanation": {
+            "eli5": "For \"What is an ISP?\", this answer is correct: \"It is an organization that enables individuals and businesses to connect to the Internet.\". In simple terms, an ISP, or Internet Service Provider, is an organization that provides access to the Internet for businesses and individuals.",
+            "ccna": "An ISP, or Internet Service Provider, is an organization that provides access to the Internet for businesses and individuals."
+          }
+        }
+      ],
+      "explanation": {
+        "eli5": "For \"What is an ISP?\", this answer is correct because an ISP, or Internet Service Provider, is an organization that provides access to the Internet for businesses and individuals.",
+        "ccna": "An ISP, or Internet Service Provider, is an organization that provides access to the Internet for businesses and individuals."
+      }
+    }
+  ]
+}
