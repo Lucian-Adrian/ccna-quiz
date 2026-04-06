@@ -1,4 +1,6 @@
 import "./styles.css";
+import { CHECKPOINT_SOURCES, resolveCheckpointAsset } from "./checkpoint-sources.js";
+import { buildCheckpointLibrary } from "./checkpoints.js";
 import { MODULE_SOURCES } from "./module-sources.js";
 import { shuffleCards } from "./parser.js";
 import { buildModuleLibrary, buildStatsSnapshot, getProgressEntry, getReviewQueue, recordAttempt, summarizeModules, theorySectionsForModule } from "./progress.js";
@@ -6,8 +8,11 @@ import { buildModuleLibrary, buildStatsSnapshot, getProgressEntry, getReviewQueu
 const STORAGE_KEY = "ccna-study-workspace-v4";
 const LEGACY_STORAGE_KEY = "ccna-study-workspace-v3";
 const library = buildModuleLibrary(MODULE_SOURCES);
+const checkpointLibrary = buildCheckpointLibrary(CHECKPOINT_SOURCES, resolveCheckpointAsset);
+const allPracticeItems = [...library.cards, ...checkpointLibrary.questions];
 const moduleMap = new Map(library.modules.map((module) => [module.id, module]));
-const cardMap = new Map(library.cards.map((card) => [card.id, card]));
+const checkpointMap = new Map(checkpointLibrary.checkpoints.map((checkpoint) => [checkpoint.id, checkpoint]));
+const itemMap = new Map(allPracticeItems.map((item) => [item.id, item]));
 
 const app = document.querySelector("#app");
 const pathParts = window.location.pathname.split("/").filter(Boolean);
@@ -37,6 +42,7 @@ const state = {
   questionFilter: "all",
   reviewMode: false,
   selectedOptions: [],
+  selectedMatrixAnswers: {},
   learnChecked: false,
   learnResult: null,
   progress: loadProgress(),
@@ -49,9 +55,12 @@ const state = {
     order: [],
     index: 0,
     selectedOptions: [],
+    selectedMatrixAnswers: {},
     checked: false,
     results: [],
     startedAt: null,
+    mode: "practice",
+    checkpointId: checkpointLibrary.checkpoints[0]?.id ?? null,
   },
 };
 
@@ -148,12 +157,48 @@ function selectedMatches(card, selectedOptions) {
   return true;
 }
 
+function isMatrixQuestion(item) {
+  return item.kind === "matrix_sort" && item.matrix;
+}
+
+function serializeSelection(item, selectedOptions, selectedMatrixAnswers) {
+  if (isMatrixQuestion(item)) {
+    return Object.entries(selectedMatrixAnswers)
+      .sort((left, right) => Number(left[0]) - Number(right[0]))
+      .map(([slot, value]) => `${slot}:${value}`);
+  }
+
+  return [...selectedOptions];
+}
+
+function isSelectionComplete(item, selectedOptions, selectedMatrixAnswers) {
+  if (isMatrixQuestion(item)) {
+    return item.matrix.prompts.every((_, index) => normalize(selectedMatrixAnswers[index] ?? "") !== "");
+  }
+
+  return selectedOptions.length > 0;
+}
+
+function matrixMatches(item, selectedMatrixAnswers) {
+  return item.matrix.mappings.every((choice) =>
+    choice.correctSlots.every((slot) => normalize(selectedMatrixAnswers[slot] ?? "") === normalize(choice.text)),
+  );
+}
+
+function responseMatches(item, selectedOptions, selectedMatrixAnswers) {
+  if (isMatrixQuestion(item)) {
+    return matrixMatches(item, selectedMatrixAnswers);
+  }
+
+  return selectedMatches(item, selectedOptions);
+}
+
 function currentModule() {
   return moduleMap.get(state.currentModuleId) ?? library.modules[0];
 }
 
 function currentCard() {
-  return cardMap.get(state.selectedCardId) ?? currentModule().cards[0];
+  return itemMap.get(state.selectedCardId) ?? currentModule().cards[0];
 }
 
 function questionStatus(card) {
@@ -175,7 +220,7 @@ function questionStatus(card) {
 }
 
 function availableReviewCards() {
-  return getReviewQueue(library.cards, state.progress);
+  return getReviewQueue(allPracticeItems, state.progress);
 }
 
 function visibleCards() {
@@ -204,6 +249,7 @@ function ensureVisibleSelection() {
   if (!visible.some((card) => card.id === state.selectedCardId)) {
     state.selectedCardId = visible[0].id;
     state.selectedOptions = [];
+    state.selectedMatrixAnswers = {};
     state.learnChecked = false;
     state.learnResult = null;
   }
@@ -215,6 +261,7 @@ function setModule(moduleId) {
   state.questionFilter = "all";
   state.reviewMode = false;
   state.selectedOptions = [];
+  state.selectedMatrixAnswers = {};
   state.learnChecked = false;
   state.learnResult = null;
   state.selectedCardId = currentModule().cards[0].id;
@@ -225,6 +272,7 @@ function setModule(moduleId) {
 function selectCard(cardId) {
   state.selectedCardId = cardId;
   state.selectedOptions = [];
+  state.selectedMatrixAnswers = {};
   state.learnChecked = false;
   state.learnResult = null;
   render();
@@ -260,16 +308,28 @@ function toggleLearnOption(option) {
   render();
 }
 
+function setLearnMatrixAnswer(slotIndex, value) {
+  if (state.learnChecked) {
+    return;
+  }
+
+  state.selectedMatrixAnswers = {
+    ...state.selectedMatrixAnswers,
+    [slotIndex]: value,
+  };
+  render();
+}
+
 function checkLearnAnswer(recordStats = true) {
   const card = currentCard();
-  const hasSelection = state.selectedOptions.length > 0;
-  const isCorrect = hasSelection ? selectedMatches(card, state.selectedOptions) : null;
+  const hasSelection = isSelectionComplete(card, state.selectedOptions, state.selectedMatrixAnswers);
+  const isCorrect = hasSelection ? responseMatches(card, state.selectedOptions, state.selectedMatrixAnswers) : null;
 
   if (recordStats && hasSelection) {
     state.progress = recordAttempt(state.progress, {
       cardId: card.id,
       isCorrect,
-      selectedOptions: state.selectedOptions,
+      selectedOptions: serializeSelection(card, state.selectedOptions, state.selectedMatrixAnswers),
       mode: "learn",
     });
     saveProgress();
@@ -301,6 +361,7 @@ function nextLearnCard() {
 
 function resetLearnPane() {
   state.selectedOptions = [];
+  state.selectedMatrixAnswers = {};
   state.learnChecked = false;
   state.learnResult = null;
   render();
@@ -324,6 +385,7 @@ function startWrongReview() {
   state.selectedCardId = first.id;
   state.currentModuleId = first.moduleId;
   state.selectedOptions = [];
+  state.selectedMatrixAnswers = {};
   state.learnChecked = false;
   state.learnResult = null;
   state.notice = `Review mode pornit. Lucrezi doar intrebarile gresite, in ordinea prioritatii.`;
@@ -335,6 +397,7 @@ function stopWrongReview() {
   state.questionFilter = "all";
   state.searchQuery = "";
   state.selectedOptions = [];
+  state.selectedMatrixAnswers = {};
   state.learnChecked = false;
   state.learnResult = null;
   state.selectedCardId = currentModule().cards[0]?.id ?? null;
@@ -351,12 +414,26 @@ function setExamScope(scope) {
   render();
 }
 
+function setExamMode(mode) {
+  state.exam.mode = mode;
+  render();
+}
+
+function setExamCheckpoint(checkpointId) {
+  state.exam.checkpointId = checkpointId;
+  render();
+}
+
 function setExamLength(length) {
   state.exam.length = Number(length);
   render();
 }
 
 function buildExamOrder() {
+  if (state.exam.mode === "checkpoint") {
+    return [...(checkpointMap.get(state.exam.checkpointId)?.questions ?? [])];
+  }
+
   const sourceCards = state.exam.scope === "module" ? [...currentModule().cards] : [...library.cards];
   const shuffled = shuffleCards(sourceCards, Date.now());
   const limit = state.exam.length === 0 ? shuffled.length : Math.min(state.exam.length, shuffled.length);
@@ -379,6 +456,7 @@ function startExam() {
   state.exam.order = buildExamOrder();
   state.exam.index = 0;
   state.exam.selectedOptions = [];
+  state.exam.selectedMatrixAnswers = {};
   state.exam.checked = false;
   state.exam.results = [];
   state.exam.running = true;
@@ -395,6 +473,7 @@ function stopExam() {
   state.exam.order = [];
   state.exam.index = 0;
   state.exam.selectedOptions = [];
+  state.exam.selectedMatrixAnswers = {};
   state.exam.checked = false;
   state.exam.results = [];
   state.exam.startedAt = null;
@@ -423,20 +502,36 @@ function toggleExamOption(option) {
   render();
 }
 
+function setExamMatrixAnswer(slotIndex, value) {
+  const card = currentExamCard();
+
+  if (!card || state.exam.checked) {
+    return;
+  }
+
+  state.exam.selectedMatrixAnswers = {
+    ...state.exam.selectedMatrixAnswers,
+    [slotIndex]: value,
+  };
+  render();
+}
+
 function checkExamAnswer() {
   const card = currentExamCard();
 
-  if (!card || state.exam.selectedOptions.length === 0) {
-    state.notice = "Selecteaza cel putin un raspuns inainte sa verifici.";
+  if (!card || !isSelectionComplete(card, state.exam.selectedOptions, state.exam.selectedMatrixAnswers)) {
+    state.notice = isMatrixQuestion(card)
+      ? "Completeaza toate potrivirile inainte sa verifici."
+      : "Selecteaza cel putin un raspuns inainte sa verifici.";
     render();
     return;
   }
 
-  const isCorrect = selectedMatches(card, state.exam.selectedOptions);
+  const isCorrect = responseMatches(card, state.exam.selectedOptions, state.exam.selectedMatrixAnswers);
   state.progress = recordAttempt(state.progress, {
     cardId: card.id,
     isCorrect,
-    selectedOptions: state.exam.selectedOptions,
+    selectedOptions: serializeSelection(card, state.exam.selectedOptions, state.exam.selectedMatrixAnswers),
     mode: "exam",
   });
   saveProgress();
@@ -457,6 +552,7 @@ function checkExamAnswer() {
 function nextExamCard() {
   state.exam.index += 1;
   state.exam.selectedOptions = [];
+  state.exam.selectedMatrixAnswers = {};
   state.exam.checked = false;
 
   if (state.exam.index >= state.exam.order.length) {
@@ -479,14 +575,16 @@ function reviewExamMistakes() {
     return;
   }
 
-  const card = cardMap.get(firstWrong.cardId);
+  const card = itemMap.get(firstWrong.cardId);
   state.activeTab = "learn";
   state.learnView = "questions";
   state.currentModuleId = card.moduleId;
   state.selectedCardId = card.id;
   state.searchQuery = "";
   state.questionFilter = "all";
+  state.reviewMode = card.sourceType === "checkpoint";
   state.selectedOptions = [];
+  state.selectedMatrixAnswers = {};
   state.learnChecked = true;
   state.learnResult = false;
   state.notice = `Ai revenit la ${card.module}, intrebarea ${card.number}.`;
@@ -570,8 +668,16 @@ function questionMetrics(card) {
   };
 }
 
+function getCollectionById(collectionId) {
+  return moduleMap.get(collectionId) ?? checkpointMap.get(collectionId) ?? null;
+}
+
+function getCollectionSummary(collectionId, moduleSummary, checkpointSummary) {
+  return moduleSummary[collectionId] ?? checkpointSummary[collectionId] ?? null;
+}
+
 function hardestQuestions() {
-  return library.cards
+  return allPracticeItems
     .map((card) => ({ card, progress: questionMetrics(card) }))
     .filter(({ progress }) => progress.wrong > 0)
     .sort((left, right) => right.progress.wrong - left.progress.wrong || left.card.module.localeCompare(right.card.module))
@@ -607,7 +713,7 @@ function render() {
         <div class="header-side">
           ${siteSwitcher()}
           <div class="metric-row">
-            <div class="metric-pill"><span>Questions</span><strong>${library.cards.length}</strong></div>
+            <div class="metric-pill"><span>Questions</span><strong>${allPracticeItems.length}</strong></div>
             <div class="metric-pill"><span>Reviewed</span><strong>${totalReviewed(state.progress)}</strong></div>
             <div class="metric-pill"><span>Accuracy</span><strong>${overallAccuracy()}%</strong></div>
           </div>
@@ -690,11 +796,15 @@ function renderActiveView() {
 }
 
 function renderLearnView() {
+  const headingTitle = state.reviewMode
+    ? "Wrong-answer rehearsal"
+    : currentModule().title;
+
   return `
     <section class="view-header">
       <div>
         <p class="eyebrow">Mod curent</p>
-        <h2>${currentModule().title}</h2>
+        <h2>${headingTitle}</h2>
       </div>
       <div class="secondary-nav">
         <button class="secondary-tab ${state.learnView === "questions" ? "active" : ""}" type="button" data-learn-view="questions">Intrebari</button>
@@ -745,11 +855,107 @@ function renderFilterChip(value, label) {
   return `<button class="filter-chip ${state.questionFilter === value ? "active" : ""}" type="button" data-filter="${value}">${label}</button>`;
 }
 
+function renderMediaStrip(item) {
+  if (!item.media?.length) {
+    return "";
+  }
+
+  return `
+    <div class="media-strip">
+      ${item.media.map((media, index) => `
+        <figure class="media-card">
+          <img src="${media.url}" alt="${escapeHtml(media.alt || `${item.question} exhibit ${index + 1}`)}" loading="lazy" />
+        </figure>
+      `).join("")}
+    </div>
+  `;
+}
+
+function renderChoiceAnswerList(item, selectedLookup, answerLookup, mode = "learn") {
+  return `
+    <div class="answer-list">
+      ${item.options.map((option, index) => {
+        const selected = selectedLookup.has(normalize(option));
+        const revealed = mode === "learn" ? state.learnChecked : state.exam.checked;
+        const correct = revealed && answerLookup.has(normalize(option));
+        const wrong = revealed && selected && !correct;
+
+        return `
+          <button class="answer-option ${selected ? "selected" : ""} ${correct ? "correct" : ""} ${wrong ? "wrong" : ""}" type="button" data-${mode}-option="${escapeHtml(option)}">
+            <span class="answer-index">${index + 1}</span>
+            <span>${option}</span>
+          </button>
+        `;
+      }).join("")}
+    </div>
+  `;
+}
+
+function renderMatrixActivity(item, selectedMatrixAnswers, mode = "learn") {
+  return `
+    <div class="matrix-layout">
+      <div class="matrix-choice-bank">
+        <p class="eyebrow">Choices</p>
+        <div class="choice-bank-list">
+          ${item.matrix.choices.map((choice) => `<span class="choice-pill">${choice}</span>`).join("")}
+        </div>
+      </div>
+      <div class="matrix-grid">
+        ${item.matrix.prompts.map((prompt, index) => `
+          <label class="matrix-row">
+            <span>${prompt}</span>
+            <select data-${mode}-matrix="${index}">
+              <option value="">Selecteaza</option>
+              ${item.matrix.choices.map((choice) => `
+                <option value="${escapeHtml(choice)}" ${normalize(selectedMatrixAnswers[index] ?? "") === normalize(choice) ? "selected" : ""}>${choice}</option>
+              `).join("")}
+            </select>
+          </label>
+        `).join("")}
+      </div>
+    </div>
+  `;
+}
+
+function renderAnswerSurface(item, mode = "learn") {
+  if (isMatrixQuestion(item)) {
+    return renderMatrixActivity(
+      item,
+      mode === "learn" ? state.selectedMatrixAnswers : state.exam.selectedMatrixAnswers,
+      mode,
+    );
+  }
+
+  const selectedLookup = new Set((mode === "learn" ? state.selectedOptions : state.exam.selectedOptions).map(normalize));
+  const answerLookup = new Set(getAnswerTexts(item).map(normalize));
+  return renderChoiceAnswerList(item, selectedLookup, answerLookup, mode);
+}
+
+function renderCorrectAnswer(item) {
+  if (isMatrixQuestion(item) && item.answerTable) {
+    const headers = item.answerTable.headers ?? [];
+    return `
+      <div class="answer-table">
+        ${headers.length ? `<div class="answer-table-row head">${headers.map((header) => `<span>${header}</span>`).join("")}</div>` : ""}
+        ${(item.answerTable.rows ?? []).map((row) => `
+          <div class="answer-table-row ${headers.length ? `cols-${headers.length}` : `cols-${row.length}`}">
+            ${row.map((cell) => `<span>${cell}</span>`).join("")}
+          </div>
+        `).join("")}
+      </div>
+    `;
+  }
+
+  return `
+    <ul class="answer-key-list">
+      ${item.answers.map((answer) => `<li>${answer.text}</li>`).join("")}
+    </ul>
+  `;
+}
+
 function renderQuestionLayout(cards) {
   const card = currentCard();
   const metrics = questionMetrics(card);
-  const selectedLookup = new Set(state.selectedOptions.map(normalize));
-  const answerLookup = new Set(getAnswerTexts(card).map(normalize));
 
   return `
     <section class="question-layout">
@@ -786,26 +992,14 @@ function renderQuestionLayout(cards) {
         </div>
 
         <p class="question-text">${card.question}</p>
+        ${renderMediaStrip(card)}
 
         <div class="helper-line">
-          <span>${card.selectionCount === 1 ? "Alege un raspuns" : `Alege ${card.selectionCount} raspunsuri`}</span>
+          <span>${isMatrixQuestion(card) ? "Potriveste fiecare prompt cu raspunsul corect" : card.selectionCount === 1 ? "Alege un raspuns" : `Alege ${card.selectionCount} raspunsuri`}</span>
           <span class="status-tag ${metrics.status}">${statusLabel(metrics.status)}</span>
         </div>
 
-        <div class="answer-list">
-          ${card.options.map((option, index) => {
-            const selected = selectedLookup.has(normalize(option));
-            const correct = state.learnChecked && answerLookup.has(normalize(option));
-            const wrong = state.learnChecked && selected && !correct;
-
-            return `
-              <button class="answer-option ${selected ? "selected" : ""} ${correct ? "correct" : ""} ${wrong ? "wrong" : ""}" type="button" data-learn-option="${escapeHtml(option)}">
-                <span class="answer-index">${index + 1}</span>
-                <span>${option}</span>
-              </button>
-            `;
-          }).join("")}
-        </div>
+        ${renderAnswerSurface(card, "learn")}
 
         <div class="action-bar">
           <button class="primary-action" type="button" data-action="check-learn">Verifica</button>
@@ -829,9 +1023,7 @@ function renderQuestionLayout(cards) {
         <section class="explanation-grid ${state.learnChecked ? "show" : ""}">
           <div class="explanation-block">
             <p class="eyebrow">Raspuns corect</p>
-            <ul class="answer-key-list">
-              ${card.answers.map((answer) => `<li>${answer.text}</li>`).join("")}
-            </ul>
+            ${renderCorrectAnswer(card)}
           </div>
           <div class="explanation-block">
             <p class="eyebrow">ELI5</p>
@@ -920,28 +1112,52 @@ function renderExamView() {
         <div class="view-header compact">
           <div>
             <p class="eyebrow">Simulare</p>
-            <h2>Examen rapid</h2>
+            <h2>Exam engine</h2>
+          </div>
+          <div class="secondary-nav">
+            <button class="secondary-tab ${state.exam.mode === "practice" ? "active" : ""}" type="button" data-exam-mode="practice">Practice sets</button>
+            <button class="secondary-tab ${state.exam.mode === "checkpoint" ? "active" : ""}" type="button" data-exam-mode="checkpoint">Checkpoints</button>
           </div>
         </div>
-        <p class="subcopy section-copy">Ruleaza o sesiune cronometrata, salveaza fiecare raspuns si revino imediat la intrebarile ratate.</p>
-        <div class="setup-row">
-          <label class="select-field">
-            <span>Scop</span>
-            <select data-exam-scope>
-              <option value="module" ${state.exam.scope === "module" ? "selected" : ""}>Modul curent</option>
-              <option value="all" ${state.exam.scope === "all" ? "selected" : ""}>Toate modulele</option>
-            </select>
-          </label>
-          <label class="select-field">
-            <span>Lungime</span>
-            <select data-exam-length>
-              <option value="10" ${state.exam.length === 10 ? "selected" : ""}>10</option>
-              <option value="20" ${state.exam.length === 20 ? "selected" : ""}>20</option>
-              <option value="30" ${state.exam.length === 30 ? "selected" : ""}>30</option>
-              <option value="0" ${state.exam.length === 0 ? "selected" : ""}>Tot</option>
-            </select>
-          </label>
-        </div>
+        <p class="subcopy section-copy">Ruleaza o sesiune cronometrata, salveaza fiecare raspuns si foloseste checkpoint-urile reale pentru repetitie de examen.</p>
+        ${
+          state.exam.mode === "practice"
+            ? `
+              <div class="setup-row">
+                <label class="select-field">
+                  <span>Scop</span>
+                  <select data-exam-scope>
+                    <option value="module" ${state.exam.scope === "module" ? "selected" : ""}>Modul curent</option>
+                    <option value="all" ${state.exam.scope === "all" ? "selected" : ""}>Toate modulele</option>
+                  </select>
+                </label>
+                <label class="select-field">
+                  <span>Lungime</span>
+                  <select data-exam-length>
+                    <option value="10" ${state.exam.length === 10 ? "selected" : ""}>10</option>
+                    <option value="20" ${state.exam.length === 20 ? "selected" : ""}>20</option>
+                    <option value="30" ${state.exam.length === 30 ? "selected" : ""}>30</option>
+                    <option value="0" ${state.exam.length === 0 ? "selected" : ""}>Tot</option>
+                  </select>
+                </label>
+              </div>
+            `
+            : `
+              <div class="checkpoint-grid">
+                ${checkpointLibrary.checkpoints.map((checkpoint) => {
+                  const snapshot = buildStatsSnapshot(checkpoint.questions, state.progress);
+                  return `
+                    <button class="checkpoint-tile ${state.exam.checkpointId === checkpoint.id ? "active" : ""}" type="button" data-exam-checkpoint="${checkpoint.id}">
+                      <strong>${checkpoint.title}</strong>
+                      <span>${checkpoint.questions.length} intrebari</span>
+                      <span>${checkpoint.questions.filter((item) => item.media?.length).length} cu imagini</span>
+                      <span>${snapshot.totals.accuracy}% acuratete</span>
+                    </button>
+                  `;
+                }).join("")}
+              </div>
+            `
+        }
         <div class="action-bar">
           <button class="primary-action" type="button" data-action="start-exam">Porneste examenul</button>
         </div>
@@ -970,12 +1186,12 @@ function renderExamView() {
 
         <div class="summary-list">
           ${state.exam.results.filter((result) => !result.isCorrect).map((result) => {
-            const card = cardMap.get(result.cardId);
+            const card = itemMap.get(result.cardId);
             return `
               <article class="summary-item">
                 <strong>${card.module} · ${card.number}</strong>
                 <p>${card.question}</p>
-                <span>Corect: ${getAnswerTexts(card).join(" • ")}</span>
+                <span>Corect: ${isMatrixQuestion(card) ? "Vezi tabela corecta in review." : getAnswerTexts(card).join(" • ")}</span>
               </article>
             `;
           }).join("") || `<p class="subcopy">Ai terminat fara raspunsuri gresite.</p>`}
@@ -991,38 +1207,24 @@ function renderExamView() {
   }
 
   const card = currentExamCard();
-  const selectedLookup = new Set(state.exam.selectedOptions.map(normalize));
-  const answerLookup = new Set(getAnswerTexts(card).map(normalize));
 
   return `
     <section class="exam-live">
       <div class="stage-top">
         <div>
-          <p class="eyebrow">Examen in curs</p>
+          <p class="eyebrow">${state.exam.mode === "checkpoint" ? `Checkpoint · ${card.module}` : "Examen in curs"}</p>
           <h2>${card.module} · ${state.exam.index + 1}/${state.exam.order.length}</h2>
         </div>
         <div class="stage-stats">
           <span>${formatDuration(elapsedExamSeconds())}</span>
-          <span>${card.selectionCount === 1 ? "un raspuns" : `${card.selectionCount} raspunsuri`}</span>
+          <span>${isMatrixQuestion(card) ? "matching" : card.selectionCount === 1 ? "un raspuns" : `${card.selectionCount} raspunsuri`}</span>
         </div>
       </div>
 
       <p class="question-text">${card.question}</p>
+      ${renderMediaStrip(card)}
 
-      <div class="answer-list">
-        ${card.options.map((option, index) => {
-          const selected = selectedLookup.has(normalize(option));
-          const correct = state.exam.checked && answerLookup.has(normalize(option));
-          const wrong = state.exam.checked && selected && !correct;
-
-          return `
-            <button class="answer-option ${selected ? "selected" : ""} ${correct ? "correct" : ""} ${wrong ? "wrong" : ""}" type="button" data-exam-option="${escapeHtml(option)}">
-              <span class="answer-index">${index + 1}</span>
-              <span>${option}</span>
-            </button>
-          `;
-        }).join("")}
-      </div>
+      ${renderAnswerSurface(card, "exam")}
 
       <div class="action-bar">
         ${
@@ -1036,9 +1238,7 @@ function renderExamView() {
       <section class="explanation-grid ${state.exam.checked ? "show" : ""}">
         <div class="explanation-block">
           <p class="eyebrow">Raspuns corect</p>
-          <ul class="answer-key-list">
-            ${card.answers.map((answer) => `<li>${answer.text}</li>`).join("")}
-          </ul>
+          ${renderCorrectAnswer(card)}
         </div>
         <div class="explanation-block">
           <p class="eyebrow">ELI5</p>
@@ -1055,9 +1255,10 @@ function renderExamView() {
 
 function renderStatsView() {
   const summaryByModule = summarizeModules(library.cards, state.progress);
-  const snapshot = buildStatsSnapshot(library.cards, state.progress);
-  const weakestModule = snapshot.weakestModuleId ? moduleMap.get(snapshot.weakestModuleId) : null;
-  const strongestModule = snapshot.strongestModuleId ? moduleMap.get(snapshot.strongestModuleId) : null;
+  const checkpointSummary = summarizeModules(checkpointLibrary.questions, state.progress);
+  const snapshot = buildStatsSnapshot(allPracticeItems, state.progress);
+  const weakestModule = snapshot.weakestModuleId ? getCollectionById(snapshot.weakestModuleId) : null;
+  const strongestModule = snapshot.strongestModuleId ? getCollectionById(snapshot.strongestModuleId) : null;
   const hardest = hardestQuestions();
 
   return `
@@ -1095,14 +1296,14 @@ function renderStatsView() {
       <section class="stats-section insights">
         <div class="summary-list two-up">
           <article class="summary-item accent-good">
-            <strong>Cel mai bun modul</strong>
+            <strong>Cea mai buna zona</strong>
             <p>${strongestModule ? strongestModule.title : "Fara date suficiente"}</p>
-            <span>${strongestModule ? `${summaryByModule[strongestModule.id].accuracy}% acuratete` : "Mai raspunde la cateva intrebari."}</span>
+            <span>${strongestModule ? `${getCollectionSummary(strongestModule.id, summaryByModule, checkpointSummary)?.accuracy ?? 0}% acuratete` : "Mai raspunde la cateva intrebari."}</span>
           </article>
           <article class="summary-item accent-warn">
-            <strong>Cel mai slab modul</strong>
+            <strong>Cea mai slaba zona</strong>
             <p>${weakestModule ? weakestModule.title : "Fara date suficiente"}</p>
-            <span>${weakestModule ? `${summaryByModule[weakestModule.id].accuracy}% acuratete` : "Mai raspunde la cateva intrebari."}</span>
+            <span>${weakestModule ? `${getCollectionSummary(weakestModule.id, summaryByModule, checkpointSummary)?.accuracy ?? 0}% acuratete` : "Mai raspunde la cateva intrebari."}</span>
           </article>
         </div>
       </section>
@@ -1150,6 +1351,35 @@ function renderStatsView() {
               <span>${progress.wrong} gresite · ${progress.accuracy}% corect · ${formatRelativeTime(progress.lastSeenAt)}</span>
             </article>
           `).join("") || `<p class="subcopy">Inca nu exista intrebari marcate ca dificile.</p>`}
+        </div>
+      </section>
+
+      <section class="stats-section">
+        <div class="stage-top">
+          <div>
+            <p class="eyebrow">Checkpoint Exams</p>
+            <h2>Progres pe examene reale</h2>
+          </div>
+        </div>
+        <div class="table-list">
+          <div class="table-row table-head">
+            <span>Checkpoint</span>
+            <span>Incercate</span>
+            <span>Acuratete</span>
+            <span>Media</span>
+          </div>
+          ${checkpointLibrary.checkpoints.map((checkpoint) => {
+            const stats = checkpointSummary[checkpoint.id] ?? { attempted: 0, accuracy: 0 };
+            const withMedia = checkpoint.questions.filter((item) => item.media?.length).length;
+            return `
+              <div class="table-row">
+                <span>${checkpoint.title}</span>
+                <span>${stats.attempted}/${checkpoint.questions.length}</span>
+                <span>${stats.accuracy}%</span>
+                <span>${withMedia}</span>
+              </div>
+            `;
+          }).join("")}
         </div>
       </section>
     </section>
@@ -1217,9 +1447,33 @@ function wireEvents() {
     });
   });
 
+  app.querySelectorAll("[data-learn-matrix]").forEach((select) => {
+    select.addEventListener("change", (event) => {
+      setLearnMatrixAnswer(event.target.dataset.learnMatrix, event.target.value);
+    });
+  });
+
   app.querySelectorAll("[data-exam-option]").forEach((button) => {
     button.addEventListener("click", () => {
       toggleExamOption(unescapeHtml(button.dataset.examOption));
+    });
+  });
+
+  app.querySelectorAll("[data-exam-matrix]").forEach((select) => {
+    select.addEventListener("change", (event) => {
+      setExamMatrixAnswer(event.target.dataset.examMatrix, event.target.value);
+    });
+  });
+
+  app.querySelectorAll("[data-exam-mode]").forEach((button) => {
+    button.addEventListener("click", () => {
+      setExamMode(button.dataset.examMode);
+    });
+  });
+
+  app.querySelectorAll("[data-exam-checkpoint]").forEach((button) => {
+    button.addEventListener("click", () => {
+      setExamCheckpoint(button.dataset.examCheckpoint);
     });
   });
 

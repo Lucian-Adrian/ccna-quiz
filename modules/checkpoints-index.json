@@ -1,0 +1,39 @@
+{
+  "schemaVersion": 2,
+  "files": [
+    {
+      "id": "check1",
+      "file": "check1.json",
+      "title": "Checkpoint Exam: Basic Network Connectivity and Communications",
+      "sourceUrl": "https://itexamanswers.net/ccna-1-v7-modules-1-3-basic-network-connectivity-and-communications-exam-answers.html",
+      "questionSourceUrl": "https://itexamanswers.net/ccna-1-v7-modules-1-3-basic-network-connectivity-and-communications-test-online.html",
+      "answerSourceUrl": "https://itexamanswers.net/ccna-1-v7-modules-1-3-basic-network-connectivity-and-communications-exam-answers.html",
+      "localMarkdownFiles": [
+        "check1.md",
+        "check1_questions.md"
+      ],
+      "totalQuestions": 76,
+      "answeredQuestions": 76,
+      "questionsWithMedia": 11,
+      "mediaItems": 11,
+      "assetsDir": "assets/check1"
+    },
+    {
+      "id": "check2",
+      "file": "check2.json",
+      "title": "Checkpoint Exam: Ethernet Concepts",
+      "sourceUrl": "https://itexamanswers.net/ccna-1-v7-modules-4-7-ethernet-concepts-exam-answers.html",
+      "questionSourceUrl": "https://itexamanswers.net/ccna-1-v7-modules-4-7-ethernet-concepts-test-online.html",
+      "answerSourceUrl": "https://itexamanswers.net/ccna-1-v7-modules-4-7-ethernet-concepts-exam-answers.html",
+      "localMarkdownFiles": [
+        "check2.md",
+        "check2_questions.md"
+      ],
+      "totalQuestions": 80,
+      "answeredQuestions": 80,
+      "questionsWithMedia": 7,
+      "mediaItems": 8,
+      "assetsDir": "assets/check2"
+    }
+  ]
+}

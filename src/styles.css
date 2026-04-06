@@ -504,6 +504,145 @@ a {
   gap: 10px;
 }
 
+.media-strip,
+.checkpoint-grid,
+.matrix-layout,
+.choice-bank-list,
+.answer-table,
+.answer-table-row {
+  display: grid;
+  gap: 12px;
+}
+
+.media-strip {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  margin-bottom: 16px;
+}
+
+.media-card {
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  overflow: hidden;
+  background: var(--surface-soft);
+}
+
+.media-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.checkpoint-grid {
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.checkpoint-tile {
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: var(--surface-soft);
+  text-align: left;
+  cursor: pointer;
+  display: grid;
+  gap: 8px;
+}
+
+.checkpoint-tile.active {
+  border-color: var(--blue);
+  background: var(--blue-soft);
+}
+
+.checkpoint-tile strong {
+  color: var(--text);
+}
+
+.checkpoint-tile span {
+  color: var(--muted);
+}
+
+.matrix-layout {
+  margin-top: 4px;
+}
+
+.matrix-choice-bank {
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface-soft);
+}
+
+.choice-bank-list {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.choice-pill {
+  min-height: 38px;
+  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+}
+
+.matrix-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.matrix-row {
+  display: grid;
+  gap: 8px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--surface-strong);
+}
+
+.matrix-row span {
+  color: var(--text);
+  line-height: 1.5;
+}
+
+.matrix-row select {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface);
+}
+
+.answer-table {
+  gap: 10px;
+}
+
+.answer-table-row {
+  align-items: stretch;
+}
+
+.answer-table-row.head {
+  font-weight: 700;
+  color: var(--text);
+}
+
+.answer-table-row span {
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--surface-strong);
+}
+
+.answer-table-row.cols-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.answer-table-row.cols-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .answer-option {
   width: 100%;
   display: grid;

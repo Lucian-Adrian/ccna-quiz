@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import fs from "node:fs";
 import { test } from "node:test";
+import { buildCheckpointLibrary } from "../src/checkpoints.js";
 import { getOptionState, hydrateCards, summarizeProgress } from "../src/study.js";
 import { buildModuleLibrary, buildStatsSnapshot, getReviewQueue, recordAttempt, summarizeModules, theorySectionsForModule } from "../src/progress.js";
 
@@ -207,4 +208,47 @@ test("builds a stats snapshot and prioritizes the review queue from wrong answer
     strongestModuleId: "mod1",
     reviewCount: 3,
   });
+});
+
+test("normalizes checkpoint exams with media and matrix prompts for the runtime", () => {
+  const checkpointSources = [
+    {
+      id: "check1",
+      title: "Checkpoint Exam 1",
+      questions: [
+        {
+          number: 5,
+          kind: "matrix_sort",
+          question: "Match the requirements.",
+          options: [],
+          media: [{ kind: "image", path: "assets/check1/a5-1.jpg" }],
+          answer: {
+            type: "table",
+            table: {
+              headers: [],
+              rows: [["fault tolerance", "Provide redundant links and devices."]],
+            },
+          },
+          explanation: { eli5: "eli5", ccna: "ccna" },
+          activity: {
+            type: "matrix_sort",
+            prompts: [{ position: 0, text: "Provide redundant links and devices." }],
+            choices: [{ position: 0, text: "fault tolerance", correctSlots: [0] }],
+          },
+        },
+      ],
+    },
+  ];
+
+  const library = buildCheckpointLibrary(checkpointSources, (assetPath) => `/resolved/${assetPath}`);
+  const [question] = library.questions;
+
+  assert.equal(library.checkpoints.length, 1);
+  assert.equal(question.id, "check1-5");
+  assert.equal(question.sourceType, "checkpoint");
+  assert.equal(question.kind, "matrix_sort");
+  assert.equal(question.media[0].url, "/resolved/assets/check1/a5-1.jpg");
+  assert.deepEqual(question.matrix.prompts, ["Provide redundant links and devices."]);
+  assert.deepEqual(question.matrix.choices, ["fault tolerance"]);
+  assert.deepEqual(question.answerTable.rows, [["fault tolerance", "Provide redundant links and devices."]]);
 });
