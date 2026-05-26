@@ -1,6 +1,8 @@
 node_modules
 /dist
 .vite
+.vite-*.pid
+/screenshots
 *.log
 npm-debug.log*
 pnpm-debug.log*

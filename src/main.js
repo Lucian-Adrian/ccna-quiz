@@ -1,53 +1,44 @@
-import mod1 from "../mod1.md?raw";
-import mod2 from "../mod2.md?raw";
-import mod3 from "../mod3.md?raw";
-import { shuffleCards } from "./parser.js";
-import { getOptionState, hydrateCards, summarizeProgress } from "./study.js";
+import modules1To3 from "../CCNA1_v7_Modules_1-3.json";
+import modules4To7 from "../CCNA1_v7_Modules_4-7.json";
+import modules8To10 from "../CCNA1_v7_Modules_8-10.json";
+import modules11To13 from "../CCNA1_v7_Modules_11-13.json";
+import modules14To15 from "../CCNA1_v7_Modules_14-15.json";
+import modules16To17 from "../CCNA1_v7_Modules_16-17.json";
+import {
+  buildSession,
+  createDecks,
+  isCorrect,
+  scoreSession,
+  summarizeDeckProgress,
+} from "./decks.js";
 import "./styles.css";
 
-const STORAGE_KEY = "cisco-flashcards-progress-v2";
+const STORAGE_KEY = "quizos-v2-progress";
+const EXAM_LIMIT = 24;
 
-const modules = [
-  { id: "mod1", label: "Module 1", markdown: mod1 },
-  { id: "mod2", label: "Module 2", markdown: mod2 },
-  { id: "mod3", label: "Module 3", markdown: mod3 },
-];
-
-const moduleCards = modules.map((module) => ({
-  ...module,
-  cards: hydrateCards(module.id, module.label, module.markdown),
-}));
-
-const allCards = moduleCards.flatMap((module) => module.cards);
-const app = document.querySelector("#app");
-const pathParts = window.location.pathname.split("/").filter(Boolean);
-const siteTrack = pathParts.at(-1) === "second" ? "second" : pathParts.at(-1) === "initial" ? "initial" : "local";
-const siteLinks = {
-  home: siteTrack === "local" ? "/" : "../",
-  initial: siteTrack === "local" ? "/" : "../initial/",
-  second: siteTrack === "local" ? "/" : "../second/",
+const moduleSources = {
+  "m1-3": modules1To3,
+  "m4-7": modules4To7,
+  "m8-10": modules8To10,
+  "m11-13": modules11To13,
+  "m14-15": modules14To15,
+  "m16-17": modules16To17,
 };
 
+const decks = createDecks(moduleSources);
+const deckById = new Map(decks.map((deck) => [deck.id, deck]));
+const app = document.querySelector("#app");
+
 const state = {
-  moduleFilter: "all",
-  focusFilter: "all",
-  mode: "quiz",
-  orderSeed: Date.now(),
-  order: [],
-  index: 0,
-  revealed: false,
-  selected: [],
+  screen: "home",
+  deckId: "midterm-1",
   progress: loadProgress(),
-  notice: "Quiz mode shows options first. Flip mode hides them until you reveal the back.",
+  session: null,
 };
 
 function loadProgress() {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) {
-      return {};
-    }
-    const parsed = JSON.parse(raw);
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
     return parsed && typeof parsed === "object" ? parsed : {};
   } catch {
     return {};
@@ -58,426 +49,427 @@ function saveProgress() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state.progress));
 }
 
-function normalize(text) {
-  return text.toLowerCase().replace(/[^a-z0-9]+/g, " ").replace(/\s+/g, " ").trim();
+function currentDeck() {
+  return deckById.get(state.deckId) ?? decks[0];
 }
 
-function getProgress(card) {
-  return state.progress[card.id] ?? { streak: 0, seen: 0, correct: 0, wrong: 0 };
+function currentQuestion() {
+  return state.session?.questions[state.session.index] ?? null;
 }
 
-function matchesFocus(card) {
-  const progress = getProgress(card);
-
-  if (state.focusFilter === "new") {
-    return progress.seen === 0;
-  }
-
-  if (state.focusFilter === "needs-work") {
-    return progress.wrong > 0 && progress.streak < 2;
-  }
-
-  if (state.focusFilter === "mastered") {
-    return progress.streak >= 3;
-  }
-
-  return true;
+function selectedFor(question) {
+  if (!question || !state.session) return [];
+  return state.session.answers[question.id] ?? [];
 }
 
-function getFilteredCards() {
-  return allCards.filter((card) => {
-    const moduleMatch = state.moduleFilter === "all" || card.moduleId === state.moduleFilter;
-    return moduleMatch && matchesFocus(card);
+function setScreen(screen) {
+  state.screen = screen;
+  state.session = null;
+  render();
+}
+
+function selectDeck(deckId) {
+  state.deckId = deckId;
+  render();
+}
+
+function startSession(mode) {
+  const deck = currentDeck();
+  state.screen = mode;
+  state.session = buildSession(deck, {
+    mode,
+    limit: EXAM_LIMIT,
+    seed: Date.now(),
   });
-}
-
-function buildOrder() {
-  const cards = getFilteredCards().map((card) => ({
-    ...card,
-    progress: getProgress(card),
-  }));
-
-  if (cards.length === 0) {
-    state.order = [];
-    state.index = 0;
-    state.revealed = false;
-    state.selected = [];
-    return;
-  }
-
-  const groups = new Map();
-  for (const card of cards) {
-    const key = Math.min(card.progress.streak, 5);
-    if (!groups.has(key)) {
-      groups.set(key, []);
-    }
-    groups.get(key).push(card);
-  }
-
-  const ordered = [];
-  const sortedKeys = [...groups.keys()].sort((left, right) => left - right);
-  for (const key of sortedKeys) {
-    ordered.push(...shuffleCards(groups.get(key), state.orderSeed + key));
-  }
-
-  state.order = ordered;
-  state.index = 0;
-  state.revealed = false;
-  state.selected = [];
-}
-
-function currentCard() {
-  return state.order[state.index];
-}
-
-function selectedMatches(card) {
-  const selected = new Set(state.selected.map(normalize));
-  const answers = new Set(card.answers.map(normalize));
-
-  if (selected.size !== answers.size) {
-    return false;
-  }
-
-  for (const answer of answers) {
-    if (!selected.has(answer)) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-function toggleSelection(option) {
-  const card = currentCard();
-  if (!card || state.revealed || state.mode !== "quiz") {
-    return;
-  }
-
-  const existing = state.selected.includes(option);
-
-  if (card.selectionCount === 1) {
-    state.selected = existing ? [] : [option];
-  } else if (existing) {
-    state.selected = state.selected.filter((item) => item !== option);
-  } else if (state.selected.length < card.selectionCount) {
-    state.selected = [...state.selected, option];
-  } else {
-    state.notice = `Pick up to ${card.selectionCount} answers for this card.`;
-    return;
-  }
-
-  state.notice = state.selected.length
-    ? `${state.selected.length} of ${card.selectionCount} selected.`
-    : "Selection cleared.";
-
   render();
 }
 
-function revealCard() {
-  const card = currentCard();
-  if (!card) {
-    return;
-  }
+function toggleAnswer(option) {
+  const question = currentQuestion();
+  if (!question || !state.session || state.session.submitted) return;
+  if (state.session.mode === "practice" && state.session.revealed) return;
 
-  state.revealed = true;
+  const selected = selectedFor(question);
+  const exists = selected.includes(option);
+  const answerCount = Math.max(question.correctAnswers.length, 1);
 
-  if (state.mode === "quiz") {
-    state.notice = selectedMatches(card)
-      ? "Strong read. Check the explanation, then mark it got it."
-      : "Review the correct answer, then send it back again or mark it got it.";
-  } else {
-    state.notice = "Back side open. Read the explanation, then score yourself.";
+  if (answerCount === 1) {
+    state.session.answers[question.id] = exists ? [] : [option];
+  } else if (exists) {
+    state.session.answers[question.id] = selected.filter((item) => item !== option);
+  } else if (selected.length < answerCount) {
+    state.session.answers[question.id] = [...selected, option];
   }
 
   render();
 }
 
-function advanceCard(isSuccess) {
-  const card = currentCard();
-  if (!card) {
-    return;
+function revealPracticeAnswer() {
+  const question = currentQuestion();
+  if (!question || !state.session) return;
+  if (question.options.length > 0 && selectedFor(question).length === 0) return;
+
+  state.session.revealed = true;
+  writeProgress(question, question.options.length === 0 ? true : isCorrect(question, selectedFor(question)));
+  render();
+}
+
+function nextQuestion() {
+  if (!state.session) return;
+
+  if (state.session.index < state.session.questions.length - 1) {
+    state.session.index += 1;
+    state.session.revealed = false;
+  } else if (state.session.mode === "practice") {
+    state.screen = "home";
+    state.session = null;
   }
 
-  const entry = getProgress(card);
-  const nextEntry = {
-    ...entry,
-    seen: entry.seen + 1,
-    streak: isSuccess ? Math.min(entry.streak + 1, 5) : 0,
-    correct: entry.correct + (isSuccess ? 1 : 0),
-    wrong: entry.wrong + (isSuccess ? 0 : 1),
+  render();
+}
+
+function previousQuestion() {
+  if (!state.session || state.session.index === 0) return;
+  state.session.index -= 1;
+  state.session.revealed = false;
+  render();
+}
+
+function submitExam() {
+  if (!state.session) return;
+
+  state.session.submitted = true;
+  for (const question of state.session.questions) {
+    writeProgress(question, isCorrect(question, selectedFor(question)));
+  }
+  render();
+}
+
+function restartExamMisses() {
+  if (!state.session) return;
+  const misses = state.session.questions.filter((question) => !isCorrect(question, selectedFor(question)));
+  if (misses.length === 0) return;
+
+  state.session = {
+    deckId: state.deckId,
+    mode: "practice",
+    questions: misses,
+    index: 0,
+    answers: {},
+    revealed: false,
+    submitted: false,
+    seed: Date.now(),
   };
-
-  state.progress[card.id] = nextEntry;
-  saveProgress();
-
-  state.index += 1;
-  state.revealed = false;
-  state.selected = [];
-
-  if (state.index >= state.order.length) {
-    state.orderSeed = Date.now();
-    buildOrder();
-    state.notice = isSuccess
-      ? "Round complete. Starting another pass with the weakest cards first."
-      : "Round complete. Starting a fresh review pass.";
-  } else {
-    state.notice = isSuccess ? "Logged as got it. Next card." : "Logged for more practice. Next card.";
-  }
-
+  state.screen = "practice";
   render();
 }
 
-function skipCard() {
-  if (!state.order.length) {
-    return;
-  }
-
-  state.index += 1;
-  state.revealed = false;
-  state.selected = [];
-
-  if (state.index >= state.order.length) {
-    state.orderSeed = Date.now();
-    buildOrder();
-    state.notice = "Skipped to a fresh review pass.";
-  } else {
-    state.notice = "Skipped.";
-  }
-
-  render();
+function writeProgress(question, correct) {
+  const current = state.progress[question.id] ?? { seen: 0, correct: 0, wrong: 0 };
+  state.progress[question.id] = {
+    seen: current.seen + 1,
+    correct: current.correct + (correct ? 1 : 0),
+    wrong: current.wrong + (correct ? 0 : 1),
+  };
+  saveProgress();
 }
 
 function resetProgress() {
   state.progress = {};
   localStorage.removeItem(STORAGE_KEY);
-  state.orderSeed = Date.now();
-  buildOrder();
-  state.notice = "Progress reset. You are starting from a clean deck.";
   render();
-}
-
-function setModuleFilter(filter) {
-  state.moduleFilter = filter;
-  state.orderSeed = Date.now();
-  buildOrder();
-  state.notice = `Deck changed to ${filter === "all" ? "all modules" : modules.find((module) => module.id === filter)?.label ?? filter}.`;
-  render();
-}
-
-function setFocusFilter(filter) {
-  state.focusFilter = filter;
-  state.orderSeed = Date.now();
-  buildOrder();
-  state.notice = `Focus changed to ${filter.replace("-", " ")}.`;
-  render();
-}
-
-function setMode(mode) {
-  state.mode = mode;
-  state.revealed = false;
-  state.selected = [];
-  state.notice =
-    mode === "quiz"
-      ? "Quiz mode is on. Pick an answer first, then reveal."
-      : "Flashcard mode is on. Reveal the back when you are ready.";
-  render();
-}
-
-function formatProgress(card) {
-  const progress = getProgress(card);
-  return `Seen ${progress.seen} · Streak ${progress.streak} · Right ${progress.correct} · Missed ${progress.wrong}`;
 }
 
 function render() {
-  const card = currentCard();
-  const total = state.order.length;
-  const remaining = Math.max(total - state.index - 1, 0);
-  const summary = summarizeProgress(allCards, state.progress);
-
   app.innerHTML = `
-    <main class="shell">
-      <nav class="site-switcher" aria-label="Site versions">
-        <a class="site-link" href="${siteLinks.home}">Hub</a>
-        <a class="site-link ${siteTrack === "initial" ? "active" : ""}" href="${siteLinks.initial}">Initial</a>
-        <a class="site-link ${siteTrack === "second" ? "active" : ""}" href="${siteLinks.second}">Second</a>
-      </nav>
-
-      <section class="hero">
-        <div>
-          <p class="eyebrow">Cisco CCNA study deck ${siteTrack !== "local" ? `· ${siteTrack}` : ""}</p>
-          <h1>Train the three markdown modules on one phone-ready page.</h1>
-          <p class="lede">Everything is local and static. Open the Vite network URL on your phone, then drill in quiz mode or flip through classic flashcards.</p>
-        </div>
-        <div class="hero-metrics">
-          <div class="metric">
-            <span>Total cards</span>
-            <strong>${allCards.length}</strong>
-          </div>
-          <div class="metric">
-            <span>Mastered</span>
-            <strong>${summary.mastered}</strong>
-          </div>
-          <div class="metric">
-            <span>Need work</span>
-            <strong>${summary.needsWork}</strong>
-          </div>
-          <div class="metric">
-            <span>Seen</span>
-            <strong>${summary.seen}</strong>
-          </div>
-        </div>
-      </section>
-
-      <section class="control-grid">
-        <div class="control-group">
-          <span class="group-label">Module</span>
-          <div class="toolbar">
-            ${renderChip("module", "all", "All modules", state.moduleFilter)}
-            ${moduleCards.map((module) => renderChip("module", module.id, module.label, state.moduleFilter)).join("")}
-          </div>
-        </div>
-
-        <div class="control-group">
-          <span class="group-label">Focus</span>
-          <div class="toolbar">
-            ${renderChip("focus", "all", "Mixed", state.focusFilter)}
-            ${renderChip("focus", "new", "New", state.focusFilter)}
-            ${renderChip("focus", "needs-work", "Need work", state.focusFilter)}
-            ${renderChip("focus", "mastered", "Mastered", state.focusFilter)}
-          </div>
-        </div>
-
-        <div class="control-group">
-          <span class="group-label">Mode</span>
-          <div class="toolbar">
-            ${renderChip("mode", "quiz", "Quiz", state.mode)}
-            ${renderChip("mode", "flash", "Flashcard", state.mode)}
-            <button class="chip danger" type="button" data-action="reset">Reset progress</button>
-          </div>
-        </div>
-      </section>
-
-      <section class="statusbar" aria-live="polite">
-        <span>${state.notice}</span>
-        <span>${remaining} left in this pass</span>
-      </section>
-
-      ${card ? renderCard(card, total) : renderEmpty()}
-    </main>
+    <div class="app-shell">
+      ${renderSidebar()}
+      <main class="main">
+        ${state.screen === "home" ? renderHome() : ""}
+        ${state.screen === "practice" ? renderTrainer("practice") : ""}
+        ${state.screen === "exam" ? renderTrainer("exam") : ""}
+        ${state.screen === "stats" ? renderStats() : ""}
+      </main>
+      ${renderBottomNav()}
+    </div>
   `;
 
   wireEvents();
 }
 
-function renderChip(group, value, label, currentValue) {
-  const active = currentValue === value ? "active" : "";
-  return `<button class="chip ${active}" type="button" data-group="${group}" data-value="${value}">${label}</button>`;
+function renderSidebar() {
+  return `
+    <aside class="sidebar">
+      <button class="brand" type="button" data-screen="home"><span>Q</span>QuizOS</button>
+      <nav class="side-nav" aria-label="Main">
+        ${navButton("home", "Home")}
+        ${navButton("practice", "Practice")}
+        ${navButton("exam", "Exam")}
+        ${navButton("stats", "Stats")}
+      </nav>
+      <button class="small-reset" type="button" data-action="reset-progress">Reset progress</button>
+    </aside>
+  `;
 }
 
-function renderCard(card, total) {
+function navButton(screen, label) {
+  const active =
+    state.screen === screen ||
+    (screen === "home" && !["practice", "exam", "stats"].includes(state.screen));
+  return `<button class="${active ? "active" : ""}" type="button" data-screen="${screen}">${label}</button>`;
+}
+
+function renderBottomNav() {
   return `
-    <article class="card ${state.revealed ? "revealed" : ""}">
-      <div class="card-top">
+    <nav class="bottom-nav" aria-label="Mobile navigation">
+      ${navButton("home", "Home")}
+      ${navButton("practice", "Practice")}
+      ${navButton("exam", "Exam")}
+      ${navButton("stats", "Stats")}
+    </nav>
+  `;
+}
+
+function renderHome() {
+  const deck = currentDeck();
+  const summary = summarizeDeckProgress(deck, state.progress);
+
+  return `
+    <section class="topbar">
+      <div>
+        <h1>Choose what to practice</h1>
+        <p>${deck.title} · ${deck.count} questions</p>
+      </div>
+      <button class="primary desktop-only" type="button" data-start="practice">Start</button>
+    </section>
+
+    <section class="content">
+      <section class="hero-panel">
         <div>
-          <p class="card-kicker">${card.module}</p>
-          <h2>Question ${card.number}</h2>
+          <span class="eyebrow">Selected</span>
+          <h2>${deck.title}</h2>
+          <p>Modules ${deck.range}</p>
         </div>
-        <div class="badge">${state.mode === "quiz" ? (card.selectionCount === 1 ? "single answer" : `choose ${card.selectionCount}`) : "flip + self-grade"}</div>
-      </div>
-
-      <p class="question">${card.question}</p>
-
-      <div class="progress-line" aria-hidden="true">
-        <span style="width:${Math.min(getProgress(card).streak * 20, 100)}%"></span>
-      </div>
-
-      <div class="round-note">
-        <span>Card ${Math.min(state.index + 1, total)} of ${Math.max(total, 1)}</span>
-        <span>${formatProgress(card)}</span>
-      </div>
-
-      ${
-        state.mode === "quiz"
-          ? renderQuizAnswers(card)
-          : `<section class="flash-face">
-              <p class="flash-hint">Front side</p>
-              <p class="flash-copy">Say the answer out loud before you reveal the back. This works especially well for quick phone review sessions.</p>
-            </section>`
-      }
-
-      <div class="card-actions">
-        ${
-          state.revealed
-            ? `
-              <button type="button" class="action ghost" data-action="again">Again</button>
-              <button type="button" class="action primary" data-action="gotit">Got it</button>
-            `
-            : `
-              <button type="button" class="action primary" data-action="reveal">${state.mode === "quiz" ? "Check and reveal" : "Flip card"}</button>
-            `
-        }
-        <button type="button" class="action ghost" data-action="skip">Skip</button>
-      </div>
-
-      <div class="review-panel ${state.revealed ? "show" : ""}">
-        <div class="review-head">
-          <span>Back side</span>
-          <strong>${card.answers.length > 1 ? "Correct answers" : "Correct answer"}</strong>
+        <div class="hero-actions">
+          <button class="primary" type="button" data-start="practice">Practice</button>
+          <button class="secondary" type="button" data-start="exam">Exam</button>
         </div>
-        <p class="review-selection">Correct: ${card.answers.join(" • ")}</p>
-        ${state.mode === "quiz" ? `<p class="review-selection muted">Your pick: ${state.selected.length ? state.selected.join(" • ") : "none"}</p>` : ""}
-        <p>${card.explanation || "This card came without an explanation in the markdown source, so the app is using the verified answer key only."}</p>
-      </div>
-    </article>
-  `;
-}
+      </section>
 
-function renderQuizAnswers(card) {
-  return `
-    <div class="answers" role="list" aria-label="Answer choices">
-      ${card.options
-        .map((option) => {
-          const optionState = getOptionState(card, state.selected, option, state.revealed);
-          const classes = ["answer"];
+      <section class="metrics">
+        <div><span>Questions</span><strong>${deck.count}</strong></div>
+        <div><span>Seen</span><strong>${summary.seen}</strong></div>
+        <div><span>Accuracy</span><strong>${summary.percent}%</strong></div>
+        <div><span>Missed</span><strong class="danger">${summary.wrong}</strong></div>
+      </section>
 
-          if (optionState.selected) {
-            classes.push("selected");
-          }
-          if (optionState.correct) {
-            classes.push("correct");
-          }
-          if (optionState.wrong) {
-            classes.push("wrong");
-          }
+      <h2 class="section-title">Midterms</h2>
+      <section class="deck-grid featured">
+        ${decks.filter((item) => item.type === "midterm").map(renderDeckButton).join("")}
+      </section>
 
-          return `
-            <button type="button" class="${classes.join(" ")}" data-option="${escapeHtml(option)}">
-              <span class="answer-letter">${optionLetter(card, option)}</span>
-              <span class="answer-text">${option}</span>
-            </button>
-          `;
-        })
-        .join("")}
-    </div>
-  `;
-}
+      <h2 class="section-title">Modules</h2>
+      <section class="deck-grid">
+        ${decks.filter((item) => item.type === "module").map(renderDeckButton).join("")}
+      </section>
 
-function renderEmpty() {
-  return `
-    <section class="card empty">
-      <h2>No cards match this filter.</h2>
-      <p>Switch back to Mixed or All modules to keep studying.</p>
+      <section class="all-row">
+        ${renderDeckButton(decks.find((item) => item.id === "all"))}
+      </section>
     </section>
   `;
 }
 
-function optionLetter(card, option) {
-  const index = card.options.indexOf(option);
-  return String.fromCharCode(65 + index);
+function renderDeckButton(deck) {
+  if (!deck) return "";
+  const selected = deck.id === state.deckId;
+  const progress = summarizeDeckProgress(deck, state.progress);
+
+  return `
+    <button class="deck-card ${selected ? "selected" : ""}" type="button" data-deck="${deck.id}">
+      <span>${deck.title}</span>
+      <strong>${deck.count}</strong>
+      <small>${progress.percent}% accuracy</small>
+    </button>
+  `;
+}
+
+function renderTrainer(mode) {
+  if (!state.session) {
+    startSession(mode);
+    return "";
+  }
+
+  const question = currentQuestion();
+  if (!question) return "";
+
+  const deck = currentDeck();
+  const selected = selectedFor(question);
+  const checked = mode === "practice" && state.session.revealed;
+  const examDone = mode === "exam" && state.session.submitted;
+  const score = scoreSession(state.session.questions, state.session.answers);
+  const answerCount = question.correctAnswers.length;
+  const hasChoices = question.options.length > 0;
+
+  return `
+    <section class="trainer ${mode}">
+      <header class="question-top">
+        <button class="back-button" type="button" data-screen="home">Back</button>
+        <div>
+          <h1>${mode === "exam" ? "Exam" : "Practice"}</h1>
+          <p>${deck.title} · ${state.session.index + 1}/${state.session.questions.length}</p>
+        </div>
+        ${mode === "exam" ? `<button class="secondary" type="button" data-action="submit-exam">Submit</button>` : ""}
+      </header>
+
+      ${
+        examDone
+          ? renderExamResult(score)
+          : `
+        <article class="question-card">
+          <div class="question-meta">
+            <span>${question.sourceTitle}</span>
+            <span>${!hasChoices ? "Study card" : answerCount > 1 ? `Choose ${answerCount}` : "Single answer"}</span>
+          </div>
+          <h2>${escapeHtml(question.question)}</h2>
+          ${renderQuestionAssets(question)}
+          ${
+            hasChoices
+              ? `<div class="answers">
+                  ${question.options.map((option, index) => renderAnswer(question, option, index, selected, checked)).join("")}
+                </div>`
+              : `<div class="study-card-note">Read the prompt, then reveal the answer.</div>`
+          }
+        </article>
+
+        ${checked ? renderExplanation(question, selected) : ""}
+
+        <footer class="trainer-actions">
+          <button class="secondary" type="button" data-action="previous" ${state.session.index === 0 ? "disabled" : ""}>Previous</button>
+          ${
+            mode === "practice"
+              ? state.session.revealed
+                ? `<button class="primary" type="button" data-action="next">Next</button>`
+                : `<button class="primary" type="button" data-action="reveal" ${hasChoices && selected.length === 0 ? "disabled" : ""}>${hasChoices ? "Check" : "Show answer"}</button>`
+              : `<button class="primary" type="button" data-action="next" ${state.session.index === state.session.questions.length - 1 ? "disabled" : ""}>Next</button>`
+          }
+        </footer>
+      `
+      }
+    </section>
+  `;
+}
+
+function renderAnswer(question, option, index, selected, checked) {
+  const selectedClass = selected.includes(option) ? "selected" : "";
+  const correctClass = checked && question.correctAnswers.includes(option) ? "correct" : "";
+  const wrongClass = checked && selected.includes(option) && !question.correctAnswers.includes(option) ? "wrong" : "";
+
+  return `
+    <button class="answer ${selectedClass} ${correctClass} ${wrongClass}" type="button" data-option="${escapeAttr(option)}">
+      <b>${String.fromCharCode(65 + index)}</b>
+      <span>${escapeHtml(option)}</span>
+    </button>
+  `;
+}
+
+function renderQuestionAssets(question) {
+  const tables = question.tables
+    .map((table) => `
+      <div class="table-wrap">
+        <table>
+          ${table
+            .map((row) => `<tr>${row.map((cell) => `<td>${escapeHtml(String(cell))}</td>`).join("")}</tr>`)
+            .join("")}
+        </table>
+      </div>
+    `)
+    .join("");
+
+  const code = question.codeBlocks
+    .map((block) => `<pre><code>${escapeHtml(block)}</code></pre>`)
+    .join("");
+
+  const images = question.imageUrls
+    .map((url) => `<img class="question-image" src="${escapeAttr(url)}" alt="">`)
+    .join("");
+
+  return `${images}${tables}${code}`;
+}
+
+function renderExplanation(question, selected) {
+  const correct = isCorrect(question, selected);
+  return `
+    <section class="explanation ${correct ? "correct" : "wrong"}">
+      <strong>${correct ? "Correct" : "Review this"}</strong>
+      <p class="correct-answer">${question.correctAnswers.map(escapeHtml).join(" · ")}</p>
+      <div>${formatExplanation(question.explanation)}</div>
+    </section>
+  `;
+}
+
+function renderExamResult(score) {
+  return `
+    <section class="result-card">
+      <span class="eyebrow">Result</span>
+      <h2>${score.percent}%</h2>
+      <p>${score.correct} correct · ${score.wrong} missed · ${score.total} total</p>
+      <div class="hero-actions">
+        <button class="primary" type="button" data-start="exam">New exam</button>
+        <button class="secondary" type="button" data-action="practice-misses" ${score.wrong === 0 ? "disabled" : ""}>Practice misses</button>
+      </div>
+    </section>
+  `;
+}
+
+function renderStats() {
+  return `
+    <section class="topbar">
+      <div>
+        <h1>Stats</h1>
+        <p>Progress saved on this device</p>
+      </div>
+      <button class="secondary desktop-only" type="button" data-action="reset-progress">Reset</button>
+    </section>
+    <section class="content">
+      <div class="stats-list">
+        ${decks
+          .filter((deck) => deck.type !== "all")
+          .map((deck) => {
+            const progress = summarizeDeckProgress(deck, state.progress);
+            return `
+              <div class="stat-row">
+                <div>
+                  <strong>${deck.title}</strong>
+                  <small>${progress.seen}/${deck.count} seen</small>
+                </div>
+                <span>${progress.percent}%</span>
+              </div>
+            `;
+          })
+          .join("")}
+      </div>
+    </section>
+  `;
+}
+
+function formatExplanation(explanation) {
+  if (!explanation) return "<p>No explanation provided.</p>";
+
+  return explanation
+    .split(/\n{2,}/)
+    .map((paragraph) => `<p>${inlineMarkdown(paragraph)}</p>`)
+    .join("");
+}
+
+function inlineMarkdown(value) {
+  return escapeHtml(value)
+    .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
+    .replace(/\*(.*?)\*/g, "<em>$1</em>");
 }
 
 function escapeHtml(value) {
-  return value
+  return String(value)
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;")
@@ -485,51 +477,44 @@ function escapeHtml(value) {
     .replaceAll("'", "&#39;");
 }
 
-function unescapeHtml(value) {
-  const parser = new DOMParser();
-  return parser.parseFromString(`<!doctype html><body>${value}`, "text/html").body.textContent || "";
+function escapeAttr(value) {
+  return escapeHtml(value);
+}
+
+function decodeAttr(value) {
+  const textarea = document.createElement("textarea");
+  textarea.innerHTML = value;
+  return textarea.value;
 }
 
 function wireEvents() {
-  app.querySelectorAll("[data-group]").forEach((button) => {
-    button.addEventListener("click", () => {
-      const group = button.dataset.group;
-      const value = button.dataset.value ?? "";
+  app.querySelectorAll("[data-screen]").forEach((button) => {
+    button.addEventListener("click", () => setScreen(button.dataset.screen));
+  });
 
-      if (group === "module") {
-        setModuleFilter(value);
-      } else if (group === "focus") {
-        setFocusFilter(value);
-      } else if (group === "mode") {
-        setMode(value);
-      }
-    });
+  app.querySelectorAll("[data-deck]").forEach((button) => {
+    button.addEventListener("click", () => selectDeck(button.dataset.deck));
+  });
+
+  app.querySelectorAll("[data-start]").forEach((button) => {
+    button.addEventListener("click", () => startSession(button.dataset.start));
   });
 
   app.querySelectorAll("[data-option]").forEach((button) => {
-    button.addEventListener("click", () => {
-      toggleSelection(unescapeHtml(button.dataset.option ?? ""));
-    });
+    button.addEventListener("click", () => toggleAnswer(decodeAttr(button.dataset.option ?? "")));
   });
 
   app.querySelectorAll("[data-action]").forEach((button) => {
     button.addEventListener("click", () => {
       const action = button.dataset.action;
-
-      if (action === "reveal") {
-        revealCard();
-      } else if (action === "again") {
-        advanceCard(false);
-      } else if (action === "gotit") {
-        advanceCard(true);
-      } else if (action === "skip") {
-        skipCard();
-      } else if (action === "reset") {
-        resetProgress();
-      }
+      if (action === "reveal") revealPracticeAnswer();
+      if (action === "next") nextQuestion();
+      if (action === "previous") previousQuestion();
+      if (action === "submit-exam") submitExam();
+      if (action === "practice-misses") restartExamMisses();
+      if (action === "reset-progress") resetProgress();
     });
   });
 }
 
-buildOrder();
 render();
