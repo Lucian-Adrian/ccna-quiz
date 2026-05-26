@@ -1,6 +1,13 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { buildSession, createDecks, isCorrect, scoreSession } from "../src/decks.js";
+import {
+  buildSession,
+  createDecks,
+  getRecommendedDeck,
+  getWeakQuestions,
+  isCorrect,
+  scoreSession,
+} from "../src/decks.js";
 
 const moduleSources = {
   "m1-3": [
@@ -64,4 +71,29 @@ test("scores single and multi-answer selections", () => {
     wrong: 0,
     percent: 100,
   });
+});
+
+test("finds weak questions by wrong attempts and low accuracy", () => {
+  const [deck] = createDecks(moduleSources);
+  const weak = getWeakQuestions(deck, {
+    "m1-3-1": { seen: 3, correct: 1, wrong: 2 },
+    "m1-3-2": { seen: 5, correct: 5, wrong: 0 },
+    "m4-7-1": { seen: 1, correct: 0, wrong: 1 },
+  });
+
+  assert.deepEqual(
+    weak.map((question) => question.id),
+    ["m4-7-1", "m1-3-1"],
+  );
+});
+
+test("recommends the least covered module deck before aggregate decks", () => {
+  const decks = createDecks(moduleSources);
+  const recommended = getRecommendedDeck(decks, {
+    "m1-3-1": { seen: 1, correct: 1, wrong: 0 },
+    "m1-3-2": { seen: 1, correct: 1, wrong: 0 },
+    "m4-7-1": { seen: 1, correct: 1, wrong: 0 },
+  });
+
+  assert.equal(recommended.id, "m8-10");
 });

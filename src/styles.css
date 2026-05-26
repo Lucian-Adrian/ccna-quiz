@@ -241,6 +241,34 @@ h1 {
   margin-bottom: 30px;
 }
 
+.selected-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: #fff;
+  margin-bottom: 30px;
+}
+
+.selected-strip strong,
+.selected-strip span {
+  display: block;
+}
+
+.selected-strip strong {
+  font-size: 17px;
+}
+
+.selected-strip span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 14px;
+  font-weight: 650;
+}
+
 .metrics div,
 .stat-grid div {
   min-height: 104px;
@@ -619,6 +647,12 @@ pre {
     margin-bottom: 22px;
   }
 
+  .selected-strip {
+    align-items: stretch;
+    flex-direction: column;
+    margin-bottom: 24px;
+  }
+
   .metrics div,
   .stat-grid div {
     min-height: 82px;
@@ -693,14 +727,14 @@ pre {
 
   .bottom-nav {
     position: fixed;
-    left: 8px;
-    right: 8px;
+    left: 6px;
+    right: 6px;
     bottom: 8px;
     z-index: 20;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     height: 58px;
-    padding: 6px;
+    padding: 5px;
     border: 1px solid var(--line);
     border-radius: 18px;
     background: rgba(255, 255, 255, 0.94);
@@ -712,7 +746,7 @@ pre {
     min-width: 0;
     border: 0;
     border-radius: 14px;
-    font-size: 12px;
+    font-size: 11px;
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: pointer;

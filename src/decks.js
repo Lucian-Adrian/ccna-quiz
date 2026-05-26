@@ -155,3 +155,29 @@ export function summarizeDeckProgress(deck, progress) {
 
   return { seen, correct, wrong, attempts, percent };
 }
+
+export function getWeakQuestions(deck, progress) {
+  return deck.questions
+    .map((question) => {
+      const entry = progress[question.id] ?? { seen: 0, correct: 0, wrong: 0 };
+      const attempts = (entry.correct ?? 0) + (entry.wrong ?? 0);
+      const accuracy = attempts ? (entry.correct ?? 0) / attempts : 1;
+      const priority = (1 - accuracy) * 10 + (entry.wrong ?? 0);
+      return { question, entry, priority };
+    })
+    .filter(({ entry }) => (entry.wrong ?? 0) > 0)
+    .sort((left, right) => right.priority - left.priority || left.question.id.localeCompare(right.question.id))
+    .map(({ question }) => question);
+}
+
+export function getRecommendedDeck(decks, progress) {
+  const moduleDecks = decks.filter((deck) => deck.type === "module");
+
+  return moduleDecks
+    .map((deck) => {
+      const summary = summarizeDeckProgress(deck, progress);
+      const coverage = deck.count ? summary.seen / deck.count : 1;
+      return { deck, coverage, accuracy: summary.percent };
+    })
+    .sort((left, right) => left.coverage - right.coverage || left.accuracy - right.accuracy)[0]?.deck;
+}

@@ -7,6 +7,8 @@ import modules16To17 from "../CCNA1_v7_Modules_16-17.json";
 import {
   buildSession,
   createDecks,
+  getRecommendedDeck,
+  getWeakQuestions,
   isCorrect,
   scoreSession,
   summarizeDeckProgress,
@@ -81,6 +83,31 @@ function startSession(mode) {
     limit: EXAM_LIMIT,
     seed: Date.now(),
   });
+  render();
+}
+
+function startFocusSession() {
+  const recommended = getRecommendedDeck(decks, state.progress) ?? currentDeck();
+  state.deckId = recommended.id;
+  startSession("practice");
+}
+
+function startWeakReview() {
+  const deck = currentDeck();
+  const weakQuestions = getWeakQuestions(deck, state.progress);
+  if (weakQuestions.length === 0) return;
+
+  state.screen = "practice";
+  state.session = {
+    deckId: deck.id,
+    mode: "practice",
+    questions: weakQuestions,
+    index: 0,
+    answers: {},
+    revealed: false,
+    submitted: false,
+    seed: Date.now(),
+  };
   render();
 }
 
@@ -233,34 +260,48 @@ function renderBottomNav() {
 function renderHome() {
   const deck = currentDeck();
   const summary = summarizeDeckProgress(deck, state.progress);
+  const recommended = getRecommendedDeck(decks, state.progress) ?? deck;
+  const recommendedSummary = summarizeDeckProgress(recommended, state.progress);
+  const weakCount = getWeakQuestions(deck, state.progress).length;
 
   return `
     <section class="topbar">
       <div>
-        <h1>Choose what to practice</h1>
-        <p>${deck.title} · ${deck.count} questions</p>
+        <h1>Today</h1>
+        <p>Practice, learn, then review mistakes</p>
       </div>
-      <button class="primary desktop-only" type="button" data-start="practice">Start</button>
+      <button class="primary desktop-only" type="button" data-action="start-focus">Start focus</button>
     </section>
 
     <section class="content">
       <section class="hero-panel">
         <div>
-          <span class="eyebrow">Selected</span>
-          <h2>${deck.title}</h2>
-          <p>Modules ${deck.range}</p>
+          <span class="eyebrow">Best next</span>
+          <h2>${recommended.title}</h2>
+          <p>${recommendedSummary.seen}/${recommended.count} seen · ${recommendedSummary.percent}% accuracy</p>
+        </div>
+        <div class="hero-actions">
+          <button class="primary" type="button" data-action="start-focus">Start focus</button>
+          <button class="secondary" type="button" data-action="review-weak" ${weakCount === 0 ? "disabled" : ""}>Review</button>
+        </div>
+      </section>
+
+      <section class="metrics">
+        <div><span>Selected</span><strong>${deck.range}</strong></div>
+        <div><span>Questions</span><strong>${deck.count}</strong></div>
+        <div><span>Seen</span><strong>${summary.seen}</strong></div>
+        <div><span>Misses</span><strong class="danger">${weakCount}</strong></div>
+      </section>
+
+      <section class="selected-strip">
+        <div>
+          <strong>${deck.title}</strong>
+          <span>Practice this selection or take a 24-question exam.</span>
         </div>
         <div class="hero-actions">
           <button class="primary" type="button" data-start="practice">Practice</button>
           <button class="secondary" type="button" data-start="exam">Exam</button>
         </div>
-      </section>
-
-      <section class="metrics">
-        <div><span>Questions</span><strong>${deck.count}</strong></div>
-        <div><span>Seen</span><strong>${summary.seen}</strong></div>
-        <div><span>Accuracy</span><strong>${summary.percent}%</strong></div>
-        <div><span>Missed</span><strong class="danger">${summary.wrong}</strong></div>
       </section>
 
       <h2 class="section-title">Midterms</h2>
@@ -513,6 +554,8 @@ function wireEvents() {
       if (action === "submit-exam") submitExam();
       if (action === "practice-misses") restartExamMisses();
       if (action === "reset-progress") resetProgress();
+      if (action === "start-focus") startFocusSession();
+      if (action === "review-weak") startWeakReview();
     });
   });
 }
