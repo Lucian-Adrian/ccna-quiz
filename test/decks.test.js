@@ -1,12 +1,16 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
+  buildSmartReview,
   buildSession,
   createDecks,
+  getDueQuestions,
   getLearningSummary,
+  getNewQuestions,
   getRecommendedDeck,
   getWeakQuestions,
   isCorrect,
+  scheduleProgress,
   scoreSession,
 } from "../src/decks.js";
 
@@ -102,8 +106,45 @@ test("summarizes unseen, weak, and mastered learning state", () => {
   assert.equal(summary.mastered, 1);
   assert.equal(summary.weak, 1);
   assert.equal(summary.unseen, deck.count - 2);
+  assert.equal(summary.due, 1);
   assert.equal(summary.masteryPercent, Math.round((1 / deck.count) * 100));
   assert.equal(unseen.id in progress, false);
+});
+
+test("schedules correct answers into the future and misses immediately", () => {
+  const now = Date.UTC(2026, 0, 1);
+
+  const firstCorrect = scheduleProgress({}, true, now);
+  const miss = scheduleProgress(firstCorrect, false, now + 1000);
+  const secondCorrect = scheduleProgress(firstCorrect, true, now + 2000);
+
+  assert.equal(firstCorrect.seen, 1);
+  assert.equal(firstCorrect.streak, 1);
+  assert.equal(firstCorrect.intervalDays, 1);
+  assert.equal(firstCorrect.dueAt, now + 24 * 60 * 60 * 1000);
+  assert.equal(miss.streak, 0);
+  assert.equal(miss.intervalDays, 0);
+  assert.equal(miss.dueAt, now + 1000);
+  assert.equal(secondCorrect.intervalDays > firstCorrect.intervalDays, true);
+});
+
+test("builds smart review from due, weak, then new questions", () => {
+  const deck = createDecks(moduleSources).find((item) => item.id === "all");
+  const now = Date.UTC(2026, 0, 10);
+  const progress = {
+    "m1-3-1": { seen: 2, correct: 2, wrong: 0, dueAt: now - 1000 },
+    "m1-3-2": { seen: 2, correct: 1, wrong: 1, dueAt: now + 100000 },
+  };
+
+  assert.deepEqual(
+    getDueQuestions(deck, progress, now).map((question) => question.id),
+    ["m1-3-1"],
+  );
+  assert.equal(getNewQuestions(deck, progress).length, deck.count - 2);
+  const smartReview = buildSmartReview(deck, progress, { limit: 3, now, seed: 1 }).map((question) => question.id);
+  assert.deepEqual(smartReview.slice(0, 2), ["m1-3-1", "m1-3-2"]);
+  assert.equal(smartReview.length, 3);
+  assert.equal(progress[smartReview[2]]?.seen, undefined);
 });
 
 test("recommends the least covered module deck before aggregate decks", () => {

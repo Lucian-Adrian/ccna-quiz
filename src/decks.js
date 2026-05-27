@@ -12,6 +12,8 @@ export const MIDTERMS = [
   { id: "midterm-2", title: "Midterm 2", range: "8-17", sourceIds: ["m8-10", "m11-13", "m14-15", "m16-17"] },
 ];
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 export function normalizeQuestion(rawQuestion, source) {
   const correctAnswers = rawQuestion.correct_answers ?? rawQuestion.answers ?? [];
 
@@ -160,6 +162,9 @@ export function getLearningSummary(deck, progress) {
   const base = summarizeDeckProgress(deck, progress);
   let mastered = 0;
   let weak = 0;
+  let due = 0;
+  let nextDueAt = null;
+  const now = Date.now();
 
   for (const question of deck.questions) {
     const entry = progress[question.id];
@@ -172,12 +177,77 @@ export function getLearningSummary(deck, progress) {
 
     if (attempts >= 2 && accuracy >= 0.8) mastered += 1;
     if (wrong > 0 && accuracy < 0.8) weak += 1;
+    if (isQuestionDue(question, progress, now)) due += 1;
+
+    if (entry.dueAt && (!nextDueAt || entry.dueAt < nextDueAt)) {
+      nextDueAt = entry.dueAt;
+    }
   }
 
   const unseen = Math.max(deck.count - base.seen, 0);
   const masteryPercent = deck.count ? Math.round((mastered / deck.count) * 100) : 0;
 
-  return { ...base, unseen, mastered, weak, masteryPercent };
+  return { ...base, unseen, mastered, weak, due, nextDueAt, masteryPercent };
+}
+
+export function scheduleProgress(entry = {}, correct, now = Date.now()) {
+  const currentInterval = entry.intervalDays ?? 0;
+  const nextStreak = correct ? (entry.streak ?? 0) + 1 : 0;
+  const intervalDays = correct
+    ? Math.min(45, Math.max(1, currentInterval ? Math.ceil(currentInterval * (1.8 + nextStreak * 0.12)) : 1))
+    : 0;
+
+  return {
+    seen: (entry.seen ?? 0) + 1,
+    correct: (entry.correct ?? 0) + (correct ? 1 : 0),
+    wrong: (entry.wrong ?? 0) + (correct ? 0 : 1),
+    streak: nextStreak,
+    lapses: (entry.lapses ?? 0) + (correct ? 0 : 1),
+    intervalDays,
+    lastSeenAt: now,
+    dueAt: correct ? now + intervalDays * DAY_MS : now,
+  };
+}
+
+export function isQuestionDue(question, progress, now = Date.now()) {
+  const entry = progress[question.id];
+  if (!entry || !entry.seen) return false;
+
+  return (entry.dueAt ?? (entry.wrong > 0 ? 0 : Number.POSITIVE_INFINITY)) <= now;
+}
+
+export function getDueQuestions(deck, progress, now = Date.now()) {
+  return deck.questions
+    .filter((question) => isQuestionDue(question, progress, now))
+    .sort((left, right) => {
+      const leftEntry = progress[left.id] ?? {};
+      const rightEntry = progress[right.id] ?? {};
+      const leftDue = leftEntry.dueAt ?? 0;
+      const rightDue = rightEntry.dueAt ?? 0;
+      return leftDue - rightDue || (rightEntry.wrong ?? 0) - (leftEntry.wrong ?? 0) || left.id.localeCompare(right.id);
+    });
+}
+
+export function getNewQuestions(deck, progress) {
+  return deck.questions.filter((question) => !progress[question.id]?.seen);
+}
+
+export function buildSmartReview(deck, progress, { limit = 20, now = Date.now(), seed = Date.now() } = {}) {
+  const selected = [];
+  const used = new Set();
+  const add = (questions) => {
+    for (const question of questions) {
+      if (used.has(question.id) || selected.length >= limit) continue;
+      used.add(question.id);
+      selected.push(question);
+    }
+  };
+
+  add(getDueQuestions(deck, progress, now));
+  add(getWeakQuestions(deck, progress));
+  add(shuffle(getNewQuestions(deck, progress), seed));
+
+  return selected;
 }
 
 export function getWeakQuestions(deck, progress) {

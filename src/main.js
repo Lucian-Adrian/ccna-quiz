@@ -5,12 +5,16 @@ import modules11To13 from "../CCNA1_v7_Modules_11-13.json";
 import modules14To15 from "../CCNA1_v7_Modules_14-15.json";
 import modules16To17 from "../CCNA1_v7_Modules_16-17.json";
 import {
+  buildSmartReview,
   buildSession,
   createDecks,
+  getDueQuestions,
   getLearningSummary,
+  getNewQuestions,
   getRecommendedDeck,
   getWeakQuestions,
   isCorrect,
+  scheduleProgress,
   scoreSession,
 } from "./decks.js";
 import { getNavigationAction } from "./navigation.js";
@@ -102,22 +106,14 @@ function startSession(mode) {
   render();
 }
 
-function startFocusSession() {
-  const recommended = getRecommendedDeck(decks, state.progress) ?? currentDeck();
-  state.deckId = recommended.id;
-  startSession("practice");
-}
-
-function startWeakReview() {
-  const deck = currentDeck();
-  const weakQuestions = getWeakQuestions(deck, state.progress);
-  if (weakQuestions.length === 0) return;
+function startPracticeQueue(questions) {
+  if (questions.length === 0) return;
 
   state.screen = "practice";
   state.session = {
-    deckId: deck.id,
+    deckId: state.deckId,
     mode: "practice",
-    questions: weakQuestions,
+    questions,
     index: 0,
     answers: {},
     revealed: false,
@@ -125,6 +121,39 @@ function startWeakReview() {
     seed: Date.now(),
   };
   render();
+}
+
+function startFocusSession() {
+  const recommended = getRecommendedDeck(decks, state.progress) ?? currentDeck();
+  state.deckId = recommended.id;
+  const questions = buildSmartReview(recommended, state.progress, {
+    limit: EXAM_LIMIT,
+    seed: Date.now(),
+  });
+
+  if (questions.length > 0) {
+    startPracticeQueue(questions);
+  } else {
+    startSession("practice");
+  }
+}
+
+function startDueReview() {
+  const dueQuestions = getDueQuestions(currentDeck(), state.progress);
+  if (dueQuestions.length > 0) startPracticeQueue(dueQuestions.slice(0, EXAM_LIMIT));
+}
+
+function startNewCards() {
+  const newQuestions = getNewQuestions(currentDeck(), state.progress);
+  if (newQuestions.length > 0) startPracticeQueue(newQuestions.slice(0, EXAM_LIMIT));
+}
+
+function startWeakReview() {
+  const deck = currentDeck();
+  const weakQuestions = getWeakQuestions(deck, state.progress);
+  if (weakQuestions.length === 0) return;
+
+  startPracticeQueue(weakQuestions.slice(0, EXAM_LIMIT));
 }
 
 function toggleAnswer(option) {
@@ -208,12 +237,7 @@ function restartExamMisses() {
 }
 
 function writeProgress(question, correct) {
-  const current = state.progress[question.id] ?? { seen: 0, correct: 0, wrong: 0 };
-  state.progress[question.id] = {
-    seen: current.seen + 1,
-    correct: current.correct + (correct ? 1 : 0),
-    wrong: current.wrong + (correct ? 0 : 1),
-  };
+  state.progress[question.id] = scheduleProgress(state.progress[question.id], correct);
   saveProgress();
 }
 
@@ -279,6 +303,8 @@ function renderHome() {
   const recommended = getRecommendedDeck(decks, state.progress) ?? deck;
   const recommendedSummary = getLearningSummary(recommended, state.progress);
   const weakCount = getWeakQuestions(deck, state.progress).length;
+  const dueCount = getDueQuestions(deck, state.progress).length;
+  const newCount = getNewQuestions(deck, state.progress).length;
 
   return `
     <section class="topbar">
@@ -293,30 +319,31 @@ function renderHome() {
       <section class="study-board">
         <div class="next-line">
           <span>Next</span>
-          <strong>${recommended.title}</strong>
-          <small>${recommendedSummary.unseen} unseen · ${recommendedSummary.weak} weak</small>
+          <strong>${dueCount ? "Review due" : recommended.title}</strong>
+          <small>${dueCount ? `${dueCount} due now · ${weakCount} weak` : `${recommendedSummary.unseen} unseen · ${recommendedSummary.weak} weak`}</small>
         </div>
         <div class="hero-actions compact">
-          <button class="primary" type="button" data-action="start-focus">Start focus</button>
-          <button class="secondary" type="button" data-action="review-weak" ${weakCount === 0 ? "disabled" : ""}>Review</button>
+          <button class="primary" type="button" data-action="${dueCount ? "review-due" : "start-focus"}">${dueCount ? "Review due" : "Smart review"}</button>
+          <button class="secondary" type="button" data-action="review-weak" ${weakCount === 0 ? "disabled" : ""}>Weak</button>
           <button class="secondary" type="button" data-start="exam">Exam</button>
         </div>
       </section>
 
       <section class="learning-strip" aria-label="Learning state">
-        <div><span>Seen</span><strong>${summary.seen}/${deck.count}</strong></div>
-        <div><span>Mastered</span><strong>${summary.masteryPercent}%</strong></div>
+        <div><span>Due</span><strong class="${summary.due ? "danger" : ""}">${summary.due}</strong></div>
+        <div><span>New</span><strong>${newCount}</strong></div>
         <div><span>Weak</span><strong class="${summary.weak ? "danger" : ""}">${summary.weak}</strong></div>
-        <div><span>Accuracy</span><strong>${summary.percent}%</strong></div>
+        <div><span>Mastered</span><strong>${summary.masteryPercent}%</strong></div>
       </section>
 
       <section class="selected-line">
         <div>
           <strong>${deck.title}</strong>
-          <span>${deck.count} questions · ${summary.unseen} unseen</span>
+          <span>${deck.count} questions · ${summary.due} due · ${summary.unseen} unseen</span>
         </div>
         <div class="hero-actions compact">
-          <button class="primary" type="button" data-start="practice">Practice</button>
+          <button class="primary" type="button" data-action="start-focus">Smart</button>
+          <button class="secondary" type="button" data-action="learn-new" ${newCount === 0 ? "disabled" : ""}>New</button>
           <button class="secondary" type="button" data-start="exam">Exam</button>
         </div>
       </section>
@@ -347,7 +374,7 @@ function renderDeckButton(deck) {
     <button class="deck-row ${selected ? "selected" : ""}" type="button" data-deck="${deck.id}">
       <span>${deck.title}</span>
       <strong>${progress.seen}/${deck.count}</strong>
-      <small>${progress.weak} weak · ${progress.percent}%</small>
+      <small>${progress.due} due · ${progress.weak} weak · ${progress.percent}%</small>
     </button>
   `;
 }
@@ -526,7 +553,7 @@ function renderStats() {
               <div class="stat-row">
                 <div>
                   <strong>${deck.title}</strong>
-                  <small>${progress.seen}/${deck.count} seen · ${progress.weak} weak · ${progress.mastered} mastered</small>
+                  <small>${progress.seen}/${deck.count} seen · ${progress.due} due · ${progress.weak} weak · ${progress.mastered} mastered</small>
                   <span class="progress-track"><i style="width: ${progress.masteryPercent}%"></i></span>
                 </div>
                 <span>${progress.percent}%</span>
@@ -600,7 +627,9 @@ function wireEvents() {
       if (action === "practice-misses") restartExamMisses();
       if (action === "reset-progress") resetProgress();
       if (action === "start-focus") startFocusSession();
+      if (action === "review-due") startDueReview();
       if (action === "review-weak") startWeakReview();
+      if (action === "learn-new") startNewCards();
     });
   });
 }

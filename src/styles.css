@@ -712,7 +712,8 @@ pre {
     grid-template-columns: 1fr 1fr;
   }
 
-  .study-board .hero-actions.compact {
+  .study-board .hero-actions.compact,
+  .selected-line .hero-actions.compact {
     grid-template-columns: repeat(3, 1fr);
   }
 
