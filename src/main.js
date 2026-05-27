@@ -8,6 +8,7 @@ import {
   buildSmartReview,
   buildSession,
   createDecks,
+  formatMatchingAnswer,
   getDueQuestions,
   getLearningSummary,
   getNewQuestions,
@@ -176,13 +177,30 @@ function toggleAnswer(option) {
   render();
 }
 
+function setMatchingAnswer(left, right) {
+  const question = currentQuestion();
+  if (!question || !state.session || state.session.submitted) return;
+  if (state.session.mode === "practice" && state.session.revealed) return;
+
+  const selected = selectedFor(question).filter((answer) => !answer.startsWith(`${left} => `));
+  if (right) selected.push(formatMatchingAnswer(left, right));
+  state.session.answers[question.id] = selected;
+  render();
+}
+
 function revealPracticeAnswer() {
   const question = currentQuestion();
   if (!question || !state.session) return;
   if (question.options.length > 0 && selectedFor(question).length === 0) return;
+  if ((question.matchingPairs?.length ?? 0) > 0 && selectedFor(question).length < question.matchingPairs.length) return;
 
   state.session.revealed = true;
-  writeProgress(question, question.options.length === 0 ? true : isCorrect(question, selectedFor(question)));
+  writeProgress(
+    question,
+    question.options.length === 0 && (question.matchingPairs?.length ?? 0) === 0
+      ? true
+      : isCorrect(question, selectedFor(question)),
+  );
   render();
 }
 
@@ -396,6 +414,7 @@ function renderTrainer(mode) {
   const answered = answeredCount();
   const answerCount = question.correctAnswers.length;
   const hasChoices = question.options.length > 0;
+  const hasMatching = (question.matchingPairs?.length ?? 0) > 0;
 
   return `
     <section class="trainer ${mode}">
@@ -418,7 +437,7 @@ function renderTrainer(mode) {
         <article class="question-card">
           <div class="question-meta">
             <span>${question.sourceTitle}</span>
-            <span>${!hasChoices ? "Study card" : answerCount > 1 ? `Choose ${answerCount}` : "Single answer"}</span>
+            <span>${hasMatching ? "Matching" : !hasChoices ? "Study card" : answerCount > 1 ? `Choose ${answerCount}` : "Single answer"}</span>
           </div>
           <h2>${escapeHtml(question.question)}</h2>
           ${renderQuestionAssets(question)}
@@ -427,7 +446,9 @@ function renderTrainer(mode) {
               ? `<div class="answers">
                   ${question.options.map((option, index) => renderAnswer(question, option, index, selected, checked)).join("")}
                 </div>`
-              : `<div class="study-card-note">Read the prompt, then reveal the answer.</div>`
+              : hasMatching
+                ? renderMatchingQuestion(question, selected, checked)
+                : `<div class="study-card-note">Read the prompt, then reveal the answer.</div>`
           }
         </article>
 
@@ -439,13 +460,55 @@ function renderTrainer(mode) {
             mode === "practice"
               ? state.session.revealed
                 ? `<button class="primary" type="button" data-action="next">Next</button>`
-                : `<button class="primary" type="button" data-action="reveal" ${hasChoices && selected.length === 0 ? "disabled" : ""}>${hasChoices ? "Check" : "Show answer"}</button>`
+                : `<button class="primary" type="button" data-action="reveal" ${
+                    (hasChoices && selected.length === 0) || (hasMatching && selected.length < question.matchingPairs.length)
+                      ? "disabled"
+                      : ""
+                  }>${hasChoices || hasMatching ? "Check" : "Show answer"}</button>`
               : `<button class="primary" type="button" data-action="next" ${state.session.index === state.session.questions.length - 1 ? "disabled" : ""}>Next</button>`
           }
         </footer>
       `
       }
     </section>
+  `;
+}
+
+function renderMatchingQuestion(question, selected, checked) {
+  const selectedMap = new Map(
+    selected.map((answer) => {
+      const [left, right] = answer.split(" => ");
+      return [left, right];
+    }),
+  );
+  const targets = [...new Set(question.matchingPairs.map((pair) => pair.right))].sort((left, right) =>
+    left.localeCompare(right),
+  );
+
+  return `
+    <div class="matching">
+      ${question.matchingPairs
+        .map((pair) => {
+          const value = selectedMap.get(pair.left) ?? "";
+          const correct = value === pair.right;
+          return `
+            <label class="match-row ${checked ? (correct ? "correct" : "wrong") : ""}">
+              <span>${escapeHtml(pair.left)}</span>
+              <select data-match-left="${escapeAttr(pair.left)}" ${checked ? "disabled" : ""}>
+                <option value="">Choose match</option>
+                ${targets
+                  .map(
+                    (target) =>
+                      `<option value="${escapeAttr(target)}" ${target === value ? "selected" : ""}>${escapeHtml(target)}</option>`,
+                  )
+                  .join("")}
+              </select>
+              ${checked ? `<small>${correct ? "Correct" : `Answer: ${escapeHtml(pair.right)}`}</small>` : ""}
+            </label>
+          `;
+        })
+        .join("")}
+    </div>
   `;
 }
 
@@ -462,8 +525,10 @@ function renderAnswer(question, option, index, selected, checked) {
   `;
 }
 
-function renderQuestionAssets(question) {
-  const tables = question.tables
+function renderQuestionAssets(question, includeAnswerAssets = false) {
+  const hasMatching = (question.matchingPairs?.length ?? 0) > 0;
+  const visibleTables = hasMatching ? [] : question.tables;
+  const tables = visibleTables
     .map((table) => `
       <div class="table-wrap">
         <table>
@@ -479,7 +544,8 @@ function renderQuestionAssets(question) {
     .map((block) => `<pre><code>${escapeHtml(block)}</code></pre>`)
     .join("");
 
-  const images = question.imageUrls
+  const visibleImages = hasMatching && !includeAnswerAssets ? question.imageUrls.slice(0, 1) : question.imageUrls;
+  const images = visibleImages
     .map((url) => `<img class="question-image" src="${escapeAttr(url)}" alt="">`)
     .join("");
 
@@ -488,12 +554,28 @@ function renderQuestionAssets(question) {
 
 function renderExplanation(question, selected) {
   const correct = isCorrect(question, selected);
+  const hasMatching = (question.matchingPairs?.length ?? 0) > 0;
   return `
     <section class="explanation ${correct ? "correct" : "wrong"}">
       <strong>${correct ? "Correct" : "Review this"}</strong>
-      <p class="correct-answer">${question.correctAnswers.map(escapeHtml).join(" · ")}</p>
+      <p class="correct-answer">${
+        hasMatching ? "Review the correct matches below." : question.correctAnswers.map(escapeHtml).join(" · ")
+      }</p>
+      ${renderAnswerAssets(question)}
       <div>${formatExplanation(question.explanation)}</div>
     </section>
+  `;
+}
+
+function renderAnswerAssets(question) {
+  if ((question.matchingPairs?.length ?? 0) === 0) return "";
+  const answerImages = question.imageUrls.slice(1);
+  if (answerImages.length === 0) return "";
+
+  return `
+    <div class="answer-assets">
+      ${answerImages.map((url) => `<img class="question-image" src="${escapeAttr(url)}" alt="">`).join("")}
+    </div>
   `;
 }
 
@@ -615,6 +697,12 @@ function wireEvents() {
 
   app.querySelectorAll("[data-option]").forEach((button) => {
     button.addEventListener("click", () => toggleAnswer(decodeAttr(button.dataset.option ?? "")));
+  });
+
+  app.querySelectorAll("[data-match-left]").forEach((select) => {
+    select.addEventListener("change", () =>
+      setMatchingAnswer(decodeAttr(select.dataset.matchLeft ?? ""), decodeAttr(select.value)),
+    );
   });
 
   app.querySelectorAll("[data-action]").forEach((button) => {

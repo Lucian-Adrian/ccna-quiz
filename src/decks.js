@@ -15,7 +15,11 @@ export const MIDTERMS = [
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 export function normalizeQuestion(rawQuestion, source) {
-  const correctAnswers = rawQuestion.correct_answers ?? rawQuestion.answers ?? [];
+  const matchingPairs = inferMatchingPairs(rawQuestion);
+  const correctAnswers =
+    matchingPairs.length > 0
+      ? matchingPairs.map((pair) => formatMatchingAnswer(pair.left, pair.right))
+      : rawQuestion.correct_answers ?? rawQuestion.answers ?? [];
 
   return {
     id: `${source.id}-${rawQuestion.number}`,
@@ -26,11 +30,32 @@ export function normalizeQuestion(rawQuestion, source) {
     question: rawQuestion.question,
     options: rawQuestion.options ?? [],
     correctAnswers,
+    matchingPairs,
     explanation: rawQuestion.explanation ?? "",
     imageUrls: rawQuestion.image_urls ?? [],
     codeBlocks: rawQuestion.code_blocks ?? [],
     tables: rawQuestion.tables ?? [],
   };
+}
+
+export function inferMatchingPairs(rawQuestion) {
+  const questionText = rawQuestion.question ?? "";
+  const table = rawQuestion.tables?.[0] ?? [];
+  const hasChoiceAnswers = (rawQuestion.options ?? []).length > 0 || (rawQuestion.correct_answers ?? []).length > 0;
+  const looksLikeMatching = /match|place the options/i.test(questionText);
+
+  if (hasChoiceAnswers || !looksLikeMatching) return [];
+  if (!Array.isArray(table) || table.length < 2) return [];
+  if (!table.every((row) => Array.isArray(row) && row.length === 2 && row[0] && row[1])) return [];
+
+  return table.map(([left, right]) => ({
+    left: String(left),
+    right: String(right),
+  }));
+}
+
+export function formatMatchingAnswer(left, right) {
+  return `${left} => ${right}`;
 }
 
 export function createModuleDecks(moduleSources) {
@@ -96,7 +121,11 @@ export function shuffle(items, seed = Date.now()) {
 export function buildSession(deck, { mode, limit = 24, seed = Date.now() } = {}) {
   const eligibleQuestions =
     mode === "exam"
-      ? deck.questions.filter((question) => question.options.length > 0 && question.correctAnswers.length > 0)
+      ? deck.questions.filter(
+          (question) =>
+            question.correctAnswers.length > 0 &&
+            (question.options.length > 0 || (question.matchingPairs?.length ?? 0) > 0),
+        )
       : deck.questions;
   const shuffled = shuffle(eligibleQuestions, seed);
   const questions = mode === "exam" ? shuffled.slice(0, Math.min(limit, shuffled.length)) : shuffled;

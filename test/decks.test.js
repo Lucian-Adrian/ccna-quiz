@@ -4,11 +4,13 @@ import {
   buildSmartReview,
   buildSession,
   createDecks,
+  formatMatchingAnswer,
   getDueQuestions,
   getLearningSummary,
   getNewQuestions,
   getRecommendedDeck,
   getWeakQuestions,
+  inferMatchingPairs,
   isCorrect,
   scheduleProgress,
   scoreSession,
@@ -59,6 +61,36 @@ test("exam sessions skip unanswerable study cards", () => {
 
   assert.equal(session.questions.length, 1);
   assert.equal(session.questions[0].question, "Choice");
+});
+
+test("hydrates table-only matching questions as answerable pairs", () => {
+  const rawQuestion = {
+    number: 1,
+    question: "Refer to the exhibit. Match the network with the correct IP address.",
+    options: [],
+    correct_answers: [],
+    tables: [
+      [
+        ["Network A", "192.168.0.128 /25"],
+        ["Network B", "192.168.0.0 /26"],
+      ],
+    ],
+  };
+
+  const pairs = inferMatchingPairs(rawQuestion);
+  const [deck] = createDecks({ "m1-3": [rawQuestion] });
+  const [question] = deck.questions;
+
+  assert.deepEqual(pairs, [
+    { left: "Network A", right: "192.168.0.128 /25" },
+    { left: "Network B", right: "192.168.0.0 /26" },
+  ]);
+  assert.deepEqual(question.correctAnswers, [
+    "Network A => 192.168.0.128 /25",
+    "Network B => 192.168.0.0 /26",
+  ]);
+  assert.equal(isCorrect(question, [formatMatchingAnswer("Network B", "192.168.0.0 /26"), formatMatchingAnswer("Network A", "192.168.0.128 /25")]), true);
+  assert.equal(buildSession(deck, { mode: "exam", limit: 10, seed: 1 }).questions.length, 1);
 });
 
 test("scores single and multi-answer selections", () => {
