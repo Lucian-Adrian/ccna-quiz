@@ -58,6 +58,19 @@ export function formatMatchingAnswer(left, right) {
   return `${left} => ${right}`;
 }
 
+export function splitMatchingImages(question) {
+  const imageUrls = question.imageUrls ?? [];
+  const hasMatching = (question.matchingPairs?.length ?? 0) > 0;
+
+  if (!hasMatching) return { exhibitImages: imageUrls, answerImages: [] };
+  if (imageUrls.length <= 1) return { exhibitImages: [], answerImages: imageUrls };
+
+  return {
+    exhibitImages: imageUrls.slice(0, 1),
+    answerImages: imageUrls.slice(1),
+  };
+}
+
 export function createModuleDecks(moduleSources) {
   return MODULE_GROUPS.map((group) => {
     const questions = (moduleSources[group.id] ?? []).map((question) => normalizeQuestion(question, group));

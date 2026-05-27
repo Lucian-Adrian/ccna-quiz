@@ -17,6 +17,7 @@ import {
   isCorrect,
   scheduleProgress,
   scoreSession,
+  splitMatchingImages,
 } from "./decks.js";
 import { getNavigationAction } from "./navigation.js";
 import { createProgressBackup, loadStoredProgress, parseProgressPayload, saveStoredProgress } from "./storage.js";
@@ -584,7 +585,8 @@ function renderQuestionAssets(question, includeAnswerAssets = false) {
     .map((block) => `<pre><code>${escapeHtml(block)}</code></pre>`)
     .join("");
 
-  const visibleImages = hasMatching && !includeAnswerAssets ? question.imageUrls.slice(0, 1) : question.imageUrls;
+  const { exhibitImages } = splitMatchingImages(question);
+  const visibleImages = hasMatching && !includeAnswerAssets ? exhibitImages : question.imageUrls;
   const images = visibleImages
     .map((url) => `<img class="question-image" src="${escapeAttr(url)}" alt="">`)
     .join("");
@@ -609,7 +611,7 @@ function renderExplanation(question, selected) {
 
 function renderAnswerAssets(question) {
   if ((question.matchingPairs?.length ?? 0) === 0) return "";
-  const answerImages = question.imageUrls.slice(1);
+  const { answerImages } = splitMatchingImages(question);
   if (answerImages.length === 0) return "";
 
   return `

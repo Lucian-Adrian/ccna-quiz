@@ -14,6 +14,7 @@ import {
   isCorrect,
   scheduleProgress,
   scoreSession,
+  splitMatchingImages,
 } from "../src/decks.js";
 
 const moduleSources = {
@@ -91,6 +92,29 @@ test("hydrates table-only matching questions as answerable pairs", () => {
   ]);
   assert.equal(isCorrect(question, [formatMatchingAnswer("Network B", "192.168.0.0 /26"), formatMatchingAnswer("Network A", "192.168.0.128 /25")]), true);
   assert.equal(buildSession(deck, { mode: "exam", limit: 10, seed: 1 }).questions.length, 1);
+});
+
+test("splits matching images into exhibit and answer assets", () => {
+  assert.deepEqual(
+    splitMatchingImages({
+      matchingPairs: [{ left: "A", right: "B" }],
+      imageUrls: ["answer.jpg"],
+    }),
+    { exhibitImages: [], answerImages: ["answer.jpg"] },
+  );
+
+  assert.deepEqual(
+    splitMatchingImages({
+      matchingPairs: [{ left: "A", right: "B" }],
+      imageUrls: ["exhibit.png", "answer.jpg"],
+    }),
+    { exhibitImages: ["exhibit.png"], answerImages: ["answer.jpg"] },
+  );
+
+  assert.deepEqual(splitMatchingImages({ imageUrls: ["ordinary.png"] }), {
+    exhibitImages: ["ordinary.png"],
+    answerImages: [],
+  });
 });
 
 test("scores single and multi-answer selections", () => {
