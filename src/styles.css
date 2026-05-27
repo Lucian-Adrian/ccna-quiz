@@ -690,6 +690,45 @@ pre {
   background: var(--green);
 }
 
+.save-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 0 20px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 8px;
+}
+
+.save-panel strong,
+.save-panel span {
+  display: block;
+}
+
+.save-panel strong {
+  font-size: 16px;
+}
+
+.save-panel span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.import-button {
+  display: inline-grid;
+  place-items: center;
+}
+
+.import-button input {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .bottom-nav {
   display: none;
 }
@@ -714,7 +753,7 @@ pre {
   }
 
   .main {
-    padding-bottom: 78px;
+    padding-bottom: 154px;
   }
 
   .topbar,
@@ -741,6 +780,10 @@ pre {
 
   .content {
     padding: 18px 20px 94px;
+  }
+
+  .trainer {
+    padding-bottom: 156px;
   }
 
   .desktop-only {
@@ -853,15 +896,30 @@ pre {
 
   .missed-list {
     margin: 12px 16px 0;
-    padding-bottom: 88px;
+    padding-bottom: 168px;
   }
 
   .trainer-actions {
-    padding: 14px 16px 84px;
+    position: fixed;
+    left: 50%;
+    bottom: 74px;
+    width: min(390px, 100vw);
+    transform: translateX(-50%);
+    z-index: 21;
+    padding: 10px 16px;
+    border-top: 1px solid var(--line);
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(16px);
+    box-shadow: 0 -10px 26px rgba(0, 0, 0, 0.07);
   }
 
   .trainer-actions .primary {
     flex: 1;
+  }
+
+  .save-panel {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .result-card h2 {

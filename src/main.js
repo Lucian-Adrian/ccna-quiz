@@ -19,9 +19,11 @@ import {
   scoreSession,
 } from "./decks.js";
 import { getNavigationAction } from "./navigation.js";
+import { createProgressBackup, loadStoredProgress, parseProgressPayload, saveStoredProgress } from "./storage.js";
 import "./styles.css";
 
 const STORAGE_KEY = "quizos-v2-progress";
+const STORAGE_BACKUP_KEY = "quizos-v2-progress-backup";
 const EXAM_LIMIT = 24;
 
 const moduleSources = {
@@ -42,19 +44,22 @@ const state = {
   deckId: "midterm-1",
   progress: loadProgress(),
   session: null,
+  savedAt: Number(localStorage.getItem(`${STORAGE_KEY}-saved-at`) ?? 0),
+  saveError: "",
 };
 
 function loadProgress() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
-    return parsed && typeof parsed === "object" ? parsed : {};
-  } catch {
-    return {};
-  }
+  return loadStoredProgress(localStorage, STORAGE_KEY, STORAGE_BACKUP_KEY);
 }
 
 function saveProgress() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(state.progress));
+  try {
+    state.savedAt = saveStoredProgress(localStorage, STORAGE_KEY, STORAGE_BACKUP_KEY, state.progress);
+    localStorage.setItem(`${STORAGE_KEY}-saved-at`, String(state.savedAt));
+    state.saveError = "";
+  } catch {
+    state.saveError = "Could not save progress on this device.";
+  }
 }
 
 function currentDeck() {
@@ -262,7 +267,42 @@ function writeProgress(question, correct) {
 function resetProgress() {
   state.progress = {};
   localStorage.removeItem(STORAGE_KEY);
+  localStorage.removeItem(STORAGE_BACKUP_KEY);
+  localStorage.removeItem(`${STORAGE_KEY}-saved-at`);
+  state.savedAt = 0;
+  state.saveError = "";
   render();
+}
+
+function exportProgress() {
+  const backup = createProgressBackup(state.progress);
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = `quizos-progress-${new Date(backup.savedAt).toISOString().slice(0, 10)}.json`;
+  document.body.append(anchor);
+  anchor.click();
+  anchor.remove();
+  URL.revokeObjectURL(url);
+}
+
+function importProgress(file) {
+  if (!file) return;
+  const reader = new FileReader();
+  reader.addEventListener("load", () => {
+    try {
+      state.progress = parseProgressPayload(String(reader.result ?? "{}"));
+      saveProgress();
+      state.screen = "stats";
+      state.session = null;
+      render();
+    } catch {
+      state.saveError = "Could not import that progress file.";
+      render();
+    }
+  });
+  reader.readAsText(file);
 }
 
 function render() {
@@ -621,11 +661,24 @@ function renderStats() {
     <section class="topbar">
       <div>
         <h1>Stats</h1>
-        <p>Progress saved on this device</p>
+        <p>${state.saveError || progressSaveLabel()}</p>
       </div>
       <button class="secondary desktop-only" type="button" data-action="reset-progress">Reset</button>
     </section>
     <section class="content">
+      <section class="save-panel">
+        <div>
+          <strong>Local progress</strong>
+          <span>${progressSaveLabel()}</span>
+        </div>
+        <div class="hero-actions compact">
+          <button class="secondary" type="button" data-action="export-progress">Export</button>
+          <label class="secondary import-button">
+            Import
+            <input type="file" accept="application/json" data-import-progress>
+          </label>
+        </div>
+      </section>
       <div class="stats-list">
         ${decks
           .filter((deck) => deck.type !== "all")
@@ -646,6 +699,13 @@ function renderStats() {
       </div>
     </section>
   `;
+}
+
+function progressSaveLabel() {
+  if (state.saveError) return state.saveError;
+  if (!state.savedAt) return "Progress is saved locally on this device";
+
+  return `Saved locally ${new Date(state.savedAt).toLocaleString()}`;
 }
 
 function formatExplanation(explanation) {
@@ -705,6 +765,10 @@ function wireEvents() {
     );
   });
 
+  app.querySelectorAll("[data-import-progress]").forEach((input) => {
+    input.addEventListener("change", () => importProgress(input.files?.[0]));
+  });
+
   app.querySelectorAll("[data-action]").forEach((button) => {
     button.addEventListener("click", () => {
       const action = button.dataset.action;
@@ -714,6 +778,7 @@ function wireEvents() {
       if (action === "submit-exam") submitExam();
       if (action === "practice-misses") restartExamMisses();
       if (action === "reset-progress") resetProgress();
+      if (action === "export-progress") exportProgress();
       if (action === "start-focus") startFocusSession();
       if (action === "review-due") startDueReview();
       if (action === "review-weak") startWeakReview();
