@@ -7,11 +7,11 @@ import modules16To17 from "../CCNA1_v7_Modules_16-17.json";
 import {
   buildSession,
   createDecks,
+  getLearningSummary,
   getRecommendedDeck,
   getWeakQuestions,
   isCorrect,
   scoreSession,
-  summarizeDeckProgress,
 } from "./decks.js";
 import { getNavigationAction } from "./navigation.js";
 import "./styles.css";
@@ -63,6 +63,11 @@ function currentQuestion() {
 function selectedFor(question) {
   if (!question || !state.session) return [];
   return state.session.answers[question.id] ?? [];
+}
+
+function answeredCount(session = state.session) {
+  if (!session) return 0;
+  return session.questions.filter((question) => (session.answers[question.id] ?? []).length > 0).length;
 }
 
 function setScreen(screen) {
@@ -270,46 +275,47 @@ function renderBottomNav() {
 
 function renderHome() {
   const deck = currentDeck();
-  const summary = summarizeDeckProgress(deck, state.progress);
+  const summary = getLearningSummary(deck, state.progress);
   const recommended = getRecommendedDeck(decks, state.progress) ?? deck;
-  const recommendedSummary = summarizeDeckProgress(recommended, state.progress);
+  const recommendedSummary = getLearningSummary(recommended, state.progress);
   const weakCount = getWeakQuestions(deck, state.progress).length;
 
   return `
     <section class="topbar">
       <div>
-        <h1>Today</h1>
-        <p>Practice, learn, then review mistakes</p>
+        <h1>Study</h1>
+        <p>${deck.title} selected</p>
       </div>
       <button class="primary desktop-only" type="button" data-action="start-focus">Start focus</button>
     </section>
 
     <section class="content">
-      <section class="hero-panel">
-        <div>
-          <span class="eyebrow">Best next</span>
-          <h2>${recommended.title}</h2>
-          <p>${recommendedSummary.seen}/${recommended.count} seen · ${recommendedSummary.percent}% accuracy</p>
+      <section class="study-board">
+        <div class="next-line">
+          <span>Next</span>
+          <strong>${recommended.title}</strong>
+          <small>${recommendedSummary.unseen} unseen · ${recommendedSummary.weak} weak</small>
         </div>
-        <div class="hero-actions">
+        <div class="hero-actions compact">
           <button class="primary" type="button" data-action="start-focus">Start focus</button>
           <button class="secondary" type="button" data-action="review-weak" ${weakCount === 0 ? "disabled" : ""}>Review</button>
+          <button class="secondary" type="button" data-start="exam">Exam</button>
         </div>
       </section>
 
-      <section class="metrics">
-        <div><span>Selected</span><strong>${deck.range}</strong></div>
-        <div><span>Questions</span><strong>${deck.count}</strong></div>
-        <div><span>Seen</span><strong>${summary.seen}</strong></div>
-        <div><span>Misses</span><strong class="danger">${weakCount}</strong></div>
+      <section class="learning-strip" aria-label="Learning state">
+        <div><span>Seen</span><strong>${summary.seen}/${deck.count}</strong></div>
+        <div><span>Mastered</span><strong>${summary.masteryPercent}%</strong></div>
+        <div><span>Weak</span><strong class="${summary.weak ? "danger" : ""}">${summary.weak}</strong></div>
+        <div><span>Accuracy</span><strong>${summary.percent}%</strong></div>
       </section>
 
-      <section class="selected-strip">
+      <section class="selected-line">
         <div>
           <strong>${deck.title}</strong>
-          <span>Practice this selection or take a 24-question exam.</span>
+          <span>${deck.count} questions · ${summary.unseen} unseen</span>
         </div>
-        <div class="hero-actions">
+        <div class="hero-actions compact">
           <button class="primary" type="button" data-start="practice">Practice</button>
           <button class="secondary" type="button" data-start="exam">Exam</button>
         </div>
@@ -335,13 +341,13 @@ function renderHome() {
 function renderDeckButton(deck) {
   if (!deck) return "";
   const selected = deck.id === state.deckId;
-  const progress = summarizeDeckProgress(deck, state.progress);
+  const progress = getLearningSummary(deck, state.progress);
 
   return `
-    <button class="deck-card ${selected ? "selected" : ""}" type="button" data-deck="${deck.id}">
+    <button class="deck-row ${selected ? "selected" : ""}" type="button" data-deck="${deck.id}">
       <span>${deck.title}</span>
-      <strong>${deck.count}</strong>
-      <small>${progress.percent}% accuracy</small>
+      <strong>${progress.seen}/${deck.count}</strong>
+      <small>${progress.weak} weak · ${progress.percent}%</small>
     </button>
   `;
 }
@@ -360,6 +366,7 @@ function renderTrainer(mode) {
   const checked = mode === "practice" && state.session.revealed;
   const examDone = mode === "exam" && state.session.submitted;
   const score = scoreSession(state.session.questions, state.session.answers);
+  const answered = answeredCount();
   const answerCount = question.correctAnswers.length;
   const hasChoices = question.options.length > 0;
 
@@ -369,15 +376,18 @@ function renderTrainer(mode) {
         <button class="back-button" type="button" data-screen="home">Back</button>
         <div>
           <h1>${mode === "exam" ? "Exam" : "Practice"}</h1>
-          <p>${deck.title} · ${state.session.index + 1}/${state.session.questions.length}</p>
+          <p>${deck.title} · ${state.session.index + 1}/${state.session.questions.length}${mode === "exam" ? ` · ${answered} answered` : ""}</p>
         </div>
-        ${mode === "exam" ? `<button class="secondary" type="button" data-action="submit-exam">Submit</button>` : ""}
+        ${mode === "exam" ? `<button class="secondary" type="button" data-action="submit-exam" ${answered === 0 ? "disabled" : ""}>Finish</button>` : ""}
       </header>
 
       ${
         examDone
           ? renderExamResult(score)
           : `
+        <div class="session-meter" aria-hidden="true">
+          <span style="width: ${Math.round(((state.session.index + 1) / state.session.questions.length) * 100)}%"></span>
+        </div>
         <article class="question-card">
           <div class="question-meta">
             <span>${question.sourceTitle}</span>
@@ -511,12 +521,13 @@ function renderStats() {
         ${decks
           .filter((deck) => deck.type !== "all")
           .map((deck) => {
-            const progress = summarizeDeckProgress(deck, state.progress);
+            const progress = getLearningSummary(deck, state.progress);
             return `
               <div class="stat-row">
                 <div>
                   <strong>${deck.title}</strong>
-                  <small>${progress.seen}/${deck.count} seen</small>
+                  <small>${progress.seen}/${deck.count} seen · ${progress.weak} weak · ${progress.mastered} mastered</small>
+                  <span class="progress-track"><i style="width: ${progress.masteryPercent}%"></i></span>
                 </div>
                 <span>${progress.percent}%</span>
               </div>

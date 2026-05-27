@@ -156,6 +156,30 @@ export function summarizeDeckProgress(deck, progress) {
   return { seen, correct, wrong, attempts, percent };
 }
 
+export function getLearningSummary(deck, progress) {
+  const base = summarizeDeckProgress(deck, progress);
+  let mastered = 0;
+  let weak = 0;
+
+  for (const question of deck.questions) {
+    const entry = progress[question.id];
+    if (!entry) continue;
+
+    const correct = entry.correct ?? 0;
+    const wrong = entry.wrong ?? 0;
+    const attempts = correct + wrong;
+    const accuracy = attempts ? correct / attempts : 0;
+
+    if (attempts >= 2 && accuracy >= 0.8) mastered += 1;
+    if (wrong > 0 && accuracy < 0.8) weak += 1;
+  }
+
+  const unseen = Math.max(deck.count - base.seen, 0);
+  const masteryPercent = deck.count ? Math.round((mastered / deck.count) * 100) : 0;
+
+  return { ...base, unseen, mastered, weak, masteryPercent };
+}
+
 export function getWeakQuestions(deck, progress) {
   return deck.questions
     .map((question) => {

@@ -3,6 +3,7 @@ import { test } from "node:test";
 import {
   buildSession,
   createDecks,
+  getLearningSummary,
   getRecommendedDeck,
   getWeakQuestions,
   isCorrect,
@@ -85,6 +86,24 @@ test("finds weak questions by wrong attempts and low accuracy", () => {
     weak.map((question) => question.id),
     ["m4-7-1", "m1-3-1"],
   );
+});
+
+test("summarizes unseen, weak, and mastered learning state", () => {
+  const deck = createDecks(moduleSources).find((item) => item.id === "all");
+  const [mastered, weak, unseen] = deck.questions;
+  const progress = {
+    [mastered.id]: { seen: 2, correct: 2, wrong: 0 },
+    [weak.id]: { seen: 3, correct: 1, wrong: 2 },
+  };
+
+  const summary = getLearningSummary(deck, progress);
+
+  assert.equal(summary.seen, 2);
+  assert.equal(summary.mastered, 1);
+  assert.equal(summary.weak, 1);
+  assert.equal(summary.unseen, deck.count - 2);
+  assert.equal(summary.masteryPercent, Math.round((1 / deck.count) * 100));
+  assert.equal(unseen.id in progress, false);
 });
 
 test("recommends the least covered module deck before aggregate decks", () => {
