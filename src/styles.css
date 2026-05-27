@@ -505,6 +505,33 @@ h1 {
   font-weight: 880;
 }
 
+.missed-list {
+  margin: 16px 32px 0;
+  padding-bottom: 84px;
+}
+
+.missed-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.missed-item strong,
+.missed-item span {
+  display: block;
+}
+
+.missed-item strong {
+  font-size: 15px;
+  line-height: 1.35;
+}
+
+.missed-item span {
+  margin-top: 8px;
+  color: var(--green);
+  font-size: 14px;
+  font-weight: 760;
+}
+
 .table-wrap {
   overflow-x: auto;
   margin: 16px 0;
@@ -713,6 +740,11 @@ pre {
     padding: 18px;
   }
 
+  .missed-list {
+    margin: 12px 16px 0;
+    padding-bottom: 88px;
+  }
+
   .trainer-actions {
     padding: 14px 16px 84px;
   }
@@ -727,9 +759,12 @@ pre {
 
   .bottom-nav {
     position: fixed;
-    left: 6px;
-    right: 6px;
+    left: 50%;
+    right: auto;
     bottom: 8px;
+    width: min(332px, calc(100vw - 16px));
+    max-width: min(332px, calc(100vw - 16px));
+    transform: translateX(-50%);
     z-index: 20;
     display: grid;
     grid-template-columns: repeat(4, 1fr);
@@ -744,9 +779,10 @@ pre {
 
   .bottom-nav button {
     min-width: 0;
+    padding: 0;
     border: 0;
     border-radius: 14px;
-    font-size: 11px;
+    font-size: 10px;
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: pointer;

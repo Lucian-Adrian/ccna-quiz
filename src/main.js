@@ -13,6 +13,7 @@ import {
   scoreSession,
   summarizeDeckProgress,
 } from "./decks.js";
+import { getNavigationAction } from "./navigation.js";
 import "./styles.css";
 
 const STORAGE_KEY = "quizos-v2-progress";
@@ -68,6 +69,16 @@ function setScreen(screen) {
   state.screen = screen;
   state.session = null;
   render();
+}
+
+function navigate(screen) {
+  const action = getNavigationAction(screen);
+
+  if (action.type === "start-session") {
+    startSession(action.mode);
+  } else {
+    setScreen(action.screen);
+  }
 }
 
 function selectDeck(deckId) {
@@ -450,6 +461,9 @@ function renderExplanation(question, selected) {
 }
 
 function renderExamResult(score) {
+  const missedQuestions =
+    state.session?.questions.filter((question) => !isCorrect(question, selectedFor(question))) ?? [];
+
   return `
     <section class="result-card">
       <span class="eyebrow">Result</span>
@@ -460,6 +474,26 @@ function renderExamResult(score) {
         <button class="secondary" type="button" data-action="practice-misses" ${score.wrong === 0 ? "disabled" : ""}>Practice misses</button>
       </div>
     </section>
+    ${
+      missedQuestions.length
+        ? `<section class="missed-list">
+            <h2 class="section-title">Missed</h2>
+            ${missedQuestions
+              .map(
+                (question) => `
+                  <article class="missed-item">
+                    <strong>${escapeHtml(question.question)}</strong>
+                    <span>${question.correctAnswers.map(escapeHtml).join(" · ")}</span>
+                  </article>
+                `,
+              )
+              .join("")}
+          </section>`
+        : `<section class="missed-list">
+            <h2 class="section-title">Clean exam</h2>
+            <p>No missed questions in this attempt.</p>
+          </section>`
+    }
   `;
 }
 
@@ -530,7 +564,7 @@ function decodeAttr(value) {
 
 function wireEvents() {
   app.querySelectorAll("[data-screen]").forEach((button) => {
-    button.addEventListener("click", () => setScreen(button.dataset.screen));
+    button.addEventListener("click", () => navigate(button.dataset.screen));
   });
 
   app.querySelectorAll("[data-deck]").forEach((button) => {
