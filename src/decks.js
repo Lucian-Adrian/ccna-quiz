@@ -320,14 +320,7 @@ export function shuffle(items, seed = Date.now()) {
 }
 
 export function buildSession(deck, { mode, limit = 24, seed = Date.now() } = {}) {
-  const eligibleQuestions =
-    mode === "exam"
-      ? deck.questions.filter(
-          (question) =>
-            question.correctAnswers.length > 0 &&
-            (question.options.length > 0 || (question.matchingPairs?.length ?? 0) > 0),
-        )
-      : deck.questions;
+  const eligibleQuestions = mode === "exam" ? getExamEligibleQuestions(deck) : deck.questions;
   const shuffled = shuffle(eligibleQuestions, seed);
   const questions = mode === "exam" ? shuffled.slice(0, Math.min(limit, shuffled.length)) : shuffled;
 
@@ -341,6 +334,14 @@ export function buildSession(deck, { mode, limit = 24, seed = Date.now() } = {})
     submitted: false,
     seed,
   };
+}
+
+export function getExamEligibleQuestions(deck) {
+  return deck.questions.filter(
+    (question) =>
+      question.correctAnswers.length > 0 &&
+      (question.options.length > 0 || (question.matchingPairs?.length ?? 0) > 0),
+  );
 }
 
 export function normalizeAnswer(value) {

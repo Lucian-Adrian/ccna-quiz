@@ -2,15 +2,15 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { getNavigationAction } from "../src/navigation.js";
 
-test("practice and exam menu items start sessions", () => {
+test("practice and exam menu items show launchers", () => {
   assert.deepEqual(getNavigationAction("practice"), {
-    type: "start-session",
-    mode: "practice",
+    type: "show-screen",
+    screen: "practice-hub",
   });
 
   assert.deepEqual(getNavigationAction("exam"), {
-    type: "start-session",
-    mode: "exam",
+    type: "show-screen",
+    screen: "exam-hub",
   });
 });
 

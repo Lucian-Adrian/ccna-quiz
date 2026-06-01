@@ -21,6 +21,7 @@ import {
   createDecks,
   formatMatchingAnswer,
   getDueQuestions,
+  getExamEligibleQuestions,
   getLearningSummary,
   getNewQuestions,
   getWeakQuestions,
@@ -215,7 +216,7 @@ function startFullExam() {
   state.screen = "exam";
   state.session = buildSession(deck, {
     mode: "exam",
-    limit: deck.questions.length,
+    limit: getExamEligibleQuestions(deck).length,
     seed: Date.now(),
   });
   render();
@@ -419,6 +420,8 @@ function render() {
       ${renderSidebar()}
       <main class="main">
         ${state.screen === "home" ? renderHome() : ""}
+        ${state.screen === "practice-hub" ? renderPracticeHub() : ""}
+        ${state.screen === "exam-hub" ? renderExamHub() : ""}
         ${state.screen === "practice" ? renderTrainer("practice") : ""}
         ${state.screen === "exam" ? renderTrainer("exam") : ""}
         ${state.screen === "stats" ? renderStats() : ""}
@@ -448,7 +451,9 @@ function renderSidebar() {
 function navButton(screen, label) {
   const active =
     state.screen === screen ||
-    (screen === "home" && !["practice", "exam", "stats"].includes(state.screen));
+    (screen === "practice" && state.screen === "practice-hub") ||
+    (screen === "exam" && state.screen === "exam-hub") ||
+    (screen === "home" && !["practice", "practice-hub", "exam", "exam-hub", "stats"].includes(state.screen));
   return `<button class="${active ? "active" : ""}" type="button" data-screen="${screen}">${label}</button>`;
 }
 
@@ -515,30 +520,134 @@ function renderHome() {
         <div>
           <span class="scope-label">Current scope</span>
           <strong>${deck.title}</strong>
-          <span>${bank.title} bank · tap a row below to change what you practice.</span>
+          <span>${bank.title} bank · choose exactly what you want to train.</span>
         </div>
         <strong class="scope-count">${deck.count}<span>questions</span></strong>
       </section>
 
-      <h2 class="section-title">Choose scope</h2>
-      <h3 class="subsection-title">Midterms</h3>
-      <section class="deck-grid featured">
-        ${decks.filter((item) => item.type === "midterm").map(renderDeckButton).join("")}
+      ${renderScopePicker()}
+    </section>
+  `;
+}
+
+function renderPracticeHub() {
+  const deck = currentDeck();
+  const bank = currentBank();
+  const summary = getLearningSummary(deck, state.progress);
+  const weakCount = getWeakQuestions(deck, state.progress).length;
+  const dueCount = getDueQuestions(deck, state.progress).length;
+  const newCount = getNewQuestions(deck, state.progress).length;
+  const primaryAction = dueCount ? "review-due" : "start-focus";
+  const primaryLabel = dueCount ? "Review due" : "Start smart review";
+
+  return `
+    <section class="topbar">
+      <div>
+        <h1>Practice</h1>
+        <p>${bank.title} · ${deck.title}</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <section class="bank-switch" aria-label="Question bank">
+        ${questionBanks.map(renderBankButton).join("")}
       </section>
 
-      <h3 class="subsection-title">Modules</h3>
-      <section class="deck-grid">
-        ${decks.filter((item) => item.type === "module").map(renderDeckButton).join("")}
+      <section class="mode-panel practice-panel">
+        <div class="mode-copy">
+          <span class="eyebrow">Selected scope</span>
+          <h2>${deck.title}</h2>
+          <p>${summary.due} due · ${summary.unseen} new · ${summary.weak} weak</p>
+        </div>
+        <div class="mode-options">
+          <button class="primary primary-action" type="button" data-action="${primaryAction}">${primaryLabel}</button>
+          <button class="secondary" type="button" data-action="learn-new" ${newCount === 0 ? "disabled" : ""}>New only</button>
+          <button class="secondary" type="button" data-action="review-weak" ${weakCount === 0 ? "disabled" : ""}>Weak only</button>
+          <button class="secondary" type="button" data-start="practice">Shuffle all</button>
+        </div>
       </section>
 
-      <h3 class="subsection-title">Finals</h3>
-      <section class="deck-grid featured">
-        ${decks.filter((item) => item.type === "final").map(renderDeckButton).join("")}
+      <section class="learning-strip compact-strip" aria-label="Learning state">
+        <div><span>Due</span><strong class="${summary.due ? "danger" : ""}">${summary.due}</strong></div>
+        <div><span>New</span><strong>${newCount}</strong></div>
+        <div><span>Weak</span><strong class="${summary.weak ? "danger" : ""}">${summary.weak}</strong></div>
+        <div><span>Done</span><strong>${summary.percent}%</strong></div>
       </section>
 
-      <section class="all-row">
-        ${renderDeckButton(decks.find((item) => item.logicalId === "all"))}
+      ${renderScopePicker("Change practice scope")}
+    </section>
+  `;
+}
+
+function renderExamHub() {
+  const deck = currentDeck();
+  const bank = currentBank();
+  const eligibleCount = getExamEligibleQuestions(deck).length;
+  const quickCount = Math.min(EXAM_LIMIT, eligibleCount);
+
+  return `
+    <section class="topbar">
+      <div>
+        <h1>Exam</h1>
+        <p>${bank.title} · ${deck.title}</p>
+      </div>
+    </section>
+
+    <section class="content">
+      <section class="bank-switch" aria-label="Question bank">
+        ${questionBanks.map(renderBankButton).join("")}
       </section>
+
+      <section class="mode-panel exam-panel">
+        <div class="mode-copy">
+          <span class="eyebrow">Selected scope</span>
+          <h2>${deck.title}</h2>
+          <p>No answers until you finish. Missed questions come back with explanations.</p>
+        </div>
+        <div class="mode-options exam-options">
+          <button class="primary primary-action" type="button" data-start="exam" ${eligibleCount === 0 ? "disabled" : ""}>Quick exam</button>
+          <button class="secondary" type="button" data-action="full-exam" ${eligibleCount === 0 ? "disabled" : ""}>Full exam</button>
+        </div>
+      </section>
+
+      <section class="exam-choice-grid">
+        <div class="exam-choice">
+          <span>Quick exam</span>
+          <strong>${quickCount}</strong>
+          <small>Random questions for a focused check.</small>
+        </div>
+        <div class="exam-choice">
+          <span>Full exam</span>
+          <strong>${eligibleCount}</strong>
+          <small>Every answerable question in this scope.</small>
+        </div>
+      </section>
+
+      ${renderScopePicker("Change exam scope")}
+    </section>
+  `;
+}
+
+function renderScopePicker(title = "Choose scope") {
+  return `
+    <h2 class="section-title">${title}</h2>
+    <h3 class="subsection-title">Midterms</h3>
+    <section class="deck-grid featured">
+      ${decks.filter((item) => item.type === "midterm").map(renderDeckButton).join("")}
+    </section>
+
+    <h3 class="subsection-title">Modules</h3>
+    <section class="deck-grid">
+      ${decks.filter((item) => item.type === "module").map(renderDeckButton).join("")}
+    </section>
+
+    <h3 class="subsection-title">Finals</h3>
+    <section class="deck-grid featured">
+      ${decks.filter((item) => item.type === "final").map(renderDeckButton).join("")}
+    </section>
+
+    <section class="all-row">
+      ${renderDeckButton(decks.find((item) => item.logicalId === "all"))}
     </section>
   `;
 }
@@ -570,11 +679,6 @@ function renderDeckButton(deck) {
 }
 
 function renderTrainer(mode) {
-  if (!state.session) {
-    startSession(mode);
-    return "";
-  }
-
   const question = currentQuestion();
   if (!question) return "";
 
@@ -587,6 +691,14 @@ function renderTrainer(mode) {
   const answerCount = question.correctAnswers.length;
   const hasChoices = question.options.length > 0;
   const hasMatching = (question.matchingPairs?.length ?? 0) > 0;
+  const needsSelection = (hasChoices && selected.length === 0) || (hasMatching && selected.length < question.matchingPairs.length);
+  const practiceHint = state.session.revealed
+    ? "Review the explanation, then continue."
+    : hasMatching
+      ? "Match every row, then check."
+      : hasChoices
+        ? "Choose an answer, then check."
+        : "Reveal the answer when ready.";
 
   return `
     <section class="trainer ${mode}">
@@ -627,16 +739,15 @@ function renderTrainer(mode) {
         ${checked ? renderExplanation(question, selected) : ""}
 
         <footer class="trainer-actions">
+          <span class="session-hint">${mode === "practice" ? practiceHint : `${answered}/${state.session.questions.length} answered`}</span>
           <button class="secondary" type="button" data-action="previous" ${state.session.index === 0 ? "disabled" : ""}>Previous</button>
           ${
             mode === "practice"
               ? state.session.revealed
-                ? `<button class="primary" type="button" data-action="next">Next</button>`
-                : `<button class="primary" type="button" data-action="reveal" ${
-                    (hasChoices && selected.length === 0) || (hasMatching && selected.length < question.matchingPairs.length)
-                      ? "disabled"
-                      : ""
-                  }>${hasChoices || hasMatching ? "Check" : "Show answer"}</button>`
+                ? `<button class="primary" type="button" data-action="next">Next card</button>`
+                : `<button class="primary" type="button" data-action="reveal" ${needsSelection ? "disabled" : ""}>${
+                    hasChoices || hasMatching ? "Check answer" : "Show answer"
+                  }</button>`
               : `<button class="primary" type="button" data-action="next" ${state.session.index === state.session.questions.length - 1 ? "disabled" : ""}>Next</button>`
           }
         </footer>
