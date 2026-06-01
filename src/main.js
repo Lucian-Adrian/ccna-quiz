@@ -38,7 +38,9 @@ const STORAGE_KEY = "quizos-v2-progress";
 const STORAGE_BACKUP_KEY = "quizos-v2-progress-backup";
 const DECK_KEY = "quizos-v2-selected-deck";
 const BANK_KEY = "quizos-v2-selected-bank";
-const EXAM_LIMIT = 24;
+const PRACTICE_SET_SIZE = 24;
+const EXAM_QUESTION_COUNT = 90;
+const EXAM_DURATION_SECONDS = 20 * 60;
 
 const itexamSources = {
   "m1-3": modules1To3Itexam,
@@ -107,7 +109,10 @@ const state = {
   session: null,
   savedAt: Number(localStorage.getItem(`${STORAGE_KEY}-saved-at`) ?? 0),
   saveError: "",
+  now: Date.now(),
 };
+
+let timerId = 0;
 
 function loadBankId() {
   const savedBankId = localStorage.getItem(BANK_KEY);
@@ -163,17 +168,13 @@ function answeredCount(session = state.session) {
 function setScreen(screen) {
   state.screen = screen;
   state.session = null;
+  stopTimer();
   render();
 }
 
 function navigate(screen) {
   const action = getNavigationAction(screen);
-
-  if (action.type === "start-session") {
-    startSession(action.mode);
-  } else {
-    setScreen(action.screen);
-  }
+  setScreen(action.screen);
 }
 
 function selectDeck(deckId) {
@@ -200,25 +201,41 @@ function selectBank(bankId) {
   render();
 }
 
-function startSession(mode) {
-  const deck = currentDeck();
-  state.screen = mode;
-  state.session = buildSession(deck, {
+function createSession(questions, mode, options = {}) {
+  return {
+    deckId: state.deckId,
     mode,
-    limit: EXAM_LIMIT,
+    questions,
+    index: 0,
+    answers: {},
+    revealed: false,
+    submitted: false,
     seed: Date.now(),
-  });
-  render();
+    startedAt: options.startedAt ?? null,
+    durationSeconds: options.durationSeconds ?? null,
+    strictTimer: Boolean(options.strictTimer),
+  };
 }
 
-function startFullExam() {
+function startSubjectShuffle() {
+  startPracticeQueue(buildSession(currentDeck(), { mode: "practice", seed: Date.now() }).questions);
+}
+
+function startPracticeExam() {
   const deck = currentDeck();
-  state.screen = "exam";
-  state.session = buildSession(deck, {
+  const questions = buildSession(deck, {
     mode: "exam",
-    limit: getExamEligibleQuestions(deck).length,
+    limit: EXAM_QUESTION_COUNT,
     seed: Date.now(),
+  }).questions;
+
+  state.screen = "practice";
+  state.session = createSession(questions, "practice-exam", {
+    startedAt: Date.now(),
+    durationSeconds: EXAM_DURATION_SECONDS,
+    strictTimer: false,
   });
+  startTimer();
   render();
 }
 
@@ -226,41 +243,51 @@ function startPracticeQueue(questions) {
   if (questions.length === 0) return;
 
   state.screen = "practice";
-  state.session = {
-    deckId: state.deckId,
-    mode: "practice",
-    questions,
-    index: 0,
-    answers: {},
-    revealed: false,
-    submitted: false,
+  state.session = createSession(questions, "subject");
+  stopTimer();
+  render();
+}
+
+function startRealExam() {
+  const deck = currentDeck();
+  const questions = buildSession(deck, {
+    mode: "exam",
+    limit: EXAM_QUESTION_COUNT,
     seed: Date.now(),
-  };
+  }).questions;
+
+  state.screen = "exam";
+  state.session = createSession(questions, "exam", {
+    startedAt: Date.now(),
+    durationSeconds: EXAM_DURATION_SECONDS,
+    strictTimer: true,
+  });
+  startTimer();
   render();
 }
 
 function startFocusSession() {
   const deck = currentDeck();
   const questions = buildSmartReview(deck, state.progress, {
-    limit: EXAM_LIMIT,
+    limit: PRACTICE_SET_SIZE,
     seed: Date.now(),
   });
 
   if (questions.length > 0) {
     startPracticeQueue(questions);
   } else {
-    startSession("practice");
+    startSubjectShuffle();
   }
 }
 
 function startDueReview() {
   const dueQuestions = getDueQuestions(currentDeck(), state.progress);
-  if (dueQuestions.length > 0) startPracticeQueue(dueQuestions.slice(0, EXAM_LIMIT));
+  if (dueQuestions.length > 0) startPracticeQueue(dueQuestions.slice(0, PRACTICE_SET_SIZE));
 }
 
 function startNewCards() {
   const newQuestions = getNewQuestions(currentDeck(), state.progress);
-  if (newQuestions.length > 0) startPracticeQueue(newQuestions.slice(0, EXAM_LIMIT));
+  if (newQuestions.length > 0) startPracticeQueue(newQuestions.slice(0, PRACTICE_SET_SIZE));
 }
 
 function startWeakReview() {
@@ -268,13 +295,13 @@ function startWeakReview() {
   const weakQuestions = getWeakQuestions(deck, state.progress);
   if (weakQuestions.length === 0) return;
 
-  startPracticeQueue(weakQuestions.slice(0, EXAM_LIMIT));
+  startPracticeQueue(weakQuestions.slice(0, PRACTICE_SET_SIZE));
 }
 
 function toggleAnswer(option) {
   const question = currentQuestion();
   if (!question || !state.session || state.session.submitted) return;
-  if (state.session.mode === "practice" && state.session.revealed) return;
+  if (showsAnswersDuringSession() && state.session.revealed) return;
 
   const selected = selectedFor(question);
   const exists = selected.includes(option);
@@ -294,7 +321,7 @@ function toggleAnswer(option) {
 function setMatchingAnswer(left, right) {
   const question = currentQuestion();
   if (!question || !state.session || state.session.submitted) return;
-  if (state.session.mode === "practice" && state.session.revealed) return;
+  if (showsAnswersDuringSession() && state.session.revealed) return;
 
   const selected = selectedFor(question).filter((answer) => !answer.startsWith(`${left} => `));
   if (right) selected.push(formatMatchingAnswer(left, right));
@@ -309,12 +336,14 @@ function revealPracticeAnswer() {
   if ((question.matchingPairs?.length ?? 0) > 0 && selectedFor(question).length < question.matchingPairs.length) return;
 
   state.session.revealed = true;
-  writeProgress(
-    question,
-    question.options.length === 0 && (question.matchingPairs?.length ?? 0) === 0
-      ? true
-      : isCorrect(question, selectedFor(question)),
-  );
+  if (state.session.mode === "subject") {
+    writeProgress(
+      question,
+      question.options.length === 0 && (question.matchingPairs?.length ?? 0) === 0
+        ? true
+        : isCorrect(question, selectedFor(question)),
+    );
+  }
   render();
 }
 
@@ -324,9 +353,12 @@ function nextQuestion() {
   if (state.session.index < state.session.questions.length - 1) {
     state.session.index += 1;
     state.session.revealed = false;
-  } else if (state.session.mode === "practice") {
+  } else if (state.session.mode === "subject") {
     state.screen = "home";
     state.session = null;
+  } else if (state.session.mode === "practice-exam") {
+    submitExam();
+    return;
   }
 
   render();
@@ -343,8 +375,11 @@ function submitExam() {
   if (!state.session) return;
 
   state.session.submitted = true;
-  for (const question of state.session.questions) {
-    writeProgress(question, isCorrect(question, selectedFor(question)));
+  stopTimer();
+  if (state.session.mode === "exam") {
+    for (const question of state.session.questions) {
+      writeProgress(question, isCorrect(question, selectedFor(question)));
+    }
   }
   render();
 }
@@ -354,18 +389,46 @@ function restartExamMisses() {
   const misses = state.session.questions.filter((question) => !isCorrect(question, selectedFor(question)));
   if (misses.length === 0) return;
 
-  state.session = {
-    deckId: state.deckId,
-    mode: "practice",
-    questions: misses,
-    index: 0,
-    answers: {},
-    revealed: false,
-    submitted: false,
-    seed: Date.now(),
-  };
+  state.session = createSession(misses, "subject");
   state.screen = "practice";
+  stopTimer();
   render();
+}
+
+function startTimer() {
+  stopTimer();
+  state.now = Date.now();
+  timerId = window.setInterval(() => {
+    state.now = Date.now();
+    if (state.session?.strictTimer && remainingSeconds() <= 0 && !state.session.submitted) {
+      submitExam();
+      return;
+    }
+    render();
+  }, 1000);
+}
+
+function stopTimer() {
+  if (timerId) {
+    window.clearInterval(timerId);
+    timerId = 0;
+  }
+}
+
+function remainingSeconds() {
+  if (!state.session?.startedAt || !state.session.durationSeconds) return null;
+  return state.session.durationSeconds - Math.floor((state.now - state.session.startedAt) / 1000);
+}
+
+function formatTimer(seconds) {
+  const absolute = Math.abs(seconds);
+  const minutes = Math.floor(absolute / 60);
+  const remainder = absolute % 60;
+  return `${seconds < 0 ? "+" : ""}${minutes}:${String(remainder).padStart(2, "0")}`;
+}
+
+function showsAnswersDuringSession() {
+  return state.session?.mode === "subject" || state.session?.mode === "practice-exam";
 }
 
 function writeProgress(question, correct) {
@@ -422,8 +485,8 @@ function render() {
         ${state.screen === "home" ? renderHome() : ""}
         ${state.screen === "practice-hub" ? renderPracticeHub() : ""}
         ${state.screen === "exam-hub" ? renderExamHub() : ""}
-        ${state.screen === "practice" ? renderTrainer("practice") : ""}
-        ${state.screen === "exam" ? renderTrainer("exam") : ""}
+        ${state.screen === "practice" ? renderTrainer() : ""}
+        ${state.screen === "exam" ? renderTrainer() : ""}
         ${state.screen === "stats" ? renderStats() : ""}
       </main>
       ${renderBottomNav()}
@@ -472,18 +535,14 @@ function renderHome() {
   const deck = currentDeck();
   const bank = currentBank();
   const summary = getLearningSummary(deck, state.progress);
-  const weakCount = getWeakQuestions(deck, state.progress).length;
   const dueCount = getDueQuestions(deck, state.progress).length;
   const newCount = getNewQuestions(deck, state.progress).length;
-  const primaryAction = dueCount ? "review-due" : "start-focus";
-  const primaryLabel = dueCount ? "Review due" : "Start review";
-  const nextDetail = `${dueCount} due · ${newCount} new · ${weakCount} weak`;
 
   return `
     <section class="topbar">
       <div>
-        <h1>Study</h1>
-        <p>${bank.title} · ${deck.title}</p>
+        <h1>Home</h1>
+        <p>${bank.title} bank · ${deck.title} selected</p>
       </div>
     </section>
 
@@ -494,17 +553,15 @@ function renderHome() {
 
       <section class="study-board">
         <div class="next-line">
-          <span>Next up</span>
-          <strong>${dueCount ? "Review due" : deck.title}</strong>
-          <small>${nextDetail}</small>
+          <span>Current scope</span>
+          <strong>${deck.title}</strong>
+          <small>${deck.count} questions · ${dueCount} due · ${newCount} new</small>
         </div>
         <div class="study-actions">
-          <button class="primary primary-action" type="button" data-action="${primaryAction}">${primaryLabel}</button>
+          <button class="primary primary-action" type="button" data-screen="practice">Practice</button>
           <div class="secondary-actions">
-            ${weakCount > 0 ? `<button class="secondary" type="button" data-action="review-weak">Weak</button>` : ""}
-            ${newCount > 0 ? `<button class="secondary" type="button" data-action="learn-new">New</button>` : ""}
-          <button class="secondary" type="button" data-start="exam">Exam</button>
-          ${deck.count > EXAM_LIMIT ? `<button class="secondary" type="button" data-action="full-exam">Full exam</button>` : ""}
+            <button class="secondary" type="button" data-screen="exam">Exam</button>
+            <button class="secondary" type="button" data-screen="stats">Stats</button>
           </div>
         </div>
       </section>
@@ -537,8 +594,8 @@ function renderPracticeHub() {
   const weakCount = getWeakQuestions(deck, state.progress).length;
   const dueCount = getDueQuestions(deck, state.progress).length;
   const newCount = getNewQuestions(deck, state.progress).length;
-  const primaryAction = dueCount ? "review-due" : "start-focus";
-  const primaryLabel = dueCount ? "Review due" : "Start smart review";
+  const eligibleCount = getExamEligibleQuestions(deck).length;
+  const practiceExamCount = Math.min(EXAM_QUESTION_COUNT, eligibleCount);
 
   return `
     <section class="topbar">
@@ -553,18 +610,27 @@ function renderPracticeHub() {
         ${questionBanks.map(renderBankButton).join("")}
       </section>
 
-      <section class="mode-panel practice-panel">
-        <div class="mode-copy">
-          <span class="eyebrow">Selected scope</span>
-          <h2>${deck.title}</h2>
-          <p>${summary.due} due · ${summary.unseen} new · ${summary.weak} weak</p>
-        </div>
-        <div class="mode-options">
-          <button class="primary primary-action" type="button" data-action="${primaryAction}">${primaryLabel}</button>
-          <button class="secondary" type="button" data-action="learn-new" ${newCount === 0 ? "disabled" : ""}>New only</button>
-          <button class="secondary" type="button" data-action="review-weak" ${weakCount === 0 ? "disabled" : ""}>Weak only</button>
-          <button class="secondary" type="button" data-start="practice">Shuffle all</button>
-        </div>
+      <section class="practice-choice-grid">
+        <article class="mode-card">
+          <span class="eyebrow">Learn</span>
+          <h2>Practice subject</h2>
+          <p>No timer. Check each answer, read the explanation, and update your module progress.</p>
+          <div class="mode-options">
+            <button class="primary primary-action" type="button" data-action="start-focus">${dueCount ? "Review due" : "Start subject practice"}</button>
+            <button class="secondary" type="button" data-action="learn-new" ${newCount === 0 ? "disabled" : ""}>New only</button>
+            <button class="secondary" type="button" data-action="review-weak" ${weakCount === 0 ? "disabled" : ""}>Weak only</button>
+            <button class="secondary" type="button" data-action="shuffle-subject">Shuffle all</button>
+          </div>
+        </article>
+        <article class="mode-card">
+          <span class="eyebrow">Simulate</span>
+          <h2>Practice exam</h2>
+          <p>90 questions, 20-minute timer, answers shown after you respond. Going over time is allowed.</p>
+          <div class="mode-options single">
+            <button class="primary primary-action" type="button" data-action="practice-exam" ${practiceExamCount === 0 ? "disabled" : ""}>Start practice exam</button>
+            <small>${practiceExamCount} questions from ${deck.title}</small>
+          </div>
+        </article>
       </section>
 
       <section class="learning-strip compact-strip" aria-label="Learning state">
@@ -574,7 +640,7 @@ function renderPracticeHub() {
         <div><span>Done</span><strong>${summary.percent}%</strong></div>
       </section>
 
-      ${renderScopePicker("Change practice scope")}
+      ${renderScopePicker("Choose practice subject")}
     </section>
   `;
 }
@@ -583,7 +649,7 @@ function renderExamHub() {
   const deck = currentDeck();
   const bank = currentBank();
   const eligibleCount = getExamEligibleQuestions(deck).length;
-  const quickCount = Math.min(EXAM_LIMIT, eligibleCount);
+  const examCount = Math.min(EXAM_QUESTION_COUNT, eligibleCount);
 
   return `
     <section class="topbar">
@@ -600,30 +666,29 @@ function renderExamHub() {
 
       <section class="mode-panel exam-panel">
         <div class="mode-copy">
-          <span class="eyebrow">Selected scope</span>
-          <h2>${deck.title}</h2>
-          <p>No answers until you finish. Missed questions come back with explanations.</p>
+          <span class="eyebrow">Strict exam</span>
+          <h2>Real exam</h2>
+          <p>90 questions. 20 minutes. No answer reveal until the score screen.</p>
         </div>
         <div class="mode-options exam-options">
-          <button class="primary primary-action" type="button" data-start="exam" ${eligibleCount === 0 ? "disabled" : ""}>Quick exam</button>
-          <button class="secondary" type="button" data-action="full-exam" ${eligibleCount === 0 ? "disabled" : ""}>Full exam</button>
+          <button class="primary primary-action" type="button" data-action="real-exam" ${examCount === 0 ? "disabled" : ""}>Start exam</button>
         </div>
       </section>
 
       <section class="exam-choice-grid">
         <div class="exam-choice">
-          <span>Quick exam</span>
-          <strong>${quickCount}</strong>
-          <small>Random questions for a focused check.</small>
+          <span>Questions</span>
+          <strong>${examCount}</strong>
+          <small>Random answerable questions from ${deck.title}.</small>
         </div>
         <div class="exam-choice">
-          <span>Full exam</span>
-          <strong>${eligibleCount}</strong>
-          <small>Every answerable question in this scope.</small>
+          <span>Time limit</span>
+          <strong>20</strong>
+          <small>Minutes. The exam submits automatically when time ends.</small>
         </div>
       </section>
 
-      ${renderScopePicker("Change exam scope")}
+      ${renderScopePicker("Choose exam scope")}
     </section>
   `;
 }
@@ -678,14 +743,21 @@ function renderDeckButton(deck) {
   `;
 }
 
-function renderTrainer(mode) {
+function renderTrainer() {
   const question = currentQuestion();
   if (!question) return "";
 
   const deck = currentDeck();
+  const sessionMode = state.session.mode;
+  const timed = state.session.startedAt && state.session.durationSeconds;
+  const remaining = timed ? remainingSeconds() : null;
+  const overTime = typeof remaining === "number" && remaining < 0;
+  const title =
+    sessionMode === "exam" ? "Exam" : sessionMode === "practice-exam" ? "Practice exam" : "Practice subject";
   const selected = selectedFor(question);
-  const checked = mode === "practice" && state.session.revealed;
-  const examDone = mode === "exam" && state.session.submitted;
+  const answerRevealMode = showsAnswersDuringSession();
+  const checked = answerRevealMode && state.session.revealed;
+  const examDone = state.session.submitted;
   const score = scoreSession(state.session.questions, state.session.answers);
   const answered = answeredCount();
   const answerCount = question.correctAnswers.length;
@@ -701,14 +773,15 @@ function renderTrainer(mode) {
         : "Reveal the answer when ready.";
 
   return `
-    <section class="trainer ${mode}">
+    <section class="trainer ${sessionMode}">
       <header class="question-top">
-        <button class="back-button" type="button" data-screen="home">Back</button>
+        <button class="back-button" type="button" data-screen="${sessionMode === "exam" ? "exam" : "practice"}">Back</button>
         <div>
-          <h1>${mode === "exam" ? "Exam" : "Practice"}</h1>
-          <p>${deck.title} · ${state.session.index + 1}/${state.session.questions.length}${mode === "exam" ? ` · ${answered} answered` : ""}</p>
+          <h1>${title}</h1>
+          <p>${deck.title} · ${state.session.index + 1}/${state.session.questions.length} · ${answered} answered</p>
         </div>
-        ${mode === "exam" ? `<button class="secondary" type="button" data-action="submit-exam" ${answered === 0 ? "disabled" : ""}>Finish</button>` : ""}
+        ${timed ? `<div class="timer-pill ${overTime ? "overtime" : ""}">${formatTimer(remaining)}</div>` : ""}
+        ${sessionMode === "exam" ? `<button class="secondary" type="button" data-action="submit-exam" ${answered === 0 ? "disabled" : ""}>Finish</button>` : ""}
       </header>
 
       ${
@@ -739,16 +812,24 @@ function renderTrainer(mode) {
         ${checked ? renderExplanation(question, selected) : ""}
 
         <footer class="trainer-actions">
-          <span class="session-hint">${mode === "practice" ? practiceHint : `${answered}/${state.session.questions.length} answered`}</span>
+          <span class="session-hint">${
+            answerRevealMode ? practiceHint : `${answered}/${state.session.questions.length} answered · no reveal until score`
+          }</span>
           <button class="secondary" type="button" data-action="previous" ${state.session.index === 0 ? "disabled" : ""}>Previous</button>
           ${
-            mode === "practice"
+            answerRevealMode
               ? state.session.revealed
-                ? `<button class="primary" type="button" data-action="next">Next card</button>`
+                ? `<button class="primary" type="button" data-action="next">${
+                    state.session.index === state.session.questions.length - 1 && sessionMode === "practice-exam"
+                      ? "See score"
+                      : "Next"
+                  }</button>`
                 : `<button class="primary" type="button" data-action="reveal" ${needsSelection ? "disabled" : ""}>${
                     hasChoices || hasMatching ? "Check answer" : "Show answer"
                   }</button>`
-              : `<button class="primary" type="button" data-action="next" ${state.session.index === state.session.questions.length - 1 ? "disabled" : ""}>Next</button>`
+              : `<button class="primary" type="button" data-action="next" ${
+                  state.session.index === state.session.questions.length - 1 ? "disabled" : ""
+                }>Next</button>`
           }
         </footer>
       `
@@ -871,14 +952,17 @@ function renderAnswerAssets(question) {
 function renderExamResult(score) {
   const missedQuestions =
     state.session?.questions.filter((question) => !isCorrect(question, selectedFor(question))) ?? [];
+  const practiceExam = state.session?.mode === "practice-exam";
 
   return `
     <section class="result-card">
-      <span class="eyebrow">Result</span>
+      <span class="eyebrow">${practiceExam ? "Practice exam result" : "Exam result"}</span>
       <h2>${score.percent}%</h2>
       <p>${score.correct} correct · ${score.wrong} missed · ${score.total} total</p>
       <div class="hero-actions">
-        <button class="primary" type="button" data-start="exam">New exam</button>
+        <button class="primary" type="button" data-action="${practiceExam ? "practice-exam" : "real-exam"}">${
+          practiceExam ? "New practice exam" : "New exam"
+        }</button>
         <button class="secondary" type="button" data-action="practice-misses" ${score.wrong === 0 ? "disabled" : ""}>Practice misses</button>
       </div>
     </section>
@@ -1008,10 +1092,6 @@ function wireEvents() {
     button.addEventListener("click", () => selectBank(button.dataset.bank));
   });
 
-  app.querySelectorAll("[data-start]").forEach((button) => {
-    button.addEventListener("click", () => startSession(button.dataset.start));
-  });
-
   app.querySelectorAll("[data-option]").forEach((button) => {
     button.addEventListener("click", () => toggleAnswer(decodeAttr(button.dataset.option ?? "")));
   });
@@ -1040,7 +1120,9 @@ function wireEvents() {
       if (action === "review-due") startDueReview();
       if (action === "review-weak") startWeakReview();
       if (action === "learn-new") startNewCards();
-      if (action === "full-exam") startFullExam();
+      if (action === "shuffle-subject") startSubjectShuffle();
+      if (action === "practice-exam") startPracticeExam();
+      if (action === "real-exam") startRealExam();
     });
   });
 }
