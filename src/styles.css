@@ -1048,6 +1048,40 @@ pre {
   margin-bottom: 8px;
 }
 
+.storage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 10px;
+}
+
+.storage-grid div {
+  min-height: 70px;
+  padding: 14px 0;
+  border-right: 1px solid var(--line);
+}
+
+.storage-grid div:last-child {
+  border-right: 0;
+}
+
+.storage-grid span,
+.storage-grid strong {
+  display: block;
+}
+
+.storage-grid span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 780;
+}
+
+.storage-grid strong {
+  margin-top: 9px;
+  font-size: 18px;
+  font-weight: 820;
+}
+
 .save-panel strong,
 .save-panel span {
   display: block;
@@ -1413,6 +1447,10 @@ pre {
   .save-panel {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .storage-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 
   .result-card h2 {

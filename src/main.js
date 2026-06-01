@@ -36,6 +36,7 @@ import "./styles.css";
 
 const STORAGE_KEY = "quizos-v2-progress";
 const STORAGE_BACKUP_KEY = "quizos-v2-progress-backup";
+const SESSION_KEY = "quizos-v2-active-session";
 const DECK_KEY = "quizos-v2-selected-deck";
 const BANK_KEY = "quizos-v2-selected-bank";
 const EXAM_QUESTION_COUNT = 90;
@@ -112,6 +113,7 @@ const state = {
 };
 
 let timerId = 0;
+let savedSessionSignature = "";
 
 function loadBankId() {
   const savedBankId = localStorage.getItem(BANK_KEY);
@@ -181,6 +183,7 @@ function setScreen(screen) {
   state.screen = screen;
   state.session = null;
   stopTimer();
+  persistSession();
   render();
 }
 
@@ -210,6 +213,9 @@ function selectBank(bankId) {
   const matchingDeck = decks.find((deck) => deck.logicalId === currentLogicalId);
   state.deckId = savedDeckId && deckById.has(savedDeckId) ? savedDeckId : matchingDeck?.id ?? decks[0]?.id;
   localStorage.setItem(`${DECK_KEY}-${bankId}`, state.deckId);
+  state.session = null;
+  stopTimer();
+  persistSession();
   render();
 }
 
@@ -227,6 +233,92 @@ function createSession(questions, mode, options = {}) {
     durationSeconds: options.durationSeconds ?? null,
     strictTimer: Boolean(options.strictTimer),
   };
+}
+
+function sessionSnapshot() {
+  if (!state.session) return null;
+
+  return {
+    version: 1,
+    bankId: state.bankId,
+    deckId: state.deckId,
+    screen: state.screen,
+    mode: state.session.mode,
+    questionIds: state.session.questions.map((question) => question.id),
+    index: state.session.index,
+    answers: state.session.answers,
+    revealed: state.session.revealed,
+    submitted: state.session.submitted,
+    seed: state.session.seed,
+    startedAt: state.session.startedAt,
+    durationSeconds: state.session.durationSeconds,
+    strictTimer: state.session.strictTimer,
+  };
+}
+
+function persistSession() {
+  const snapshot = sessionSnapshot();
+
+  try {
+    if (!snapshot) {
+      if (savedSessionSignature) localStorage.removeItem(SESSION_KEY);
+      savedSessionSignature = "";
+      return;
+    }
+
+    const signature = JSON.stringify(snapshot);
+    if (signature === savedSessionSignature) return;
+    localStorage.setItem(SESSION_KEY, signature);
+    savedSessionSignature = signature;
+  } catch {
+    state.saveError = "Could not save the active session on this device.";
+  }
+}
+
+function restoreSavedSession() {
+  try {
+    const raw = localStorage.getItem(SESSION_KEY);
+    if (!raw) return;
+    const saved = JSON.parse(raw);
+    if (saved?.version !== 1 || !bankDecks[saved.bankId]) throw new Error("Invalid session");
+
+    state.bankId = saved.bankId;
+    decks = decksForBank(saved.bankId);
+    deckById = new Map(decks.map((deck) => [deck.id, deck]));
+    const deck = deckById.get(saved.deckId);
+    if (!deck) throw new Error("Missing deck");
+
+    const byQuestionId = new Map(deck.questions.map((question) => [question.id, question]));
+    const questions = (saved.questionIds ?? []).map((id) => byQuestionId.get(id)).filter(Boolean);
+    if (questions.length === 0) throw new Error("Missing questions");
+
+    state.deckId = deck.id;
+    state.screen = saved.screen === "exam" ? "exam" : "practice";
+    state.session = {
+      deckId: deck.id,
+      mode: saved.mode,
+      questions,
+      index: Math.min(Math.max(Number(saved.index) || 0, 0), questions.length - 1),
+      answers: saved.answers && typeof saved.answers === "object" ? saved.answers : {},
+      revealed: Boolean(saved.revealed),
+      submitted: Boolean(saved.submitted),
+      seed: saved.seed ?? Date.now(),
+      startedAt: saved.startedAt ?? null,
+      durationSeconds: saved.durationSeconds ?? null,
+      strictTimer: Boolean(saved.strictTimer),
+    };
+
+    state.now = Date.now();
+    if (state.session.strictTimer && remainingSeconds() <= 0 && !state.session.submitted) {
+      submitExam();
+      return;
+    }
+    if (state.session.startedAt && !state.session.submitted) startTimer();
+    savedSessionSignature = JSON.stringify(sessionSnapshot());
+  } catch {
+    localStorage.removeItem(SESSION_KEY);
+    savedSessionSignature = "";
+  }
 }
 
 function startSubjectShuffle() {
@@ -450,9 +542,13 @@ function writeProgress(question, correct) {
 
 function resetProgress() {
   state.progress = {};
+  state.session = null;
+  stopTimer();
   localStorage.removeItem(STORAGE_KEY);
   localStorage.removeItem(STORAGE_BACKUP_KEY);
   localStorage.removeItem(`${STORAGE_KEY}-saved-at`);
+  localStorage.removeItem(SESSION_KEY);
+  savedSessionSignature = "";
   state.savedAt = 0;
   state.saveError = "";
   render();
@@ -480,6 +576,9 @@ function importProgress(file) {
       saveProgress();
       state.screen = "stats";
       state.session = null;
+      stopTimer();
+      localStorage.removeItem(SESSION_KEY);
+      savedSessionSignature = "";
       render();
     } catch {
       state.saveError = "Could not import that progress file.";
@@ -490,6 +589,7 @@ function importProgress(file) {
 }
 
 function render() {
+  persistSession();
   app.innerHTML = `
     <div class="app-shell screen-${state.screen}">
       ${renderSidebar()}
@@ -1043,6 +1143,8 @@ function renderExamResult(score) {
 }
 
 function renderStats() {
+  const storage = storageSummary();
+
   return `
     <section class="topbar">
       <div>
@@ -1065,6 +1167,11 @@ function renderStats() {
           </label>
         </div>
       </section>
+      <section class="storage-grid" aria-label="Storage health">
+        <div><span>Saved cards</span><strong>${storage.savedCards}</strong></div>
+        <div><span>Backup</span><strong>${storage.backupOk ? "Ready" : "Missing"}</strong></div>
+        <div><span>Session</span><strong>${storage.sessionOk ? "Resumable" : "None"}</strong></div>
+      </section>
       <div class="stats-list">
         ${decks
           .filter((deck) => deck.type !== "all")
@@ -1085,6 +1192,30 @@ function renderStats() {
       </div>
     </section>
   `;
+}
+
+function storageSummary() {
+  let backupOk = false;
+  let sessionOk = false;
+
+  try {
+    backupOk = Object.keys(parseProgressPayload(localStorage.getItem(STORAGE_BACKUP_KEY))).length > 0;
+  } catch {
+    backupOk = false;
+  }
+
+  try {
+    const saved = JSON.parse(localStorage.getItem(SESSION_KEY) ?? "null");
+    sessionOk = saved?.version === 1 && Array.isArray(saved.questionIds) && saved.questionIds.length > 0;
+  } catch {
+    sessionOk = false;
+  }
+
+  return {
+    savedCards: Object.keys(state.progress).length,
+    backupOk,
+    sessionOk,
+  };
 }
 
 function progressSaveLabel() {
@@ -1176,4 +1307,5 @@ function wireEvents() {
   });
 }
 
+restoreSavedSession();
 render();
