@@ -97,7 +97,7 @@ Within a production network, what is the purpose of configuring a switch with a 
 - [ ] Hosts that are connected to the switch can use the switch default gateway address to forward packets to a remote destination.
 - [ ] A switch must have a default gateway to be accessible by Telnet and SSH.
 - [x] **The default gateway address is used to forward packets originating from the switch to remote networks.**
-- [ ] It provides a next-hop address for all traccic that flows through the switch.
+- [ ] It provides a next-hop address for all traffic that flows through the switch.
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
@@ -127,34 +127,34 @@ Which field in the IPv4 header is used to prevent a packet from traversing a net
 - [x] **Time-to-Live**
 - [ ] Sequence Number
 - [ ] Acknowledgment Number
-- [ ] Diccerentiated Services
+- [ ] Differentiated Services
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-The value of the Time-to-Live (TTL) field in the IPv4 header is used to limit the lifetime of a packet. The sending host sets the initial TTL value; which is decreased by one each time the packet is processed by a router. If the TTL field decrements to zero, the router discards the packet and sends an Internet Control Message Protocol (ICMP) Time Exceeded message to the source IP address. The Diccerentiated Services (DS) field is used to determine the priority of each packet. Sequence Number and Acknowledgment Number are two fields in the TCP header.
+The value of the Time-to-Live (TTL) field in the IPv4 header is used to limit the lifetime of a packet. The sending host sets the initial TTL value; which is decreased by one each time the packet is processed by a router. If the TTL field decrements to zero, the router discards the packet and sends an Internet Control Message Protocol (ICMP) Time Exceeded message to the source IP address. The Differentiated Services (DS) field is used to determine the priority of each packet. Sequence Number and Acknowledgment Number are two fields in the TCP header.
 
 ---
 
 ## Question 9
 
-What is one advantage that the IPv6 simplified header occers over IPv4?
+What is one advantage that the IPv6 simplified header offers over IPv4?
 
 - [ ] smaller-sized header
 - [ ] little requirement for processing checksums
 - [ ] smaller-sized source and destination IP addresses
-- [x] **eccicient packet handling**
+- [x] **efficient packet handling**
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-The IPv6 simplified header occers several advantages over IPv4:
+The IPv6 simplified header offers several advantages over IPv4:
 
-· Better routing ecciciency and eccicient packet handling for performance and forwarding-rate scalability
+· Better routing efficiency and efficient packet handling for performance and forwarding-rate scalability
 
 · No requirement for processing checksums
 
-· Simplified and more eccicient extension header mechanisms (as opposed to the IPv4 Options field)
+· Simplified and more efficient extension header mechanisms (as opposed to the IPv4 Options field)
 
-· A Flow Label field for per-flow processing with no need to open the transport inner packet to identify the various traccic flows
+· A Flow Label field for per-flow processing with no need to open the transport inner packet to identify the various traffic flows
 
 ---
 
@@ -165,11 +165,11 @@ What IPv4 header field identifies the upper layer protocol carried in the packet
 - [x] **Protocol**
 - [ ] Identification
 - [ ] Version
-- [ ] Diccerentiated Services
+- [ ] Differentiated Services
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-It is the Protocol field in the IP header that identifies the upper-layer protocol the packet is carrying. The Version field identifies the IP version. The Diccerential Services field is used for setting packet priority. The Identification field is used to reorder fragmented packets.
+It is the Protocol field in the IP header that identifies the upper-layer protocol the packet is carrying. The Version field identifies the IP version. The Differential Services field is used for setting packet priority. The Identification field is used to reorder fragmented packets.
 
 ---
 
@@ -247,8 +247,8 @@ When transporting data from real-time applications, such as streaming audio and 
 
 - [ ] Next Header
 - [x] **Flow Label**
-- [ ] Traccic Class
-- [ ] Diccerentiated Services
+- [ ] Traffic Class
+- [ ] Differentiated Services
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
@@ -260,9 +260,9 @@ The Flow Label in IPv6 header is a 20-bit field that provides a special service 
 
 What statement describes the function of the Address Resolution Protocol?
 
-- [ ] ARP is used to discover the IP address of any host on a diccerent network.
+- [ ] ARP is used to discover the IP address of any host on a different network.
 - [ ] ARP is used to discover the IP address of any host on the local network.
-- [ ] ARP is used to discover the MAC address of any host on a diccerent network.
+- [ ] ARP is used to discover the MAC address of any host on a different network.
 - [x] **ARP is used to discover the MAC address of any host on the local network.**
 
 > [!NOTE]
@@ -308,13 +308,13 @@ Which destination address is used in an ARP request frame?
 
 - [ ] 0.0.0.0
 - [ ] 255.255.255.255
-- [x] **cccc.cccc.cccc**
+- [x] **ffff.ffff.ffff**
 - [ ] AAAA.AAAA.AAAA
 - [ ] the physical address of the destination host
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-The purpose of an ARP request is to find the MAC address of the destination host on an Ethernet LAN. The ARP process sends a Layer 2 broadcast to all devices on the Ethernet LAN. The frame contains the IP address of the destination and the broadcast MAC address, cccc.cccc.cccc. The host with the IP address that matches the IP address in the ARP request will reply with a unicast frame that includes the MAC address of the host. Thus the original sending host will obtain the destination IP and MAC address pair to continue the encapsulation process for data transmission.
+The purpose of an ARP request is to find the MAC address of the destination host on an Ethernet LAN. The ARP process sends a Layer 2 broadcast to all devices on the Ethernet LAN. The frame contains the IP address of the destination and the broadcast MAC address, ffff.ffff.ffff. The host with the IP address that matches the IP address in the ARP request will reply with a unicast frame that includes the MAC address of the host. Thus the original sending host will obtain the destination IP and MAC address pair to continue the encapsulation process for data transmission.
 
 ---
 
@@ -587,7 +587,7 @@ If a router cannot locate the startup-config file in NVRAM, it will enter setup 
 
 ## Question 34
 
-The global configuration command ip default-gateway 172.16.100.1 is applied to a switch. What is the eccect of this command?
+The global configuration command ip default-gateway 172.16.100.1 is applied to a switch. What is the effect of this command?
 
 - [ ] The switch will have a management interface with the address 172.16.100.1.
 - [x] **The switch can be remotely managed from a host on another network.**
@@ -721,7 +721,7 @@ A router accepts a packet and accesses its routing table to determine the approp
 
 ## Question 41
 
-What is the eccect of using the Router# copy running-config startup-config command on a router?
+What is the effect of using the Router# copy running-config startup-config command on a router?
 
 - [ ] The contents of ROM will change.
 - [ ] The contents of RAM will change.
@@ -756,13 +756,13 @@ What are two potential network problems that can result from ARP operation? (Cho
 
 - [ ] Manually configuring static ARP associations could facilitate ARP poisoning or MAC address spoofing.
 - [x] **On large networks with low bandwidth, multiple ARP broadcasts could cause data communication delays.**
-- [x] **Network attackers could manipulate MAC address and IP address mappings in ARP messages with the intent of intercepting network traccic.**
+- [x] **Network attackers could manipulate MAC address and IP address mappings in ARP messages with the intent of intercepting network traffic.**
 - [ ] Large numbers of ARP request broadcasts could cause the host MAC address table to overflow and prevent the host from communicating on the network.
 - [ ] Multiple ARP replies result in the switch MAC address table containing entries that match the MAC addresses of hosts that are connected to the relevant switch port.
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Large numbers of ARP broadcast messages could cause momentary data communications delays. Network attackers could manipulate MAC address and IP address mappings in ARP messages with the intent to intercept network traccic. ARP requests and replies cause entries to be made into the ARP table, not the MAC address table. ARP table overflows are very unlikely. Manually configuring static ARP associations is a way to prevent, not facilitate, ARP poisoning and MAC address spoofing. Multiple ARP replies resulting in the switch MAC address table containing entries that match the MAC addresses of connected nodes and are associated with the relevant switch port are required for normal switch frame forwarding operations. It is not an ARP caused network problem.
+Large numbers of ARP broadcast messages could cause momentary data communications delays. Network attackers could manipulate MAC address and IP address mappings in ARP messages with the intent to intercept network traffic. ARP requests and replies cause entries to be made into the ARP table, not the MAC address table. ARP table overflows are very unlikely. Manually configuring static ARP associations is a way to prevent, not facilitate, ARP poisoning and MAC address spoofing. Multiple ARP replies resulting in the switch MAC address table containing entries that match the MAC addresses of connected nodes and are associated with the relevant switch port are required for normal switch frame forwarding operations. It is not an ARP caused network problem.
 
 ---
 
@@ -823,14 +823,14 @@ The term that describes a field in the IPv4 packet header used to identify the n
 
 Which term describes a field in the IPv4 packet header that contains an 8-bit binary value used to determine the priority of each packet?
 
-- [x] **diccerentiated services**
+- [x] **differentiated services**
 - [ ] destination IPv4 address
 - [ ] source IPv4 address
 - [ ] protocol
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-The term that describes a field in the IPv4 packet header that contains an 8-bit binary value used to determine the priority of each packet is “Diccerentiated Services” (often abbreviated as DSCP or DS field). The Diccerentiated Services field is used for Quality of Service (QoS) and packet prioritization in IP networks. It allows packets to be marked with a value that represents their relative priority, and routers and network devices can use this value to make forwarding and queuing decisions based on the desired quality of service for diccerent types of traccic.
+The term that describes a field in the IPv4 packet header that contains an 8-bit binary value used to determine the priority of each packet is “Differentiated Services” (often abbreviated as DSCP or DS field). The Differentiated Services field is used for Quality of Service (QoS) and packet prioritization in IP networks. It allows packets to be marked with a value that represents their relative priority, and routers and network devices can use this value to make forwarding and queuing decisions based on the desired quality of service for different types of traffic.
 
 ---
 
@@ -905,7 +905,7 @@ Which term describes a field in the IPv4 packet header used to limit the lifetim
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-The term that describes a field in the IPv4 packet header used to limit the lifetime of a packet is “TTL,” which stands for “Time to Live.” The TTL field is an 8-bit value in the IPv4 header that represents the maximum number of hops (routers) that a packet can traverse before it is discarded. TTL helps prevent packets from circulating endlessly in the network and is primarily used for network stability and loop prevention. As each router processes the packet, it decrements the TTL value by one, and if the TTL reaches zero, the packet is dropped. This field ensures that packets do not endlessly loop through the network and helps in their eccicient delivery.
+The term that describes a field in the IPv4 packet header used to limit the lifetime of a packet is “TTL,” which stands for “Time to Live.” The TTL field is an 8-bit value in the IPv4 header that represents the maximum number of hops (routers) that a packet can traverse before it is discarded. TTL helps prevent packets from circulating endlessly in the network and is primarily used for network stability and loop prevention. As each router processes the packet, it decrements the TTL value by one, and if the TTL reaches zero, the packet is dropped. This field ensures that packets do not endlessly loop through the network and helps in their efficient delivery.
 
 ---
 
@@ -930,7 +930,7 @@ Which term describes a field in the IPv4 packet header used to identify the next
 
 - [x] **protocol**
 - [ ] version
-- [ ] diccerentiated services
+- [ ] differentiated services
 - [ ] header checksum
 
 > [!NOTE]
@@ -944,7 +944,7 @@ The term that describes a field in the IPv4 packet header used to identify the n
 Which term describes a field in the IPv4 packet header that contains a 4-bit binary value set to 0100?
 
 - [x] **version**
-- [ ] diccerentiated services
+- [ ] differentiated services
 - [ ] header checksum
 - [ ] TTL
 
@@ -992,7 +992,7 @@ By manually configuring static entries in the ARP table, you can ensure that the
 What property of ARP allows MAC addresses of frequently used servers to be fixed in the ARP table?
 
 - [x] **A static IP-to-MAC address entry can be entered manually into an ARP table.**
-- [ ] The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.
+- [ ] The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.
 - [ ] The source MAC address appears in the header of the Ethernet frame.
 - [ ] The port-to-MAC address table on a switch has the same entries as the ARP table on the switch.
 
@@ -1007,10 +1007,10 @@ By manually configuring static entries in the ARP table, you can ensure that the
 
 ## Question 59
 
-What property of ARP allows hosts on a LAN to send traccic to remote networks?
+What property of ARP allows hosts on a LAN to send traffic to remote networks?
 
 - [x] **Local hosts learn the MAC address of the default gateway.**
-- [ ] The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.
+- [ ] The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.
 - [ ] The source MAC address appears in the header of the Ethernet frame.
 - [ ] The port-to-MAC address table on a switch has the same entries as the ARP table on the switch.
 
@@ -1018,34 +1018,34 @@ What property of ARP allows hosts on a LAN to send traccic to remote networks?
 > **Explanation:** Explanation & Hint:
 Local hosts learn the MAC address of the default gateway.
 
-This is the correct answer. ARP enables a host on a local network to discover the MAC address of the default gateway (usually a router), which is necessary to route traccic to a remote network. When a host sends a packet to a destination outside its local network, it uses ARP to find the MAC address of the default gateway. The packet is then sent to this MAC address, and the gateway routes it towards the remote network.
-The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.
+This is the correct answer. ARP enables a host on a local network to discover the MAC address of the default gateway (usually a router), which is necessary to route traffic to a remote network. When a host sends a packet to a destination outside its local network, it uses ARP to find the MAC address of the default gateway. The packet is then sent to this MAC address, and the gateway routes it towards the remote network.
+The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.
 
-This is incorrect in the context of ARP’s role in sending traccic to remote networks. The MAC address cc-cc-cc-cc-cc-cc is a broadcast address used in ARP requests within a local network, particularly when a device is trying to discover the MAC address associated with an IP address. This broadcast address is not used for sending traccic to remote networks.
+This is incorrect in the context of ARP’s role in sending traffic to remote networks. The MAC address ff-ff-ff-ff-ff-ff is a broadcast address used in ARP requests within a local network, particularly when a device is trying to discover the MAC address associated with an IP address. This broadcast address is not used for sending traffic to remote networks.
 The source MAC address appears in the header of the Ethernet frame.
 
 While this statement is true, it’s not specific to ARP’s functionality for remote network communication. The source MAC address is part of the Ethernet frame and is used to identify the sending device on the local network. This information is important in all Ethernet communications, not just in the context of ARP or communicating with remote networks.
 The port-to-MAC address table on a switch has the same entries as the ARP table on the switch.
 
-This statement is incorrect. The port-to-MAC address table (also known as the MAC address table) on a switch maps MAC addresses to switch ports, helping the switch ecciciently forward frames within the local network. On the other hand, the ARP table maps IP addresses to MAC addresses. These tables serve diccerent purposes and contain diccerent types of information. Additionally, switches typically do not maintain ARP tables as this is a function of devices that use IP addressing, like routers and hosts.
+This statement is incorrect. The port-to-MAC address table (also known as the MAC address table) on a switch maps MAC addresses to switch ports, helping the switch efficiently forward frames within the local network. On the other hand, the ARP table maps IP addresses to MAC addresses. These tables serve different purposes and contain different types of information. Additionally, switches typically do not maintain ARP tables as this is a function of devices that use IP addressing, like routers and hosts.
 
 ---
 
 ## Question 60
 
-What property of ARP allows hosts on a LAN to send traccic to remote networks?
+What property of ARP allows hosts on a LAN to send traffic to remote networks?
 
 - [x] **Local hosts learn the MAC address of the default gateway.**
-- [ ] The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.
+- [ ] The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.
 - [ ] The source MAC address appears in the header of the Ethernet frame.
 - [ ] ARP replies are broadcast on the network when a host receives an ARP request.
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-The property of ARP (Address Resolution Protocol) that allows hosts on a LAN to send traccic to remote networks is:
+The property of ARP (Address Resolution Protocol) that allows hosts on a LAN to send traffic to remote networks is:
 “Local hosts learn the MAC address of the default gateway.”
 
-When a host on a local network wants to communicate with devices on remote networks, it needs to know the MAC address of its default gateway (typically a router). The local hosts learn the MAC address of the default gateway through ARP. They use the ARP protocol to resolve the IP address of the default gateway to its corresponding MAC address. Once they have this MAC address, they can encapsulate their data in Ethernet frames and send it to the default gateway, which is responsible for routing the traccic to remote networks.
+When a host on a local network wants to communicate with devices on remote networks, it needs to know the MAC address of its default gateway (typically a router). The local hosts learn the MAC address of the default gateway through ARP. They use the ARP protocol to resolve the IP address of the default gateway to its corresponding MAC address. Once they have this MAC address, they can encapsulate their data in Ethernet frames and send it to the default gateway, which is responsible for routing the traffic to remote networks.
 
 ---
 
@@ -1053,7 +1053,7 @@ When a host on a local network wants to communicate with devices on remote netwo
 
 What property of ARP forces all Ethernet NICs to process an ARP request?
 
-- [x] **The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.**
+- [x] **The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.**
 - [ ] The source MAC address appears in the header of the Ethernet frame.
 - [ ] The type field 0x806 appears in the header of the Ethernet frame.
 - [ ] ARP replies are broadcast on the network when a host receives an ARP request.
@@ -1061,9 +1061,9 @@ What property of ARP forces all Ethernet NICs to process an ARP request?
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
 The property of ARP (Address Resolution Protocol) that forces all Ethernet NICs to process an ARP request is:
-“The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.”
+“The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.”
 
-When an ARP request is sent, it is broadcast with a destination MAC address of cc-cc-cc-cc-cc-cc, which is a broadcast address. This means that the frame will be received and processed by all NICs on the local network segment, forcing each NIC to check whether the ARP request is relevant to it. NICs compare the target IP address in the ARP request to their own IP address, and the one that matches responds with an ARP reply. This is how ARP works to resolve IP addresses to MAC addresses on a local network.
+When an ARP request is sent, it is broadcast with a destination MAC address of ff-ff-ff-ff-ff-ff, which is a broadcast address. This means that the frame will be received and processed by all NICs on the local network segment, forcing each NIC to check whether the ARP request is relevant to it. NICs compare the target IP address in the ARP request to their own IP address, and the one that matches responds with an ARP reply. This is how ARP works to resolve IP addresses to MAC addresses on a local network.
 
 ---
 
@@ -1072,7 +1072,7 @@ When an ARP request is sent, it is broadcast with a destination MAC address of c
 What property of ARP causes a reply only to the source sending an ARP request?
 
 - [x] **The source MAC address appears in the header of the Ethernet frame.**
-- [ ] The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.
+- [ ] The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.
 - [ ] The type field 0x806 appears in the header of the Ethernet frame.
 - [ ] ARP replies are broadcast on the network when a host receives an ARP request.
 
@@ -1089,7 +1089,7 @@ When a host sends an ARP request to resolve an IP address to a MAC address, it i
 
 What property of ARP causes the request to be flooded out all ports of a switch except for the port receiving the ARP request?
 
-- [x] **The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.**
+- [x] **The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.**
 - [ ] The type field 0x806 appears in the header of the Ethernet frame.
 - [ ] Entries in an ARP table are time-stamped and are purged after the timeout expires.
 - [ ] ARP replies are broadcast on the network when a host receives an ARP request.
@@ -1097,9 +1097,9 @@ What property of ARP causes the request to be flooded out all ports of a switch 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
 The property of ARP (Address Resolution Protocol) that causes the ARP request to be flooded out all ports of a switch except for the port receiving the ARP request is:
-“The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.”
+“The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.”
 
-In an ARP request, the destination MAC address is set to the broadcast address cc-cc-cc-cc-cc-cc. When the switch receives a frame with a broadcast MAC address, it floods the frame out to all ports except for the port from which the frame was received. This behavior ensures that all devices on the local network segment have the opportunity to process the ARP request and respond if necessary, as ARP requests are used to resolve IP addresses to MAC addresses and discover the MAC addresses of devices on the local network.
+In an ARP request, the destination MAC address is set to the broadcast address ff-ff-ff-ff-ff-ff. When the switch receives a frame with a broadcast MAC address, it floods the frame out to all ports except for the port from which the frame was received. This behavior ensures that all devices on the local network segment have the opportunity to process the ARP request and respond if necessary, as ARP requests are used to resolve IP addresses to MAC addresses and discover the MAC addresses of devices on the local network.
 
 ---
 
@@ -1108,7 +1108,7 @@ In an ARP request, the destination MAC address is set to the broadcast address c
 What property of ARP causes the NICs receiving an ARP request to pass the data portion of the Ethernet frame to the ARP process?
 
 - [x] **The type field 0x806 appears in the header of the Ethernet frame.**
-- [ ] The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.
+- [ ] The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.
 - [ ] Entries in an ARP table are time-stamped and are purged after the timeout expires.
 - [ ] ARP replies are broadcast on the network when a host receives an ARP request.
 
@@ -1126,7 +1126,7 @@ The Ethernet frame type field indicates the protocol being used within the data 
 What property of ARP causes the NICs receiving an ARP request to pass the data portion of the Ethernet frame to the ARP process?
 
 - [x] **The type field 0x806 appears in the header of the Ethernet frame.**
-- [ ] The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.
+- [ ] The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.
 - [ ] Entries in an ARP table are time-stamped and are purged after the timeout expires.
 - [ ] The port-to-MAC address table on a switch has the same entries as the ARP table on the switch.
 
@@ -1154,7 +1154,7 @@ Main(config-if)# description Connects to the ISP
 Main(config-if)# ip address 10.156.157.254 255.255.255.0 
 Main(config-if)# no shutdown 
 Main(config-if)# interface s0/0/1 
-Main(config-if)# description Connects to the Head Occice WAN 
+Main(config-if)# description Connects to the Head Office WAN 
 Main(config-if)# ip address 198.51.100.177 255.255.255.0 
 Main(config-if)# no shutdown 
 Main(config-if)# end
@@ -1189,7 +1189,7 @@ BldgA(config-if)# description Connects to the ISP
 BldgA(config-if)# ip address 10.190.191.254 255.255.255.0 
 BldgA(config-if)# no shutdown 
 BldgA(config-if)# interface s0/0/1 
-BldgA(config-if)# description Connects to the Head Occice WAN 
+BldgA(config-if)# description Connects to the Head Office WAN 
 BldgA(config-if)# ip address 198.51.100.213 255.255.255.0 
 BldgA(config-if)# no shutdown 
 BldgA(config-if)# end
@@ -1224,7 +1224,7 @@ Floor(config-if)# description Connects to the ISP
 Floor(config-if)# ip address 10.224.225.254 255.255.255.0 
 Floor(config-if)# no shutdown 
 Floor(config-if)# interface s0/0/1 
-Floor(config-if)# description Connects to the Head Occice WAN 
+Floor(config-if)# description Connects to the Head Office WAN 
 Floor(config-if)# ip address 203.0.113.246 255.255.255.0 
 Floor(config-if)# no shutdown 
 Floor(config-if)# end
@@ -1259,7 +1259,7 @@ Floor(config-if)# description Connects to the ISP
 Floor(config-if)# ip address 10.62.63.254 255.255.255.0 
 Floor(config-if)# no shutdown 
 Floor(config-if)# interface s0/0/1 
-Floor(config-if)# description Connects to the Head Occice WAN 
+Floor(config-if)# description Connects to the Head Office WAN 
 Floor(config-if)# ip address 209.165.200.87 255.255.255.0 
 Floor(config-if)# no shutdown 
 Floor(config-if)# end
@@ -1294,7 +1294,7 @@ HQ(config-if)# description Connects to the ISP
 HQ(config-if)# ip address 10.98.99.254 255.255.255.0 
 HQ(config-if)# no shutdown 
 HQ(config-if)# interface s0/0/1 
-HQ(config-if)# description Connects to the Head Occice WAN 
+HQ(config-if)# description Connects to the Head Office WAN 
 HQ(config-if)# ip address 209.165.200.120 255.255.255.0 
 HQ(config-if)# no shutdown 
 HQ(config-if)# end
@@ -1329,7 +1329,7 @@ HQ(config-if)# description Connects to the ISP
 HQ(config-if)# ip address 10.132.133.254 255.255.255.0 
 HQ(config-if)# no shutdown 
 HQ(config-if)# interface s0/0/1 
-HQ(config-if)# description Connects to the Head Occice WAN 
+HQ(config-if)# description Connects to the Head Office WAN 
 HQ(config-if)# ip address 198.51.100.156 255.255.255.0 
 HQ(config-if)# no shutdown 
 HQ(config-if)# end
@@ -1364,7 +1364,7 @@ Main(config-if)# description Connects to the ISP
 Main(config-if)# ip address 10.166.167.254 255.255.255.0 
 Main(config-if)# no shutdown 
 Main(config-if)# interface s0/0/1 
-Main(config-if)# description Connects to the Head Occice WAN 
+Main(config-if)# description Connects to the Head Office WAN 
 Main(config-if)# ip address 198.51.100.189 255.255.255.0 
 Main(config-if)# no shutdown 
 Main(config-if)# end
@@ -1399,7 +1399,7 @@ BldgA(config-if)# description Connects to the ISP
 BldgA(config-if)# ip address 10.200.201.254 255.255.255.0 
 BldgA(config-if)# no shutdown 
 BldgA(config-if)# interface s0/0/1 
-BldgA(config-if)# description Connects to the Head Occice WAN 
+BldgA(config-if)# description Connects to the Head Office WAN 
 BldgA(config-if)# ip address 203.0.113.222 255.255.255.0 
 BldgA(config-if)# no shutdown 
 BldgA(config-if)# end
@@ -1434,7 +1434,7 @@ Floor(config-if)# description Connects to the ISP
 Floor(config-if)# ip address 10.234.235.254 255.255.255.0 
 Floor(config-if)# no shutdown 
 Floor(config-if)# interface s0/0/1 
-Floor(config-if)# description Connects to the Head Occice WAN 
+Floor(config-if)# description Connects to the Head Office WAN 
 Floor(config-if)# ip address 203.0.113.3 255.255.255.0 
 Floor(config-if)# no shutdown 
 Floor(config-if)# end
@@ -1469,7 +1469,7 @@ RTR1(config-if)# description Connects to the ISP
 RTR1(config-if)# ip address 10.14.15.254 255.255.255.0 
 RTR1(config-if)# no shutdown 
 RTR1(config-if)# interface s0/0/1 
-RTR1(config-if)# description Connects to the Head Occice WAN 
+RTR1(config-if)# description Connects to the Head Office WAN 
 RTR1(config-if)# ip address 203.0.113.39 255.255.255.0 
 RTR1(config-if)# no shutdown 
 RTR1(config-if)# end

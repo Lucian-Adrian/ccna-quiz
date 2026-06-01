@@ -8,18 +8,18 @@ Total Questions: 76
 
 ## Question 1
 
-A network administrator is measuring the transfer of bits across the company backbone for a mission critical financial application. The administrator notices that the network throughput appears lower than the bandwidth expected. Which three factors could influence the diccerences in throughput? (Choose three.)
+A network administrator is measuring the transfer of bits across the company backbone for a mission critical financial application. The administrator notices that the network throughput appears lower than the bandwidth expected. Which three factors could influence the differences in throughput? (Choose three.)
 
-- [x] **the amount of traccic that is currently crossing the network**
+- [x] **the amount of traffic that is currently crossing the network**
 - [ ] the sophistication of the encapsulation method applied to the data
-- [x] **the type of traccic that is crossing the network**
+- [x] **the type of traffic that is crossing the network**
 - [x] **the latency that is created by the number of network devices that the data is crossing**
 - [ ] the bandwidth of the WAN connection to the Internet
 - [ ] the reliability of the gigabit Ethernet infrastructure of the backbone
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Throughput usually does not match the specified bandwidth of physical links due to multiple factors. These factors include, the amount of traccic, type of traccic, and latency created by the network devices the data has to cross.
+Throughput usually does not match the specified bandwidth of physical links due to multiple factors. These factors include, the amount of traffic, type of traffic, and latency created by the network devices the data has to cross.
 
 ---
 
@@ -27,7 +27,7 @@ Throughput usually does not match the specified bandwidth of physical links due 
 
 What are two characteristics of fiber-optic cable? (Choose two.)
 
-- [x] **It is not accected by EMI or RFI.**
+- [x] **It is not affected by EMI or RFI.**
 - [ ] Each pair of cables is wrapped in metallic foil.
 - [ ] It combines the technique of cancellation, shielding, and twisting to protect data.
 - [ ] It typically contains 4 pairs of fiber-optic wires.
@@ -63,19 +63,19 @@ Match the situation with the appropriate use of network media.
 ![exhibit](https://infraexam.com/wp-content/uploads/2026/03/CCNA1-Module-4-7-Checkpoint-Exam-Ethernet-Concepts-Exam-Answers-001-1024x922.png)
 
 - [x] **backbone cabling in an enterprise ==> Fiber Optic**
-- [x] **guest access in a coccee shop ==> Wireless**
+- [x] **guest access in a coffee shop ==> Wireless**
 - [x] **horizontal cabling structure ==> Copper Cables**
 - [x] **waiting rooms in a hospital ==> Wireless**
-- [x] **desktop PCs in an enterprise occice ==> Copper Cables**
+- [x] **desktop PCs in an enterprise office ==> Copper Cables**
 - [x] **long-haul networks ==> Fiber Optic**
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Copper Cables – horizontal cabling structure and desktop PCs in occices in an enterprise
+Copper Cables – horizontal cabling structure and desktop PCs in offices in an enterprise
 
 Fiber optic – backbone cabling in an enterprise and long-haul networks
 
-Wireless – coccee shops and waiting rooms in a hospital
+Wireless – coffee shops and waiting rooms in a hospital
 
 ---
 
@@ -109,7 +109,7 @@ Refer to the graphic. What type of cabling is shown?
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Network cabling include diccerent types of cables:
+Network cabling include different types of cables:
 
 UTP cable consists of four pairs of color-coded wires that have been twisted together and then encased in a flexible plastic sheath.
 
@@ -156,7 +156,7 @@ Refer to the graphic. What type of cabling is shown?
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Network cabling include diccerent types of cables:
+Network cabling include different types of cables:
 
 UTP cable consists of four pairs of color-coded wires that have been twisted together and then encased in a flexible plastic sheath.
 
@@ -170,7 +170,7 @@ Fiber cable is a flexible, extremely thin, transparent strand of glass surrounde
 
 ## Question 9
 
-Which two devices commonly accect wireless networks? (Choose two.)
+Which two devices commonly affect wireless networks? (Choose two.)
 
 - [ ] Blu-ray players
 - [ ] home theaters
@@ -243,7 +243,7 @@ Which statement describes a characteristic of the frame header fields of the dat
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-All data link layer protocols encapsulate the Layer 3 PDU within the data field of the frame. However, the structure of the frame and the fields that are contained in the header vary according to the protocol. Diccerent data link layer protocols may use diccerent fields, like priority/quality of service, logical connection control, physical link control, flow control, and congestion control.
+All data link layer protocols encapsulate the Layer 3 PDU within the data field of the frame. However, the structure of the frame and the fields that are contained in the header vary according to the protocol. Different data link layer protocols may use different fields, like priority/quality of service, logical connection control, physical link control, flow control, and congestion control.
 
 ---
 
@@ -331,7 +331,7 @@ What are three ways that media access control is used in networking? (Choose thr
 - [x] **Media access control provides placement of data frames onto the media.**
 - [ ] Contention-based access is also known as deterministic.
 - [ ] 802.11 utilizes CSMA/CD.
-- [x] **Data link layer protocols define the rules for access to diccerent media.**
+- [x] **Data link layer protocols define the rules for access to different media.**
 - [ ] Networks with controlled access have reduced performance due to data collisions.
 
 > [!NOTE]
@@ -405,7 +405,7 @@ Which three basic parts are common to all frame types supported by the data link
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-The data link protocol is responsible for NIC-to-NIC communications within the same network. Although there are many diccerent data link layer protocols that describe data link layer frames, each frame type has three basic parts:
+The data link protocol is responsible for NIC-to-NIC communications within the same network. Although there are many different data link layer protocols that describe data link layer frames, each frame type has three basic parts:
 
 Header
 
@@ -475,7 +475,7 @@ A Layer 2 switch is used to switch incoming frames from a 1000BASE-T port to a p
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-With shared memory buccering, the number of frames stored in the buccer is restricted only by the of the entire memory buccer and not limited to a single port buccer. This permits larger frames to be transmitted with fewer dropped frames. This is important to asymmetric switching, which applies to this scenario, where frames are being exchanged between ports of diccerent rates. With port-based memory buccering, frames are stored in queues that are linked to specific incoming and outgoing ports making it possible for a single frame to delay the transmission of all the frames in memory because of a busy destination port. Level 1 cache is memory used in a CPU. Fixed configuration refers to the port arrangement in switch hardware.
+With shared memory buccering, the number of frames stored in the buffer is restricted only by the of the entire memory buffer and not limited to a single port buffer. This permits larger frames to be transmitted with fewer dropped frames. This is important to asymmetric switching, which applies to this scenario, where frames are being exchanged between ports of different rates. With port-based memory buccering, frames are stored in queues that are linked to specific incoming and outgoing ports making it possible for a single frame to delay the transmission of all the frames in memory because of a busy destination port. Level 1 cache is memory used in a CPU. Fixed configuration refers to the port arrangement in switch hardware.
 
 ---
 
@@ -546,7 +546,7 @@ A network administrator is connecting two modern switches using a straight-throu
 
 - [x] **The link between the switches will work at the fastest speed that is supported by both switches.**
 - [x] **The link between switches will work as full-duplex.**
-- [ ] If both switches support diccerent speeds, they will each work at their own fastest speed.
+- [ ] If both switches support different speeds, they will each work at their own fastest speed.
 - [x] **The auto-MDIX feature will configure the interfaces eliminating the need for a crossover cable.**
 - [ ] The connection will not be possible unless the administrator changes the cable to a crossover cable.
 - [ ] The duplex capability has to be manually configured because it cannot be negotiated.
@@ -632,7 +632,7 @@ Which two statements describe features or functions of the logical link control 
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Logical link control is implemented in software and enables the data link layer to communicate with the upper layers of the protocol suite. Logical link control is specified in the IEEE 802.2 standard. IEEE 802.3 is a suite of standards that define the diccerent Ethernet types. The MAC (Media Access Control) sublayer is responsible for the placement and retrieval of frames on and occ the media. The MAC sublayer is also responsible for adding a header and a trailer to the network layer protocol data unit (PDU).
+Logical link control is implemented in software and enables the data link layer to communicate with the upper layers of the protocol suite. Logical link control is specified in the IEEE 802.2 standard. IEEE 802.3 is a suite of standards that define the different Ethernet types. The MAC (Media Access Control) sublayer is responsible for the placement and retrieval of frames on and occ the media. The MAC sublayer is also responsible for adding a header and a trailer to the network layer protocol data unit (PDU).
 
 ---
 
@@ -670,7 +670,7 @@ Cut-through switching provides lower latency switching for high-performance comp
 
 Which is a multicast MAC address?
 
-- [ ] cc-cc-cc-cc-cc-cc
+- [ ] ff-ff-ff-ff-ff-ff
 - [ ] 5C-26-0A-4B-19-3E
 - [x] **01-00-5E-00-00-03**
 - [ ] 00-26-0F-4B-00-3E
@@ -857,7 +857,7 @@ What OSI physical layer term describes the capacity at which a medium can carry 
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-The OSI physical layer term that describes the capacity at which a medium can carry data is “bandwidth.” Bandwidth refers to the range of frequencies that a communication channel can support and is a measure of the maximum data transfer rate that the channel can handle. It is often expressed in bits per second (bps) or a similar data rate unit. The other terms, throughput, latency, and goodput, are related to network and data transfer performance but represent diccerent aspects of data transmission:
+The OSI physical layer term that describes the capacity at which a medium can carry data is “bandwidth.” Bandwidth refers to the range of frequencies that a communication channel can support and is a measure of the maximum data transfer rate that the channel can handle. It is often expressed in bits per second (bps) or a similar data rate unit. The other terms, throughput, latency, and goodput, are related to network and data transfer performance but represent different aspects of data transmission:
 Throughput: Throughput is the actual data transfer rate achieved in a network or communication channel, which can be less than the available bandwidth due to various factors such as network congestion or protocol overhead.
 Latency: Latency refers to the time delay between the transmission of data and its reception. It includes factors like propagation delay, transmission delay, and processing delay.
 Goodput: Goodput is the measure of the actual useful data transferred over a network or communication channel, excluding overhead and retransmissions. It represents the “good” data delivered successfully.
@@ -875,7 +875,7 @@ What OSI physical layer term describes the measure of the transfer of bits acros
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-The OSI physical layer term that describes the measure of the transfer of bits across a medium over a given period of time is “throughput.” Throughput represents the actual data transfer rate achieved in a network or communication channel and takes into account factors such as network congestion, protocol overhead, and any other factors that can accect the ecciciency of data transmission. It is typically measured in bits per second (bps) or a similar data rate unit.
+The OSI physical layer term that describes the measure of the transfer of bits across a medium over a given period of time is “throughput.” Throughput represents the actual data transfer rate achieved in a network or communication channel and takes into account factors such as network congestion, protocol overhead, and any other factors that can affect the efficiency of data transmission. It is typically measured in bits per second (bps) or a similar data rate unit.
 
 ---
 
@@ -906,7 +906,7 @@ What OSI physical layer term describes the amount of time, including delays, for
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
 The OSI physical layer term that describes the amount of time, including delays, for data to travel from one point to another is “latency.” Latency encompasses the total time delay experienced by data as it travels from its source to its destination, and it includes factors like propagation delay, transmission delay, and processing delay. It is a key factor in determining the performance of a network or communication system.
-The other terms, such as “fiber-optic cable,” “air,” and “copper cable,” are not OSI physical layer terms but rather refer to diccerent physical media or transmission mediums used in networking.
+The other terms, such as “fiber-optic cable,” “air,” and “copper cable,” are not OSI physical layer terms but rather refer to different physical media or transmission mediums used in networking.
 
 ---
 
@@ -922,7 +922,7 @@ What OSI physical layer term describes the measure of usable data transferred ov
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
 The OSI physical layer term that describes the measure of usable data transferred over a given period of time is “goodput.” Goodput represents the amount of actual useful data transferred successfully over a network or communication channel, excluding any protocol overhead or retransmissions. It focuses on the data that serves a practical purpose and is typically measured in bits per second (bps) or a similar data rate unit.
-The terms “fiber-optic cable,” “air,” and “copper cable” refer to diccerent physical transmission media, and they are not OSI physical layer terms but are used in the context of the physical layer in networking.
+The terms “fiber-optic cable,” “air,” and “copper cable” refer to different physical transmission media, and they are not OSI physical layer terms but are used in the context of the physical layer in networking.
 
 ---
 
@@ -989,7 +989,7 @@ Which two functions are performed at the MAC sublayer of the OSI data link layer
 Here are the two functions performed at the MAC (Media Access Control) sublayer of the OSI data link layer:
 Implements a trailer to detect transmission errors: The MAC sublayer typically appends a frame check sequence (FCS) as part of the trailer to the data frame. This FCS allows the receiver to detect transmission errors and verify the integrity of the received data.
 Controls the NIC responsible for sending and receiving data on the physical medium: The MAC sublayer is responsible for managing access to the physical medium, including controlling the Network Interface Card (NIC) to send and receive data frames on the local network segment.
-These functions are essential for reliable and eccicient data link layer operation in a network.
+These functions are essential for reliable and efficient data link layer operation in a network.
 
 ---
 
@@ -1002,13 +1002,13 @@ Which two functions are performed at the LLC sublayer of the OSI data link layer
 - [ ] Integrates various physical technologies.
 - [ ] Implements a process to delimit fields within a Layer 2 frame.
 - [ ] Controls the NIC responsible for sending and receiving data on the physical medium.
-- [ ] Enables IPv4 and IPv6 to utilize the same network interface and media: The LLC sublayer helps in multiplexing diccerent network layer protocols, allowing both IPv4 and IPv6 to share the same network interface and media.
+- [ ] Enables IPv4 and IPv6 to utilize the same network interface and media: The LLC sublayer helps in multiplexing different network layer protocols, allowing both IPv4 and IPv6 to share the same network interface and media.
 - [ ] Places information in the frame that identifies which network layer protocol is being used for the frame: The LLC sublayer includes a field that specifies which network layer protocol is encapsulated within the data link layer frame, enabling the receiver to identify the type of network layer protocol contained in the frame.
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
 Here are the two functions performed at the LLC (Logical Link Control) sublayer of the OSI data link layer:
-Enables IPv4 and IPv6 to utilize the same network interface and media: The LLC sublayer helps in multiplexing diccerent network layer protocols, allowing both IPv4 and IPv6 to share the same network interface and media.
+Enables IPv4 and IPv6 to utilize the same network interface and media: The LLC sublayer helps in multiplexing different network layer protocols, allowing both IPv4 and IPv6 to share the same network interface and media.
 Places information in the frame that identifies which network layer protocol is being used for the frame: The LLC sublayer includes a field that specifies which network layer protocol is encapsulated within the data link layer frame, enabling the receiver to identify the type of network layer protocol contained in the frame.
 
 ---
@@ -1044,13 +1044,13 @@ Which two functions are performed at the MAC sublayer of the OSI data link layer
 - [ ] Adds Layer 2 control information to network protocol data.
 - [ ] Places information in the frame that identifies which network layer protocol is being used for the frame.
 - [ ] Controls the NIC responsible for sending and receiving data on the physical medium: The MAC sublayer manages the Network Interface Card (NIC) to control the sending and receiving of data frames on the local network segment.
-- [ ] Integrates various physical technologies: The MAC sublayer is responsible for integrating and coordinating the use of various physical layer technologies to ensure that data can be transmitted and received eccectively over the network. This integration helps in making diccerent network types compatible with each other.
+- [ ] Integrates various physical technologies: The MAC sublayer is responsible for integrating and coordinating the use of various physical layer technologies to ensure that data can be transmitted and received effectively over the network. This integration helps in making different network types compatible with each other.
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
 Here are the two functions performed at the MAC (Media Access Control) sublayer of the OSI data link layer:
 Controls the NIC responsible for sending and receiving data on the physical medium: The MAC sublayer manages the Network Interface Card (NIC) to control the sending and receiving of data frames on the local network segment.
-Integrates various physical technologies: The MAC sublayer is responsible for integrating and coordinating the use of various physical layer technologies to ensure that data can be transmitted and received eccectively over the network. This integration helps in making diccerent network types compatible with each other.
+Integrates various physical technologies: The MAC sublayer is responsible for integrating and coordinating the use of various physical layer technologies to ensure that data can be transmitted and received effectively over the network. This integration helps in making different network types compatible with each other.
 
 ---
 
@@ -1084,13 +1084,13 @@ Which two functions are performed at the MAC sublayer of the OSI data link layer
 - [ ] Adds Layer 2 control information to network protocol data.
 - [ ] Enables IPv4 and IPv6 to utilize the same network interface and media.
 - [ ] Provides synchronization between source and target nodes: The MAC sublayer helps in managing access to the shared communication medium, which involves synchronization to prevent data collisions on shared channels.
-- [ ] Integrates various physical technologies: The MAC sublayer is responsible for coordinating and integrating diccerent physical layer technologies, allowing them to work together eccectively on the same network.
+- [ ] Integrates various physical technologies: The MAC sublayer is responsible for coordinating and integrating different physical layer technologies, allowing them to work together effectively on the same network.
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
 Here are the two functions performed at the MAC (Media Access Control) sublayer of the OSI data link layer:
 Provides synchronization between source and target nodes: The MAC sublayer helps in managing access to the shared communication medium, which involves synchronization to prevent data collisions on shared channels.
-Integrates various physical technologies: The MAC sublayer is responsible for coordinating and integrating diccerent physical layer technologies, allowing them to work together eccectively on the same network.
+Integrates various physical technologies: The MAC sublayer is responsible for coordinating and integrating different physical layer technologies, allowing them to work together effectively on the same network.
 These functions are essential for the proper operation of the MAC sublayer within the data link layer.
 
 ---
@@ -1105,13 +1105,13 @@ Which two functions are performed at the LLC sublayer of the OSI data link layer
 - [ ] Implements a trailer to detect transmission errors.
 - [ ] Provides synchronization between source and target nodes.
 - [ ] Adds Layer 2 control information to network protocol data: The LLC sublayer is responsible for adding Layer 2 control information, including source and destination MAC addresses, to network protocol data as it prepares data for transmission over the data link layer.
-- [ ] Enables IPv4 and IPv6 to utilize the same network interface and media: The LLC sublayer can support multiple network layer protocols and allows them to share the same network interface and media, facilitating communication for diccerent network protocols.
+- [ ] Enables IPv4 and IPv6 to utilize the same network interface and media: The LLC sublayer can support multiple network layer protocols and allows them to share the same network interface and media, facilitating communication for different network protocols.
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
 Here are the two functions performed at the LLC (Logical Link Control) sublayer of the OSI data link layer:
 Adds Layer 2 control information to network protocol data: The LLC sublayer is responsible for adding Layer 2 control information, including source and destination MAC addresses, to network protocol data as it prepares data for transmission over the data link layer.
-Enables IPv4 and IPv6 to utilize the same network interface and media: The LLC sublayer can support multiple network layer protocols and allows them to share the same network interface and media, facilitating communication for diccerent network protocols.
+Enables IPv4 and IPv6 to utilize the same network interface and media: The LLC sublayer can support multiple network layer protocols and allows them to share the same network interface and media, facilitating communication for different network protocols.
 These functions are crucial for the proper operation of the LLC sublayer within the data link layer.
 
 ---
@@ -1126,13 +1126,13 @@ Which two functions are performed at the MAC sublayer of the OSI data link layer
 - [ ] Enables IPv4 and IPv6 to utilize the same network interface and media.
 - [ ] Adds Layer 2 control information to network protocol data.
 - [ ] Implements a trailer to detect transmission errors: The MAC sublayer typically appends a frame check sequence (FCS) as part of the trailer to the data frame. This FCS allows the receiver to detect transmission errors and verify the integrity of the received data.
-- [ ] Provides synchronization between source and target nodes: The MAC sublayer manages access to the shared communication medium, which involves synchronization to prevent data collisions and ensure eccicient data transmission between source and target nodes.
+- [ ] Provides synchronization between source and target nodes: The MAC sublayer manages access to the shared communication medium, which involves synchronization to prevent data collisions and ensure efficient data transmission between source and target nodes.
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
 Here are the two functions performed at the MAC (Media Access Control) sublayer of the OSI data link layer:
 Implements a trailer to detect transmission errors: The MAC sublayer typically appends a frame check sequence (FCS) as part of the trailer to the data frame. This FCS allows the receiver to detect transmission errors and verify the integrity of the received data.
-Provides synchronization between source and target nodes: The MAC sublayer manages access to the shared communication medium, which involves synchronization to prevent data collisions and ensure eccicient data transmission between source and target nodes.
+Provides synchronization between source and target nodes: The MAC sublayer manages access to the shared communication medium, which involves synchronization to prevent data collisions and ensure efficient data transmission between source and target nodes.
 These functions are essential for the proper operation of the MAC sublayer within the data link layer.
 
 ---
@@ -1146,13 +1146,13 @@ Which two functions are performed at the LLC sublayer of the OSI data link layer
 - [ ] Integrates various physical technologies.
 - [ ] Implements a trailer to detect transmission errors.
 - [ ] Provides synchronization between source and target nodes.
-- [ ] Enables IPv4 and IPv6 to utilize the same network interface and media: The LLC sublayer can support multiple network layer protocols and allows them to share the same network interface and media, facilitating communication for diccerent network protocols.
+- [ ] Enables IPv4 and IPv6 to utilize the same network interface and media: The LLC sublayer can support multiple network layer protocols and allows them to share the same network interface and media, facilitating communication for different network protocols.
 - [ ] Adds Layer 2 control information to network protocol data: The LLC sublayer is responsible for adding Layer 2 control information, including source and destination MAC addresses, to network protocol data as it prepares data for transmission over the data link layer.
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
 The two functions performed at the LLC (Logical Link Control) sublayer of the OSI data link layer are:
-Enables IPv4 and IPv6 to utilize the same network interface and media: The LLC sublayer can support multiple network layer protocols and allows them to share the same network interface and media, facilitating communication for diccerent network protocols.
+Enables IPv4 and IPv6 to utilize the same network interface and media: The LLC sublayer can support multiple network layer protocols and allows them to share the same network interface and media, facilitating communication for different network protocols.
 Adds Layer 2 control information to network protocol data: The LLC sublayer is responsible for adding Layer 2 control information, including source and destination MAC addresses, to network protocol data as it prepares data for transmission over the data link layer.
 The other options mentioned, such as integrating various physical technologies, implementing a trailer to detect transmission errors, and providing synchronization between source and target nodes, are not typically functions of the LLC sublayer but may be associated with other layers or sublayers within the OSI model.
 
@@ -1196,7 +1196,7 @@ It implies that the switch updates the timestamp on the existing MAC address tab
 
 ## Question 68
 
-What action will occur if a switch receives a frame with the destination MAC address cc:cc:cc:cc:cc:cc?
+What action will occur if a switch receives a frame with the destination MAC address ff:ff:ff:ff:ff:ff?
 
 - [x] **The switch forwards it out all ports except the ingress port.**
 - [ ] The switch shares the MAC address table entry with any connected switches.
@@ -1205,7 +1205,7 @@ What action will occur if a switch receives a frame with the destination MAC add
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-The switch forwards a frame with the destination MAC address cc:cc:cc:cc:cc:cc out all ports except the ingress (receiving) port. This is the typical behavior for broadcast frames, as they are intended to be received by all devices within the same local network segment. By forwarding the frame to all ports except the one it came in on, the switch ensures that all devices connected to the same LAN segment have the opportunity to process the broadcasted message or frame.
+The switch forwards a frame with the destination MAC address ff:ff:ff:ff:ff:ff out all ports except the ingress (receiving) port. This is the typical behavior for broadcast frames, as they are intended to be received by all devices within the same local network segment. By forwarding the frame to all ports except the one it came in on, the switch ensures that all devices connected to the same LAN segment have the opportunity to process the broadcasted message or frame.
 
 ---
 
@@ -1223,7 +1223,7 @@ What action will occur if a host receives a frame with a destination MAC address
 When a host receives a frame with a destination MAC address it does not recognize (i.e., a MAC address not associated with its own MAC address or a broadcast MAC address), the typical action is for the host to 
 discard the frame
 .
-Hosts in a network typically process frames with destination MAC addresses that match their own MAC address or broadcast addresses. Frames intended for other hosts should not be processed by the receiving host and are simply discarded. This behavior ensures that only the intended recipient processes the frame, reducing unnecessary network traccic and processing overhead on individual hosts.
+Hosts in a network typically process frames with destination MAC addresses that match their own MAC address or broadcast addresses. Frames intended for other hosts should not be processed by the receiving host and are simply discarded. This behavior ensures that only the intended recipient processes the frame, reducing unnecessary network traffic and processing overhead on individual hosts.
 The host would not send the frame to the switch to update the MAC address table, forward it to the router, or forward it to all other hosts in this scenario.
 
 ---
@@ -1242,14 +1242,14 @@ What action will occur if a switch receives a frame with the destination MAC add
 When a switch receives a frame with the destination MAC address 01:00:5E:00:00:D9, it typically 
 forwards the frame out all ports except the ingress port
 . This MAC address falls within a special range used for IPv4 multicast addresses.
-Multicast addresses like 01:00:5E:00:00:D9 are used for multicasting IP traccic. By forwarding the frame out all ports except the ingress port, the switch ensures that the multicast frame reaches all devices on the local network segment that have subscribed to that particular multicast group.
-This behavior is necessary for multicast communication, as it allows multiple devices to receive the same multicast traccic when they are part of the same multicast group.
+Multicast addresses like 01:00:5E:00:00:D9 are used for multicasting IP traffic. By forwarding the frame out all ports except the ingress port, the switch ensures that the multicast frame reaches all devices on the local network segment that have subscribed to that particular multicast group.
+This behavior is necessary for multicast communication, as it allows multiple devices to receive the same multicast traffic when they are part of the same multicast group.
 
 ---
 
 ## Question 71
 
-What action will occur if a host receives a frame with a destination MAC address of cc:cc:cc:cc:cc:cc?
+What action will occur if a host receives a frame with a destination MAC address of ff:ff:ff:ff:ff:ff?
 
 - [x] **The host will process the frame.**
 - [ ] The host forwards the frame to the router.
@@ -1258,7 +1258,7 @@ What action will occur if a host receives a frame with a destination MAC address
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-When a host receives a frame with a destination MAC address of cc:cc:cc:cc:cc:cc, it typically 
+When a host receives a frame with a destination MAC address of ff:ff:ff:ff:ff:ff, it typically 
 processes the frame
 . This MAC address is the broadcast address, and frames with this destination address are intended to be received and processed by all devices on the same local network segment.
 In a broadcast frame, the intention is to communicate with all devices on the local network, and it may contain information relevant to all hosts. Therefore, the host processes the frame to determine if it needs to respond or take any action based on the content of the broadcast message.
@@ -1283,7 +1283,7 @@ It implies that the switch updates the timestamp on the existing MAC address tab
 
 ## Question 73
 
-What action will occur if a host receives a frame with a destination MAC address of cc:cc:cc:cc:cc:cc?
+What action will occur if a host receives a frame with a destination MAC address of ff:ff:ff:ff:ff:ff?
 
 - [x] **The host will process the frame.**
 - [ ] The host returns the frame to the switch.
@@ -1292,7 +1292,7 @@ What action will occur if a host receives a frame with a destination MAC address
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-When a host receives a frame with a destination MAC address of cc:cc:cc:cc:cc:cc, it typically 
+When a host receives a frame with a destination MAC address of ff:ff:ff:ff:ff:ff, it typically 
 processes the frame
 . This MAC address is the broadcast address, and frames with this destination address are intended to be received and processed by all devices on the same local network segment.
 In a broadcast frame, the intention is to communicate with all devices on the local network, and it may contain information relevant to all hosts. Therefore, the host processes the frame to determine if it needs to respond or take any action based on the content of the broadcast message.
@@ -1329,14 +1329,14 @@ What action will occur if a host receives a frame with a destination MAC address
 When a host receives a frame with a destination MAC address it does not recognize (i.e., a MAC address not associated with its own MAC address or a broadcast MAC address), the typical action is for the host to 
 discard the frame
 .
-Hosts in a network typically process frames with destination MAC addresses that match their own MAC address or broadcast addresses. Frames intended for other hosts should not be processed by the receiving host and are simply discarded. This behavior ensures that only the intended recipient processes the frame, reducing unnecessary network traccic and processing overhead on individual hosts.
+Hosts in a network typically process frames with destination MAC addresses that match their own MAC address or broadcast addresses. Frames intended for other hosts should not be processed by the receiving host and are simply discarded. This behavior ensures that only the intended recipient processes the frame, reducing unnecessary network traffic and processing overhead on individual hosts.
 The host would not send the frame to the switch to update the MAC address table, forward it to the router, or forward it to all other hosts in this scenario.
 
 ---
 
 ## Question 76
 
-What action will occur if a switch receives a frame with the destination MAC address cc:cc:cc:cc:cc:cc?
+What action will occur if a switch receives a frame with the destination MAC address ff:ff:ff:ff:ff:ff?
 
 - [x] **The switch forwards it out all ports except the ingress port.**
 - [ ] The switch refreshes the timer on that entry.
@@ -1345,7 +1345,7 @@ What action will occur if a switch receives a frame with the destination MAC add
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-The switch forwards a frame with the destination MAC address cc:cc:cc:cc:cc:cc out all ports except the ingress (receiving) port. This is the typical behavior for broadcast frames, as they are intended to be received by all devices within the same local network segment. By forwarding the frame to all ports except the one it came in on, the switch ensures that all devices connected to the same LAN segment have the opportunity to process the broadcasted message or frame.
+The switch forwards a frame with the destination MAC address ff:ff:ff:ff:ff:ff out all ports except the ingress (receiving) port. This is the typical behavior for broadcast frames, as they are intended to be received by all devices within the same local network segment. By forwarding the frame to all ports except the one it came in on, the switch ensures that all devices connected to the same LAN segment have the opportunity to process the broadcasted message or frame.
 
 ---
 

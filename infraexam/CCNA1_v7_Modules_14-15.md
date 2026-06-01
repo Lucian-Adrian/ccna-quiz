@@ -124,7 +124,7 @@ The destination and source port numbers are used to identify exactly which proto
 
 Which two characteristics are associated with UDP sessions? (Choose two.)
 
-- [x] **Destination devices receive traccic with minimal delay.**
+- [x] **Destination devices receive traffic with minimal delay.**
 - [ ] Transmitted data segments are tracked.
 - [ ] Destination devices reassemble messages and pass them to an application.
 - [x] **Received data is unacknowledged.**
@@ -253,7 +253,7 @@ Which three statements characterize UDP? (Choose three.)
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-UDP is a simple protocol that provides the basic transport layer functions. It has much lower overhead than TCP because it is not connection-oriented and does not occer the sophisticated retransmission, sequencing, and flow control mechanisms that provide reliability.
+UDP is a simple protocol that provides the basic transport layer functions. It has much lower overhead than TCP because it is not connection-oriented and does not offer the sophisticated retransmission, sequencing, and flow control mechanisms that provide reliability.
 
 ---
 
@@ -293,7 +293,7 @@ The value in the control bits field of theTCP header indicates the progress and 
 Why does HTTP use TCP as the transport layer protocol?
 
 - [ ] to ensure the fastest possible download speed
-- [ ] because HTTP is a best-eccort protocol
+- [ ] because HTTP is a best-effort protocol
 - [ ] because transmission errors can be tolerated easily
 - [x] **because HTTP requires reliable delivery**
 
@@ -330,7 +330,7 @@ How are port numbers used in the TCP/IP encapsulation process?
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Both UDP and TCP use port numbers to provide a unique identifier for each conversation. Source port numbers are randomly generated and are used to track diccerent conversations. Destination port numbers identify specific services by using either a default port number for the service or a port number that is assigned manually by a system administrator.
+Both UDP and TCP use port numbers to provide a unique identifier for each conversation. Source port numbers are randomly generated and are used to track different conversations. Destination port numbers identify specific services by using either a default port number for the service or a port number that is assigned manually by a system administrator.
 
 ---
 
@@ -346,7 +346,7 @@ In what two situations would UDP be better than TCP as the preferred transport p
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-UDP is a very simple transport layer protocol that does not guarantee delivery. Devices on both ends of the conversation are not required to keep track of the conversation. UDP is used as the transport protocol for applications that need a speedy, best-eccort delivery.
+UDP is a very simple transport layer protocol that does not guarantee delivery. Devices on both ends of the conversation are not required to keep track of the conversation. UDP is used as the transport protocol for applications that need a speedy, best-effort delivery.
 
 ---
 
@@ -381,16 +381,16 @@ Managing the reliability requirements of applications
 
 Which three statements describe a DHCP Discover message? (Choose three.)
 
-- [ ] The source MAC address is 48 ones (cc-cc-cc-cc-cc-cc).
+- [ ] The source MAC address is 48 ones (ff-ff-ff-ff-ff-ff).
 - [x] **The destination IP address is 255.255.255.255.**
-- [ ] The message comes from a server occering an IP address.
+- [ ] The message comes from a server offering an IP address.
 - [x] **The message comes from a client seeking an IP address.**
 - [x] **All hosts receive the message, but only a DHCP server replies.**
 - [ ] Only the DHCP server receives the message.
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-When a host configured to use DHCP powers up on a network it sends a DHCPDISCOVER message. cc-cc-cc-cc-cc-cc is the L2 broadcast address. A DHCP server replies with a unicast DHCPOccER message back to the host.
+When a host configured to use DHCP powers up on a network it sends a DHCPDISCOVER message. ff-ff-ff-ff-ff-ff is the L2 broadcast address. A DHCP server replies with a unicast DHCPOccER message back to the host.
 
 ---
 
@@ -415,7 +415,7 @@ POP, POP3, and IMAP are protocols that are used to retrieve email from servers. 
 
 What is true about the Server Message Block protocol?
 
-- [ ] Diccerent SMB message types have a diccerent format.
+- [ ] Different SMB message types have a different format.
 - [x] **Clients establish a long term connection to servers.**
 - [ ] SMB messages cannot authenticate a session.
 - [ ] SMB uses the FTP protocol for communication.
@@ -612,7 +612,7 @@ A manufacturing company subscribes to certain hosted services from its ISP. The 
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-The ISP uses the HTTP protocol in conjunction with hosting web pages, the FTP protocol with file transfers, and SMTP with e-mail. DNS is used to translate domain names to IP addresses. SNMP is used for network management traccic. DHCP ic commonly used to manage IP addressing.
+The ISP uses the HTTP protocol in conjunction with hosting web pages, the FTP protocol with file transfers, and SMTP with e-mail. DNS is used to translate domain names to IP addresses. SNMP is used for network management traffic. DHCP ic commonly used to manage IP addressing.
 
 ---
 
@@ -1132,7 +1132,7 @@ A client creates a packet to send to a server. The client is requesting POP3 ser
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-POP3, or Post Occice Protocol version 3, typically uses port 110. This protocol is used by email clients to retrieve emails from a server.
+POP3, or Post Office Protocol version 3, typically uses port 110. This protocol is used by email clients to retrieve emails from a server.
 So, when a client creates a packet to send to a server requesting POP3 service, the destination port number used in the sending packet will be 
 110
 .
@@ -1168,7 +1168,7 @@ A client creates a packet to send to a server. The client is requesting POP3 ser
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-POP3, or Post Occice Protocol version 3, typically uses port 110. This protocol is used by email clients to retrieve emails from a server.
+POP3, or Post Office Protocol version 3, typically uses port 110. This protocol is used by email clients to retrieve emails from a server.
 So, when a client creates a packet to send to a server requesting POP3 service, the destination port number used in the sending packet will be 
 110
 .

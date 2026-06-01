@@ -25,7 +25,7 @@
       "software that is installed on a user device and collects information about the user",
       "an attack that slows or crashes a device or network service",
       "the use of stolen credentials to access private data",
-      "a network device that filters access and traccic coming into a network"
+      "a network device that filters access and traffic coming into a network"
     ],
     "correct_answers": [
       "software that is installed on a user device and collects information about the user"
@@ -39,9 +39,9 @@
     "question": "Which statement describes network security?",
     "options": [
       "It ensures sensitive corporate data is available for authorized users.",
-      "It prioritizes data flows in order to give priority to delay-sensitive traccic.",
+      "It prioritizes data flows in order to give priority to delay-sensitive traffic.",
       "It supports growth over time in accordance with approved network design procedures.",
-      "It synchronizes traccic flows using timestamps."
+      "It synchronizes traffic flows using timestamps."
     ],
     "correct_answers": [
       "It ensures sensitive corporate data is available for authorized users."
@@ -54,9 +54,9 @@
     "number": 4,
     "question": "What is a user trying to determine when issuing a ping 10.1.1.1 command on a PC?",
     "options": [
-      "if the TCP/IP stack is functioning on the PC without putting traccic on the wire",
+      "if the TCP/IP stack is functioning on the PC without putting traffic on the wire",
       "if there is connectivity with the destination device",
-      "the path that traccic will take to reach the destination",
+      "the path that traffic will take to reach the destination",
       "what type of device is at the destination"
     ],
     "correct_answers": [
@@ -216,7 +216,7 @@
       "Fiber-optic cabling is primarily used as backbone cabling."
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nFiber-optic cabling is primarily used for high-traccic backbone cabling and does not conduct electricity. Multimode fiber uses LEDs for signaling and single-mode fiber uses laser technology. FIber-optic cabling carries signals from only one device to another.",
+    "explanation": "Answers Explanation & Hints:\nFiber-optic cabling is primarily used for high-traffic backbone cabling and does not conduct electricity. Multimode fiber uses LEDs for signaling and single-mode fiber uses laser technology. FIber-optic cabling carries signals from only one device to another.",
     "is_matching": false
   },
   {
@@ -228,7 +228,7 @@
       "https://infraexam.com/wp-content/uploads/2026/03/CCNA1-Introduction-to-Networks-Practice-Final-Exam-Answers-002.png",
       "https://infraexam.com/wp-content/uploads/2026/03/CCNA1-Introduction-to-Networks-Practice-Final-Exam-Answers-002-1024x497.png"
     ],
-    "explanation": "Answers Explanation & Hints:\nUTP cables are used in wired occice environments. Coaxial cables are used to connect cable modems and televisions. Fiber optics are used for high transmission speeds and to transfer data over long distances. STP cables are used in environments where there is a lot of interference.",
+    "explanation": "Answers Explanation & Hints:\nUTP cables are used in wired office environments. Coaxial cables are used to connect cable modems and televisions. Fiber optics are used for high transmission speeds and to transfer data over long distances. STP cables are used in environments where there is a lot of interference.",
     "is_matching": true
   },
   {
@@ -320,7 +320,7 @@
     "number": 20,
     "question": "Two network engineers are discussing the methods used to forward frames through a switch. What is an important concept related to the cut-through method of switching?",
     "options": [
-      "The fragment-free switching occers the lowest level of latency.",
+      "The fragment-free switching offers the lowest level of latency.",
       "Fast-forward switching can be viewed as a compromise between store-and-forward switching and fragment-free switching.",
       "Fragment-free switching is the typical cut-through method of switching.",
       "Packets can be relayed with errors when fast-forward switching is used."
@@ -329,7 +329,7 @@
       "Packets can be relayed with errors when fast-forward switching is used."
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nFast-forward switching occers the lowest level of latency and it is the typical cut-through method of switching. Fragment-free switching can be viewed as a compromise between store-and-forward switching and fast-forward switching. Because fast-forward switching starts forwarding before the entire packet has been received, there may be times when packets are relayed with errors.",
+    "explanation": "Answers Explanation & Hints:\nFast-forward switching offers the lowest level of latency and it is the typical cut-through method of switching. Fragment-free switching can be viewed as a compromise between store-and-forward switching and fast-forward switching. Because fast-forward switching starts forwarding before the entire packet has been received, there may be times when packets are relayed with errors.",
     "is_matching": false
   },
   {
@@ -352,7 +352,7 @@
   },
   {
     "number": 22,
-    "question": "What happens when a switch receives a frame and the calculated CRC value is diccerent than the value that is in the FCS field?",
+    "question": "What happens when a switch receives a frame and the calculated CRC value is different than the value that is in the FCS field?",
     "options": [
       "The switch places the new CRC value in the FCS field and forwards the frame.",
       "The switch notifies the source of the bad frame.",
@@ -395,7 +395,7 @@
       "The host can communicate with other hosts on the local network, but is unable to communicate with hosts on remote networks."
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nA default gateway is only required to communicate with devices on another network. The absence of a default gateway does not accect connectivity between devices on the same local network.",
+    "explanation": "Answers Explanation & Hints:\nA default gateway is only required to communicate with devices on another network. The absence of a default gateway does not affect connectivity between devices on the same local network.",
     "is_matching": false
   },
   {
@@ -455,15 +455,15 @@
     "options": [
       "0.0.0.0",
       "255.255.255.255",
-      "cccc.cccc.cccc",
+      "ffff.ffff.ffff",
       "AAAA.AAAA.AAAA",
       "the physical address of the destination host"
     ],
     "correct_answers": [
-      "cccc.cccc.cccc"
+      "ffff.ffff.ffff"
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nThe purpose of an ARP request is to find the MAC address of the destination host on an Ethernet LAN. The ARP process sends a Layer 2 broadcast to all devices on the Ethernet LAN. The frame contains the IP address of the destination and the broadcast MAC address, cccc.cccc.cccc. The host with the IP address that matches the IP address in the ARP request will reply with a unicast frame that includes the MAC address of the host. Thus the original sending host will obtain the destination IP and MAC address pair to continue the encapsulation process for data transmission.",
+    "explanation": "Answers Explanation & Hints:\nThe purpose of an ARP request is to find the MAC address of the destination host on an Ethernet LAN. The ARP process sends a Layer 2 broadcast to all devices on the Ethernet LAN. The frame contains the IP address of the destination and the broadcast MAC address, ffff.ffff.ffff. The host with the IP address that matches the IP address in the ARP request will reply with a unicast frame that includes the MAC address of the host. Thus the original sending host will obtain the destination IP and MAC address pair to continue the encapsulation process for data transmission.",
     "is_matching": false
   },
   {
@@ -487,7 +487,7 @@
   },
   {
     "number": 30,
-    "question": "Floor(config)# interface gi0/1 \nFloor(config-if)# description Connects to the Registrar LAN \nFloor(config-if)# ip address 192.168.235.234 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface gi0/0 \nFloor(config-if)# description Connects to the Manager LAN \nFloor(config-if)# ip address 192.168.234.114 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/0 \nFloor(config-if)# description Connects to the ISP \nFloor(config-if)# ip address 10.234.235.254 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/1 \nFloor(config-if)# description Connects to the Head Occice WAN \nFloor(config-if)# ip address 203.0.113.3 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Registrar LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "question": "Floor(config)# interface gi0/1 \nFloor(config-if)# description Connects to the Registrar LAN \nFloor(config-if)# ip address 192.168.235.234 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface gi0/0 \nFloor(config-if)# description Connects to the Manager LAN \nFloor(config-if)# ip address 192.168.234.114 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/0 \nFloor(config-if)# description Connects to the ISP \nFloor(config-if)# ip address 10.234.235.254 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/1 \nFloor(config-if)# description Connects to the Head Office WAN \nFloor(config-if)# ip address 203.0.113.3 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Registrar LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
     "options": [
       "192.168.235.234",
       "192.168.235.1",
@@ -756,7 +756,7 @@
       "well-known"
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nThere are diccerent types of TCP and UDP port numbers:Well-known ports – numbers 0 to 1023\n\nRegistered ports – numbers 1024 to 49151\n\nDynamic or private ports – numbers 49152 to 65535",
+    "explanation": "Answers Explanation & Hints:\nThere are different types of TCP and UDP port numbers:Well-known ports – numbers 0 to 1023\n\nRegistered ports – numbers 1024 to 49151\n\nDynamic or private ports – numbers 49152 to 65535",
     "is_matching": false
   },
   {
@@ -843,7 +843,7 @@
   },
   {
     "number": 53,
-    "question": "The employees and residents of Ciscoville cannot access the Internet or any remote web-based services. IT workers quickly determine that the city firewall is being flooded with so much traccic that a breakdown of connectivity to the Internet is occurring. Which type of attack is being launched at Ciscoville?",
+    "question": "The employees and residents of Ciscoville cannot access the Internet or any remote web-based services. IT workers quickly determine that the city firewall is being flooded with so much traffic that a breakdown of connectivity to the Internet is occurring. Which type of attack is being launched at Ciscoville?",
     "options": [
       "Trojan horse",
       "reconnaissance",
@@ -864,13 +864,13 @@
       "a user who is trying to guess a password to access the router",
       "a worm that is attempting to access another part of the network",
       "an unidentified individual who is trying to access the network equipment room",
-      "a device that is trying to inspect the traccic on a link"
+      "a device that is trying to inspect the traffic on a link"
     ],
     "correct_answers": [
       "a user who is trying to guess a password to access the router"
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nThe login block-for 180 attempts 2 within 30 command will cause the device to block authentication after 2 unsuccessful attempts within 30 seconds for a duration of 180 seconds. A device inspecting the traccic on a link has nothing to do with the router. The router configuration cannot prevent unauthorized access to the equipment room. A worm would not attempt to access the router to propagate to another part of the network.",
+    "explanation": "Answers Explanation & Hints:\nThe login block-for 180 attempts 2 within 30 command will cause the device to block authentication after 2 unsuccessful attempts within 30 seconds for a duration of 180 seconds. A device inspecting the traffic on a link has nothing to do with the router. The router configuration cannot prevent unauthorized access to the equipment room. A worm would not attempt to access the router to propagate to another part of the network.",
     "is_matching": false
   },
   {
@@ -909,7 +909,7 @@
   },
   {
     "number": 57,
-    "question": "Only employees connected to IPv6 interfaces are having dicciculty connecting to remote networks. The analyst wants to verify that IPv6 routing has been enabled. What is the best command to use to accomplish the task?",
+    "question": "Only employees connected to IPv6 interfaces are having difficulty connecting to remote networks. The analyst wants to verify that IPv6 routing has been enabled. What is the best command to use to accomplish the task?",
     "options": [
       "show running-config",
       "show interfaces",
@@ -943,7 +943,7 @@
   },
   {
     "number": 59,
-    "question": "A small advertising company has a web server that provides critical business service. The company connects to the Internet through a leased line service to an ISP. Which approach best provides cost eccective redundancy for the Internet connection?",
+    "question": "A small advertising company has a web server that provides critical business service. The company connects to the Internet through a leased line service to an ISP. Which approach best provides cost effective redundancy for the Internet connection?",
     "options": [
       "Add a second NIC to the web server.",
       "Add another web server to prepare failover support.",

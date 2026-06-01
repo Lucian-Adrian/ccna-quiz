@@ -2367,7 +2367,7 @@ Refer to the exhibit. If host A sends an IP packet to host B, what will the dest
 - [ ] 172.168.10.65
 - [ ] 172.168.10.99
 - [ ] AA:AA:AA:AA:AA:AA
-- [ ] CC:CC:CC:CC:CC:CC
+- [ ] FF:FF:FF:FF:FF:FF
 - [x] **BB:BB:BB:BB:BB:BB**
 - [ ] DD:DD:DD:DD:DD:DD
 

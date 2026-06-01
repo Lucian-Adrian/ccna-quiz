@@ -17,7 +17,7 @@
   },
   {
     "number": 2,
-    "question": "What is the diccerence between a virus and a worm?",
+    "question": "What is the difference between a virus and a worm?",
     "options": [
       "Viruses self-replicate but worms do not.",
       "Worms self-replicate but viruses do not.",
@@ -106,7 +106,7 @@
       "https://infraexam.com/wp-content/uploads/2026/03/CCNA1-Module-16-17-Checkpoint-Exam-Building-and-Securing-a-Small-Network-Exam-Answers-003.png",
       "https://infraexam.com/wp-content/uploads/2026/03/CCNA1-Module-16-17-Checkpoint-Exam-Building-and-Securing-a-Small-Network-Exam-Answers-003-1024x496.png"
     ],
-    "explanation": "Answers Explanation & Hints:\nStateful packet inspection\n: Prevents or allows access based on whether the traccic is in response to requests from internal hosts.\nURL filtering\n: Prevents or allows access based on web addresses or keywords.\nApplication filtering\n: Prevents or allows access based on the port numbers used in the request.\nPacket filtering\n: Prevents or allows access based on the IP or MAC addresses of the source and destination.",
+    "explanation": "Answers Explanation & Hints:\nStateful packet inspection\n: Prevents or allows access based on whether the traffic is in response to requests from internal hosts.\nURL filtering\n: Prevents or allows access based on web addresses or keywords.\nApplication filtering\n: Prevents or allows access based on the port numbers used in the request.\nPacket filtering\n: Prevents or allows access based on the IP or MAC addresses of the source and destination.",
     "is_matching": true
   },
   {
@@ -200,7 +200,7 @@
       "SSH provides secure communications to access hosts."
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nSSH provides a secure method for remote access to hosts by encrypting network traccic between the SSH client and remote hosts. Although both Telnet and SSH request authentication before a connection is established, Telnet does not support encryption of login credentials.",
+    "explanation": "Answers Explanation & Hints:\nSSH provides a secure method for remote access to hosts by encrypting network traffic between the SSH client and remote hosts. Although both Telnet and SSH request authentication before a connection is established, Telnet does not support encryption of login credentials.",
     "is_matching": false
   },
   {
@@ -209,7 +209,7 @@
     "options": [
       "detecting and blocking of attacks in real time",
       "connecting global threat information to Cisco network security devices",
-      "authenticating and validating traccic",
+      "authenticating and validating traffic",
       "filtering of nefarious websites"
     ],
     "correct_answers": [
@@ -232,7 +232,7 @@
       "layered"
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nUsing diccerent defenses at various points of the network creates a layered approach.",
+    "explanation": "Answers Explanation & Hints:\nUsing different defenses at various points of the network creates a layered approach.",
     "is_matching": false
   },
   {
@@ -240,8 +240,8 @@
     "question": "What is an accurate description of redundancy?",
     "options": [
       "configuring a router with a complete MAC address database to ensure that all frames can be forwarded to the correct destination",
-      "configuring a switch with proper security to ensure that all traccic forwarded through an interface is filtered",
-      "designing a network to use multiple virtual devices to ensure that all traccic uses the best path through the internetwork",
+      "configuring a switch with proper security to ensure that all traffic forwarded through an interface is filtered",
+      "designing a network to use multiple virtual devices to ensure that all traffic uses the best path through the internetwork",
       "designing a network to use multiple paths between switches to ensure there is no single point of failure"
     ],
     "correct_answers": [
@@ -253,7 +253,7 @@
   },
   {
     "number": 17,
-    "question": "A network administrator is upgrading a small business network to give high priority to real-time applications traccic. What two types of network services is the network administrator trying to accommodate? (Choose two.)",
+    "question": "A network administrator is upgrading a small business network to give high priority to real-time applications traffic. What two types of network services is the network administrator trying to accommodate? (Choose two.)",
     "options": [
       "voice",
       "video",
@@ -266,23 +266,23 @@
       "video"
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nStreaming media, such as video, and voice traccic, are both examples of real-time traccic. Real-time traccic needs higher priority through the network than other types of traccic because it is very sensitive to network delay and latency.",
+    "explanation": "Answers Explanation & Hints:\nStreaming media, such as video, and voice traffic, are both examples of real-time traffic. Real-time traffic needs higher priority through the network than other types of traffic because it is very sensitive to network delay and latency.",
     "is_matching": false
   },
   {
     "number": 18,
-    "question": "What is the purpose of a small company using a protocol analyzer utility to capture network traccic on the network segments where the company is considering a network upgrade?",
+    "question": "What is the purpose of a small company using a protocol analyzer utility to capture network traffic on the network segments where the company is considering a network upgrade?",
     "options": [
-      "to identify the source and destination of local network traccic",
+      "to identify the source and destination of local network traffic",
       "to capture the Internet connection bandwidth requirement",
-      "to document and analyze network traccic requirements on each network segment",
+      "to document and analyze network traffic requirements on each network segment",
       "to establish a baseline for security analysis after the network is upgraded"
     ],
     "correct_answers": [
-      "to document and analyze network traccic requirements on each network segment"
+      "to document and analyze network traffic requirements on each network segment"
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nAn important prerequisite for considering network growth is to understand the type and amount of traccic that is crossing the network as well as the current traccic flow. By using a protocol analyzer in each network segment, the network administrator can document and analyze the network traccic pattern for each segment, which becomes the base in determining the needs and means of the network growth.",
+    "explanation": "Answers Explanation & Hints:\nAn important prerequisite for considering network growth is to understand the type and amount of traffic that is crossing the network as well as the current traffic flow. By using a protocol analyzer in each network segment, the network administrator can document and analyze the network traffic pattern for each segment, which becomes the base in determining the needs and means of the network growth.",
     "is_matching": false
   },
   {
@@ -638,7 +638,7 @@
   },
   {
     "number": 40,
-    "question": "What is considered the most eccective way to mitigate a worm attack?",
+    "question": "What is considered the most effective way to mitigate a worm attack?",
     "options": [
       "Change system passwords every 30 days.",
       "Ensure that all systems have the most current virus definitions.",
@@ -649,7 +649,7 @@
       "Download security updates from the operating system vendor and patch all vulnerable systems."
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nBecause worms take advantage of vulnerabilities in the system itself, the most eccective way to mitigate worm attacks is to download security updates from the operating system vendor and patch all vulnerable systems.",
+    "explanation": "Answers Explanation & Hints:\nBecause worms take advantage of vulnerabilities in the system itself, the most effective way to mitigate worm attacks is to download security updates from the operating system vendor and patch all vulnerable systems.",
     "is_matching": false
   },
   {
@@ -896,7 +896,7 @@
       "show ip interface brief"
     ],
     "image_urls": [],
-    "explanation": "Explanation & Hint:\nFor a network technician troubleshooting on a router and needing to verify the IP addresses of all interfaces, the best command would be:\nshow ip interface brief\nThis command is used on Cisco routers and provides a summary of all the interfaces, including their IP addresses and status (up/down). It’s a concise and eccective way to view all the necessary information regarding the interfaces on a router.\nnslookup\n is typically used for querying the Domain Name System (DNS) to obtain domain name or IP address mapping.\nipconfig getifaddr en0\n is a command used on macOS systems to get the IP address of a specific interface (\nen0\n in this case).\nshow ip route\n displays the routing table of the router but does not specifically list all interface IP addresses.",
+    "explanation": "Explanation & Hint:\nFor a network technician troubleshooting on a router and needing to verify the IP addresses of all interfaces, the best command would be:\nshow ip interface brief\nThis command is used on Cisco routers and provides a summary of all the interfaces, including their IP addresses and status (up/down). It’s a concise and effective way to view all the necessary information regarding the interfaces on a router.\nnslookup\n is typically used for querying the Domain Name System (DNS) to obtain domain name or IP address mapping.\nipconfig getifaddr en0\n is a command used on macOS systems to get the IP address of a specific interface (\nen0\n in this case).\nshow ip route\n displays the routing table of the router but does not specifically list all interface IP addresses.",
     "is_matching": false
   },
   {
@@ -915,7 +915,7 @@
       "show interfaces"
     ],
     "image_urls": [],
-    "explanation": "Explanation & Hint:\nIf a network administrator suspects a duplex mismatch or a similar issue accecting network performance for students connected to the same switch, the most appropriate command to use would be:\nshow interfaces\nThis command is typically used on Cisco switches and routers. It provides detailed information about the status of each interface, including the duplex setting (half or full), speed, and any errors that might be accecting performance, such as collisions or CRC errors. These details are crucial for diagnosing issues related to physical connectivity and configuration mismatches on the network.\nipconfig getifaddr en0\n is a command specific to macOS systems and is used to get the IP address of a specific interface, which isn’t directly relevant for checking duplex settings on a switch.\ncopy running-config startup-config\n is a Cisco command used to save the current running configuration to the startup configuration, which is not directly helpful in diagnosing duplex issues.\nshow ip nat translations\n displays the Network Address Translation (NAT) translations table on a router, which is not directly related to troubleshooting duplex issues on a switch.",
+    "explanation": "Explanation & Hint:\nIf a network administrator suspects a duplex mismatch or a similar issue affecting network performance for students connected to the same switch, the most appropriate command to use would be:\nshow interfaces\nThis command is typically used on Cisco switches and routers. It provides detailed information about the status of each interface, including the duplex setting (half or full), speed, and any errors that might be affecting performance, such as collisions or CRC errors. These details are crucial for diagnosing issues related to physical connectivity and configuration mismatches on the network.\nipconfig getifaddr en0\n is a command specific to macOS systems and is used to get the IP address of a specific interface, which isn’t directly relevant for checking duplex settings on a switch.\ncopy running-config startup-config\n is a Cisco command used to save the current running configuration to the startup configuration, which is not directly helpful in diagnosing duplex issues.\nshow ip nat translations\n displays the Network Address Translation (NAT) translations table on a router, which is not directly related to troubleshooting duplex issues on a switch.",
     "is_matching": false
   },
   {
@@ -952,7 +952,7 @@
       "copy running-config startup-config"
     ],
     "image_urls": [],
-    "explanation": "Explanation & Hint:\nTo save a router’s current configuration to NVRAM (Non-Volatile Random-Access Memory), ensuring that the configuration is retained even after a reboot, the student should use the command:\ncopy running-config startup-config\nThis command is used on Cisco routers and switches. It copies the current running configuration (which is active and stored in RAM) to the startup configuration (which is stored in NVRAM). When the device restarts, it loads the configuration stored in the startup-config file.\nThe other commands listed serve diccerent purposes:\nshow interfaces\n provides detailed information about the router’s interfaces.\nshow ip nat translations\n displays the Network Address Translation (NAT) translation table.\nshow ip route\n shows the routing table of the router.",
+    "explanation": "Explanation & Hint:\nTo save a router’s current configuration to NVRAM (Non-Volatile Random-Access Memory), ensuring that the configuration is retained even after a reboot, the student should use the command:\ncopy running-config startup-config\nThis command is used on Cisco routers and switches. It copies the current running configuration (which is active and stored in RAM) to the startup configuration (which is stored in NVRAM). When the device restarts, it loads the configuration stored in the startup-config file.\nThe other commands listed serve different purposes:\nshow interfaces\n provides detailed information about the router’s interfaces.\nshow ip nat translations\n displays the Network Address Translation (NAT) translation table.\nshow ip route\n shows the routing table of the router.",
     "is_matching": false
   },
   {
@@ -988,12 +988,12 @@
       "show ipv6 interface"
     ],
     "image_urls": [],
-    "explanation": "Explanation & Hint:\nFor a network technician who needs to verify all of the IPv6 interface addresses on a router, the best command to use is:\nshow ipv6 interface\nThis command, when used on routers that support IPv6, will display details about IPv6 interfaces, including their addresses, status, and other relevant configuration details. It’s specifically tailored to provide comprehensive information about IPv6 configurations.\nThe other commands have diccerent purposes:\nshow interfaces\n provides detailed information about all interfaces, including their status and configuration, but it may not provide comprehensive IPv6-specific details.\nshow ip nat translations\n and \nshow ip route\n are commands relevant to IPv4 configurations; \nshow ip nat translations\n displays the NAT translations table, and \nshow ip route\n shows the IP routing table.",
+    "explanation": "Explanation & Hint:\nFor a network technician who needs to verify all of the IPv6 interface addresses on a router, the best command to use is:\nshow ipv6 interface\nThis command, when used on routers that support IPv6, will display details about IPv6 interfaces, including their addresses, status, and other relevant configuration details. It’s specifically tailored to provide comprehensive information about IPv6 configurations.\nThe other commands have different purposes:\nshow interfaces\n provides detailed information about all interfaces, including their status and configuration, but it may not provide comprehensive IPv6-specific details.\nshow ip nat translations\n and \nshow ip route\n are commands relevant to IPv4 configurations; \nshow ip nat translations\n displays the NAT translations table, and \nshow ip route\n shows the IP routing table.",
     "is_matching": false
   },
   {
     "number": 61,
-    "question": "A teacher is having dicciculties connecting his PC to the classroom network. He needs to verify that a default gateway is configured correctly. What is the best command to use to accomplish the task?",
+    "question": "A teacher is having difficulties connecting his PC to the classroom network. He needs to verify that a default gateway is configured correctly. What is the best command to use to accomplish the task?",
     "options": [
       "ipconfig",
       "copy running-config startup-config",
@@ -1011,7 +1011,7 @@
   },
   {
     "number": 62,
-    "question": "Only employees connected to IPv6 interfaces are having dicciculty connecting to remote networks. The analyst wants to verify that IPv6 routing has been enabled. What is the best command to use to accomplish the task?",
+    "question": "Only employees connected to IPv6 interfaces are having difficulty connecting to remote networks. The analyst wants to verify that IPv6 routing has been enabled. What is the best command to use to accomplish the task?",
     "options": [
       "show running-config",
       "show interfaces",
@@ -1025,7 +1025,7 @@
       "show running-config"
     ],
     "image_urls": [],
-    "explanation": "Explanation & Hint:\nFor an analyst who needs to verify whether IPv6 routing has been enabled on a device (typically a router), the best command to use would be:\nshow running-config\nThis command displays the current active configuration on the device. By examining the output of this command, the analyst can check for specific lines in the configuration that enable IPv6 routing, such as \nipv6 unicast-routing\n. If this command is present, it indicates that IPv6 routing is enabled.\nThe other commands have diccerent primary functions:\nshow interfaces\n provides detailed information about the interfaces (both IPv4 and IPv6, if configured) but doesn’t directly show whether IPv6 routing is enabled.\ncopy running-config startup-config\n is used to save the current configuration (running-config) to the startup configuration. It does not provide information about the state of IPv6 routing.\nshow ip nat translations\n displays the NAT translations table for IPv4 and is not related to IPv6 routing.",
+    "explanation": "Explanation & Hint:\nFor an analyst who needs to verify whether IPv6 routing has been enabled on a device (typically a router), the best command to use would be:\nshow running-config\nThis command displays the current active configuration on the device. By examining the output of this command, the analyst can check for specific lines in the configuration that enable IPv6 routing, such as \nipv6 unicast-routing\n. If this command is present, it indicates that IPv6 routing is enabled.\nThe other commands have different primary functions:\nshow interfaces\n provides detailed information about the interfaces (both IPv4 and IPv6, if configured) but doesn’t directly show whether IPv6 routing is enabled.\ncopy running-config startup-config\n is used to save the current configuration (running-config) to the startup configuration. It does not provide information about the state of IPv6 routing.\nshow ip nat translations\n displays the NAT translations table for IPv4 and is not related to IPv6 routing.",
     "is_matching": false
   },
   {
@@ -1049,7 +1049,7 @@
   },
   {
     "number": 64,
-    "question": "Only employees connected to IPv6 interfaces are having dicciculty connecting to remote networks. The analyst wants to verify that IPv6 routing has been enabled. What is the best command to use to accomplish the task?",
+    "question": "Only employees connected to IPv6 interfaces are having difficulty connecting to remote networks. The analyst wants to verify that IPv6 routing has been enabled. What is the best command to use to accomplish the task?",
     "options": [
       "show running-config",
       "show ipv6 route",
@@ -1063,7 +1063,7 @@
       "show running-config"
     ],
     "image_urls": [],
-    "explanation": "Explanation & Hint:\nFor an analyst who needs to verify whether IPv6 routing has been enabled on a device (typically a router), the best command to use would be:\nshow running-config\nThis command displays the current active configuration on the device. By examining the output of this command, the analyst can check for specific lines in the configuration that enable IPv6 routing, such as \nipv6 unicast-routing\n. If this command is present, it indicates that IPv6 routing is enabled.\nThe other commands have diccerent primary functions:\nshow interfaces\n provides detailed information about the interfaces (both IPv4 and IPv6, if configured) but doesn’t directly show whether IPv6 routing is enabled.\ncopy running-config startup-config\n is used to save the current configuration (running-config) to the startup configuration. It does not provide information about the state of IPv6 routing.\nshow ip nat translations\n displays the NAT translations table for IPv4 and is not related to IPv6 routing.",
+    "explanation": "Explanation & Hint:\nFor an analyst who needs to verify whether IPv6 routing has been enabled on a device (typically a router), the best command to use would be:\nshow running-config\nThis command displays the current active configuration on the device. By examining the output of this command, the analyst can check for specific lines in the configuration that enable IPv6 routing, such as \nipv6 unicast-routing\n. If this command is present, it indicates that IPv6 routing is enabled.\nThe other commands have different primary functions:\nshow interfaces\n provides detailed information about the interfaces (both IPv4 and IPv6, if configured) but doesn’t directly show whether IPv6 routing is enabled.\ncopy running-config startup-config\n is used to save the current configuration (running-config) to the startup configuration. It does not provide information about the state of IPv6 routing.\nshow ip nat translations\n displays the NAT translations table for IPv4 and is not related to IPv6 routing.",
     "is_matching": false
   }
 ]

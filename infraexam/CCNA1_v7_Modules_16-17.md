@@ -23,7 +23,7 @@ A Trojan horse is malicious code that has been written specifically to look like
 
 ## Question 2
 
-What is the diccerence between a virus and a worm?
+What is the difference between a virus and a worm?
 
 - [ ] Viruses self-replicate but worms do not.
 - [x] **Worms self-replicate but viruses do not.**
@@ -121,7 +121,7 @@ Match the description to the type of firewall filtering.
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
 Stateful packet inspection
-: Prevents or allows access based on whether the traccic is in response to requests from internal hosts.
+: Prevents or allows access based on whether the traffic is in response to requests from internal hosts.
 URL filtering
 : Prevents or allows access based on web addresses or keywords.
 Application filtering
@@ -222,7 +222,7 @@ What is the advantage of using SSH over Telnet?
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-SSH provides a secure method for remote access to hosts by encrypting network traccic between the SSH client and remote hosts. Although both Telnet and SSH request authentication before a connection is established, Telnet does not support encryption of login credentials.
+SSH provides a secure method for remote access to hosts by encrypting network traffic between the SSH client and remote hosts. Although both Telnet and SSH request authentication before a connection is established, Telnet does not support encryption of login credentials.
 
 ---
 
@@ -232,7 +232,7 @@ What is the role of an IPS?
 
 - [x] **detecting and blocking of attacks in real time**
 - [ ] connecting global threat information to Cisco network security devices
-- [ ] authenticating and validating traccic
+- [ ] authenticating and validating traffic
 - [ ] filtering of nefarious websites
 
 > [!NOTE]
@@ -252,7 +252,7 @@ A user is redesigning a network for a small company and wants to ensure security
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Using diccerent defenses at various points of the network creates a layered approach.
+Using different defenses at various points of the network creates a layered approach.
 
 ---
 
@@ -261,8 +261,8 @@ Using diccerent defenses at various points of the network creates a layered appr
 What is an accurate description of redundancy?
 
 - [ ] configuring a router with a complete MAC address database to ensure that all frames can be forwarded to the correct destination
-- [ ] configuring a switch with proper security to ensure that all traccic forwarded through an interface is filtered
-- [ ] designing a network to use multiple virtual devices to ensure that all traccic uses the best path through the internetwork
+- [ ] configuring a switch with proper security to ensure that all traffic forwarded through an interface is filtered
+- [ ] designing a network to use multiple virtual devices to ensure that all traffic uses the best path through the internetwork
 - [x] **designing a network to use multiple paths between switches to ensure there is no single point of failure**
 
 > [!NOTE]
@@ -273,7 +273,7 @@ Redundancy attempts to remove any single point of failure in a network by using 
 
 ## Question 17
 
-A network administrator is upgrading a small business network to give high priority to real-time applications traccic. What two types of network services is the network administrator trying to accommodate? (Choose two.)
+A network administrator is upgrading a small business network to give high priority to real-time applications traffic. What two types of network services is the network administrator trying to accommodate? (Choose two.)
 
 - [x] **voice**
 - [x] **video**
@@ -283,22 +283,22 @@ A network administrator is upgrading a small business network to give high prior
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Streaming media, such as video, and voice traccic, are both examples of real-time traccic. Real-time traccic needs higher priority through the network than other types of traccic because it is very sensitive to network delay and latency.
+Streaming media, such as video, and voice traffic, are both examples of real-time traffic. Real-time traffic needs higher priority through the network than other types of traffic because it is very sensitive to network delay and latency.
 
 ---
 
 ## Question 18
 
-What is the purpose of a small company using a protocol analyzer utility to capture network traccic on the network segments where the company is considering a network upgrade?
+What is the purpose of a small company using a protocol analyzer utility to capture network traffic on the network segments where the company is considering a network upgrade?
 
-- [ ] to identify the source and destination of local network traccic
+- [ ] to identify the source and destination of local network traffic
 - [ ] to capture the Internet connection bandwidth requirement
-- [x] **to document and analyze network traccic requirements on each network segment**
+- [x] **to document and analyze network traffic requirements on each network segment**
 - [ ] to establish a baseline for security analysis after the network is upgraded
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-An important prerequisite for considering network growth is to understand the type and amount of traccic that is crossing the network as well as the current traccic flow. By using a protocol analyzer in each network segment, the network administrator can document and analyze the network traccic pattern for each segment, which becomes the base in determining the needs and means of the network growth.
+An important prerequisite for considering network growth is to understand the type and amount of traffic that is crossing the network as well as the current traffic flow. By using a protocol analyzer in each network segment, the network administrator can document and analyze the network traffic pattern for each segment, which becomes the base in determining the needs and means of the network growth.
 
 ---
 
@@ -640,7 +640,7 @@ SSH is automatically enabled after the RSA keys are generated. Setting user priv
 
 ## Question 40
 
-What is considered the most eccective way to mitigate a worm attack?
+What is considered the most effective way to mitigate a worm attack?
 
 - [ ] Change system passwords every 30 days.
 - [ ] Ensure that all systems have the most current virus definitions.
@@ -649,7 +649,7 @@ What is considered the most eccective way to mitigate a worm attack?
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Because worms take advantage of vulnerabilities in the system itself, the most eccective way to mitigate worm attacks is to download security updates from the operating system vendor and patch all vulnerable systems.
+Because worms take advantage of vulnerabilities in the system itself, the most effective way to mitigate worm attacks is to download security updates from the operating system vendor and patch all vulnerable systems.
 
 ---
 
@@ -1011,7 +1011,7 @@ A network technician is troubleshooting an issue and needs to verify the IP addr
 > **Explanation:** Explanation & Hint:
 For a network technician troubleshooting on a router and needing to verify the IP addresses of all interfaces, the best command would be:
 show ip interface brief
-This command is used on Cisco routers and provides a summary of all the interfaces, including their IP addresses and status (up/down). It’s a concise and eccective way to view all the necessary information regarding the interfaces on a router.
+This command is used on Cisco routers and provides a summary of all the interfaces, including their IP addresses and status (up/down). It’s a concise and effective way to view all the necessary information regarding the interfaces on a router.
 nslookup
  is typically used for querying the Domain Name System (DNS) to obtain domain name or IP address mapping.
 ipconfig getifaddr en0
@@ -1037,9 +1037,9 @@ Students who are connected to the same switch are having slower than normal resp
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-If a network administrator suspects a duplex mismatch or a similar issue accecting network performance for students connected to the same switch, the most appropriate command to use would be:
+If a network administrator suspects a duplex mismatch or a similar issue affecting network performance for students connected to the same switch, the most appropriate command to use would be:
 show interfaces
-This command is typically used on Cisco switches and routers. It provides detailed information about the status of each interface, including the duplex setting (half or full), speed, and any errors that might be accecting performance, such as collisions or CRC errors. These details are crucial for diagnosing issues related to physical connectivity and configuration mismatches on the network.
+This command is typically used on Cisco switches and routers. It provides detailed information about the status of each interface, including the duplex setting (half or full), speed, and any errors that might be affecting performance, such as collisions or CRC errors. These details are crucial for diagnosing issues related to physical connectivity and configuration mismatches on the network.
 ipconfig getifaddr en0
  is a command specific to macOS systems and is used to get the IP address of a specific interface, which isn’t directly relevant for checking duplex settings on a switch.
 copy running-config startup-config
@@ -1093,7 +1093,7 @@ A student wants to save a router configuration to NVRAM. What is the best comman
 To save a router’s current configuration to NVRAM (Non-Volatile Random-Access Memory), ensuring that the configuration is retained even after a reboot, the student should use the command:
 copy running-config startup-config
 This command is used on Cisco routers and switches. It copies the current running configuration (which is active and stored in RAM) to the startup configuration (which is stored in NVRAM). When the device restarts, it loads the configuration stored in the startup-config file.
-The other commands listed serve diccerent purposes:
+The other commands listed serve different purposes:
 show interfaces
  provides detailed information about the router’s interfaces.
 show ip nat translations
@@ -1158,7 +1158,7 @@ A network technician is troubleshooting an issue and needs to verify all of the 
 For a network technician who needs to verify all of the IPv6 interface addresses on a router, the best command to use is:
 show ipv6 interface
 This command, when used on routers that support IPv6, will display details about IPv6 interfaces, including their addresses, status, and other relevant configuration details. It’s specifically tailored to provide comprehensive information about IPv6 configurations.
-The other commands have diccerent purposes:
+The other commands have different purposes:
 show interfaces
  provides detailed information about all interfaces, including their status and configuration, but it may not provide comprehensive IPv6-specific details.
 show ip nat translations
@@ -1174,7 +1174,7 @@ show ip route
 
 ## Question 61
 
-A teacher is having dicciculties connecting his PC to the classroom network. He needs to verify that a default gateway is configured correctly. What is the best command to use to accomplish the task?
+A teacher is having difficulties connecting his PC to the classroom network. He needs to verify that a default gateway is configured correctly. What is the best command to use to accomplish the task?
 
 - [x] **ipconfig**
 - [ ] copy running-config startup-config
@@ -1204,7 +1204,7 @@ show ip nat translations
 
 ## Question 62
 
-Only employees connected to IPv6 interfaces are having dicciculty connecting to remote networks. The analyst wants to verify that IPv6 routing has been enabled. What is the best command to use to accomplish the task?
+Only employees connected to IPv6 interfaces are having difficulty connecting to remote networks. The analyst wants to verify that IPv6 routing has been enabled. What is the best command to use to accomplish the task?
 
 - [x] **show running-config**
 - [ ] show interfaces
@@ -1221,7 +1221,7 @@ show running-config
 This command displays the current active configuration on the device. By examining the output of this command, the analyst can check for specific lines in the configuration that enable IPv6 routing, such as 
 ipv6 unicast-routing
 . If this command is present, it indicates that IPv6 routing is enabled.
-The other commands have diccerent primary functions:
+The other commands have different primary functions:
 show interfaces
  provides detailed information about the interfaces (both IPv4 and IPv6, if configured) but doesn’t directly show whether IPv6 routing is enabled.
 copy running-config startup-config
@@ -1262,7 +1262,7 @@ copy startup-config running-config
 
 ## Question 64
 
-Only employees connected to IPv6 interfaces are having dicciculty connecting to remote networks. The analyst wants to verify that IPv6 routing has been enabled. What is the best command to use to accomplish the task?
+Only employees connected to IPv6 interfaces are having difficulty connecting to remote networks. The analyst wants to verify that IPv6 routing has been enabled. What is the best command to use to accomplish the task?
 
 - [x] **show running-config**
 - [ ] show ipv6 route
@@ -1279,7 +1279,7 @@ show running-config
 This command displays the current active configuration on the device. By examining the output of this command, the analyst can check for specific lines in the configuration that enable IPv6 routing, such as 
 ipv6 unicast-routing
 . If this command is present, it indicates that IPv6 routing is enabled.
-The other commands have diccerent primary functions:
+The other commands have different primary functions:
 show interfaces
  provides detailed information about the interfaces (both IPv4 and IPv6, if configured) but doesn’t directly show whether IPv6 routing is enabled.
 copy running-config startup-config

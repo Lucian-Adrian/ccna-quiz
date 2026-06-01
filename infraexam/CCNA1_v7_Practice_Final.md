@@ -26,7 +26,7 @@ What characteristic describes spyware?
 - [x] **software that is installed on a user device and collects information about the user**
 - [ ] an attack that slows or crashes a device or network service
 - [ ] the use of stolen credentials to access private data
-- [ ] a network device that filters access and traccic coming into a network
+- [ ] a network device that filters access and traffic coming into a network
 
 ---
 
@@ -35,9 +35,9 @@ What characteristic describes spyware?
 Which statement describes network security?
 
 - [x] **It ensures sensitive corporate data is available for authorized users.**
-- [ ] It prioritizes data flows in order to give priority to delay-sensitive traccic.
+- [ ] It prioritizes data flows in order to give priority to delay-sensitive traffic.
 - [ ] It supports growth over time in accordance with approved network design procedures.
-- [ ] It synchronizes traccic flows using timestamps.
+- [ ] It synchronizes traffic flows using timestamps.
 
 ---
 
@@ -45,9 +45,9 @@ Which statement describes network security?
 
 What is a user trying to determine when issuing a ping 10.1.1.1 command on a PC?
 
-- [ ] if the TCP/IP stack is functioning on the PC without putting traccic on the wire
+- [ ] if the TCP/IP stack is functioning on the PC without putting traffic on the wire
 - [x] **if there is connectivity with the destination device**
-- [ ] the path that traccic will take to reach the destination
+- [ ] the path that traffic will take to reach the destination
 - [ ] what type of device is at the destination
 
 > [!NOTE]
@@ -191,7 +191,7 @@ Which two statements describe the characteristics of fiber-optic cabling? (Choos
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Fiber-optic cabling is primarily used for high-traccic backbone cabling and does not conduct electricity. Multimode fiber uses LEDs for signaling and single-mode fiber uses laser technology. FIber-optic cabling carries signals from only one device to another.
+Fiber-optic cabling is primarily used for high-traffic backbone cabling and does not conduct electricity. Multimode fiber uses LEDs for signaling and single-mode fiber uses laser technology. FIber-optic cabling carries signals from only one device to another.
 
 ---
 
@@ -205,7 +205,7 @@ Match the description with the media.
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-UTP cables are used in wired occice environments. Coaxial cables are used to connect cable modems and televisions. Fiber optics are used for high transmission speeds and to transfer data over long distances. STP cables are used in environments where there is a lot of interference.
+UTP cables are used in wired office environments. Coaxial cables are used to connect cable modems and televisions. Fiber optics are used for high transmission speeds and to transfer data over long distances. STP cables are used in environments where there is a lot of interference.
 
 ---
 
@@ -295,14 +295,14 @@ Which two functions are performed at the LLC sublayer of the OSI Data Link Layer
 
 Two network engineers are discussing the methods used to forward frames through a switch. What is an important concept related to the cut-through method of switching?
 
-- [ ] The fragment-free switching occers the lowest level of latency.
+- [ ] The fragment-free switching offers the lowest level of latency.
 - [ ] Fast-forward switching can be viewed as a compromise between store-and-forward switching and fragment-free switching.
 - [ ] Fragment-free switching is the typical cut-through method of switching.
 - [x] **Packets can be relayed with errors when fast-forward switching is used.**
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Fast-forward switching occers the lowest level of latency and it is the typical cut-through method of switching. Fragment-free switching can be viewed as a compromise between store-and-forward switching and fast-forward switching. Because fast-forward switching starts forwarding before the entire packet has been received, there may be times when packets are relayed with errors.
+Fast-forward switching offers the lowest level of latency and it is the typical cut-through method of switching. Fragment-free switching can be viewed as a compromise between store-and-forward switching and fast-forward switching. Because fast-forward switching starts forwarding before the entire packet has been received, there may be times when packets are relayed with errors.
 
 ---
 
@@ -324,7 +324,7 @@ Because collisions are a normal aspect of half-duplex communications, runt and g
 
 ## Question 22
 
-What happens when a switch receives a frame and the calculated CRC value is diccerent than the value that is in the FCS field?
+What happens when a switch receives a frame and the calculated CRC value is different than the value that is in the FCS field?
 
 - [ ] The switch places the new CRC value in the FCS field and forwards the frame.
 - [ ] The switch notifies the source of the bad frame.
@@ -359,7 +359,7 @@ If the default gateway is configured incorrectly on the host, what is the impact
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-A default gateway is only required to communicate with devices on another network. The absence of a default gateway does not accect connectivity between devices on the same local network.
+A default gateway is only required to communicate with devices on another network. The absence of a default gateway does not affect connectivity between devices on the same local network.
 
 ---
 
@@ -417,13 +417,13 @@ Which destination address is used in an ARP request frame?
 
 - [ ] 0.0.0.0
 - [ ] 255.255.255.255
-- [x] **cccc.cccc.cccc**
+- [x] **ffff.ffff.ffff**
 - [ ] AAAA.AAAA.AAAA
 - [ ] the physical address of the destination host
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-The purpose of an ARP request is to find the MAC address of the destination host on an Ethernet LAN. The ARP process sends a Layer 2 broadcast to all devices on the Ethernet LAN. The frame contains the IP address of the destination and the broadcast MAC address, cccc.cccc.cccc. The host with the IP address that matches the IP address in the ARP request will reply with a unicast frame that includes the MAC address of the host. Thus the original sending host will obtain the destination IP and MAC address pair to continue the encapsulation process for data transmission.
+The purpose of an ARP request is to find the MAC address of the destination host on an Ethernet LAN. The ARP process sends a Layer 2 broadcast to all devices on the Ethernet LAN. The frame contains the IP address of the destination and the broadcast MAC address, ffff.ffff.ffff. The host with the IP address that matches the IP address in the ARP request will reply with a unicast frame that includes the MAC address of the host. Thus the original sending host will obtain the destination IP and MAC address pair to continue the encapsulation process for data transmission.
 
 ---
 
@@ -460,7 +460,7 @@ Floor(config-if)# description Connects to the ISP 
 Floor(config-if)# ip address 10.234.235.254 255.255.255.0 
 Floor(config-if)# no shutdown 
 Floor(config-if)# interface s0/0/1 
-Floor(config-if)# description Connects to the Head Occice WAN 
+Floor(config-if)# description Connects to the Head Office WAN 
 Floor(config-if)# ip address 203.0.113.3 255.255.255.0 
 Floor(config-if)# no shutdown 
 Floor(config-if)# end
@@ -761,7 +761,7 @@ To which TCP port group does the port 414 belong?
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-There are diccerent types of TCP and UDP port numbers:Well-known ports – numbers 0 to 1023
+There are different types of TCP and UDP port numbers:Well-known ports – numbers 0 to 1023
 
 Registered ports – numbers 1024 to 49151
 
@@ -840,7 +840,7 @@ The nslookup command was created to allow a user to manually query a DNS serve
 
 ## Question 53
 
-The employees and residents of Ciscoville cannot access the Internet or any remote web-based services. IT workers quickly determine that the city firewall is being flooded with so much traccic that a breakdown of connectivity to the Internet is occurring. Which type of attack is being launched at Ciscoville?
+The employees and residents of Ciscoville cannot access the Internet or any remote web-based services. IT workers quickly determine that the city firewall is being flooded with so much traffic that a breakdown of connectivity to the Internet is occurring. Which type of attack is being launched at Ciscoville?
 
 - [ ] Trojan horse
 - [ ] reconnaissance
@@ -860,11 +860,11 @@ A network administrator is issuing the login block-for 180 attempts 2 within 30
 - [x] **a user who is trying to guess a password to access the router**
 - [ ] a worm that is attempting to access another part of the network
 - [ ] an unidentified individual who is trying to access the network equipment room
-- [ ] a device that is trying to inspect the traccic on a link
+- [ ] a device that is trying to inspect the traffic on a link
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-The login block-for 180 attempts 2 within 30 command will cause the device to block authentication after 2 unsuccessful attempts within 30 seconds for a duration of 180 seconds. A device inspecting the traccic on a link has nothing to do with the router. The router configuration cannot prevent unauthorized access to the equipment room. A worm would not attempt to access the router to propagate to another part of the network.
+The login block-for 180 attempts 2 within 30 command will cause the device to block authentication after 2 unsuccessful attempts within 30 seconds for a duration of 180 seconds. A device inspecting the traffic on a link has nothing to do with the router. The router configuration cannot prevent unauthorized access to the equipment room. A worm would not attempt to access the router to propagate to another part of the network.
 
 ---
 
@@ -901,7 +901,7 @@ At a minimum, a computer should use antivirus software and have all software up 
 
 ## Question 57
 
-Only employees connected to IPv6 interfaces are having dicciculty connecting to remote networks. The analyst wants to verify that IPv6 routing has been enabled. What is the best command to use to accomplish the task?
+Only employees connected to IPv6 interfaces are having difficulty connecting to remote networks. The analyst wants to verify that IPv6 routing has been enabled. What is the best command to use to accomplish the task?
 
 - [x] **show running-config**
 - [ ] show interfaces
@@ -929,7 +929,7 @@ Nslookup is a tool for testing and troubleshooting DNS servers.
 
 ## Question 59
 
-A small advertising company has a web server that provides critical business service. The company connects to the Internet through a leased line service to an ISP. Which approach best provides cost eccective redundancy for the Internet connection?
+A small advertising company has a web server that provides critical business service. The company connects to the Internet through a leased line service to an ISP. Which approach best provides cost effective redundancy for the Internet connection?
 
 - [ ] Add a second NIC to the web server.
 - [ ] Add another web server to prepare failover support.

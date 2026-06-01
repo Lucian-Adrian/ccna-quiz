@@ -335,11 +335,11 @@ Subnet 192.168.1.64 /27 has 5 bits that are allocated for host addresses and the
 
 Which address is a valid IPv6 link-local unicast address?
 
-- [ ] FEC8:1::cccc
+- [ ] FEC8:1::ffff
 - [ ] FD80::1:1234
 - [x] **FE80::1:4545:6578:ABC1**
 - [ ] FE0A::100:7788:998F
-- [ ] FC90:5678:4251:cccc
+- [ ] FC90:5678:4251:ffff
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
@@ -567,7 +567,7 @@ Refer to the exhibit. A company is deploying an IPv6 addressing scheme for its n
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Because only one hexadecimal character is used to represent the subnet, that one character can represent 16 diccerent values 0 through F.
+Because only one hexadecimal character is used to represent the subnet, that one character can represent 16 different values 0 through F.
 
 ---
 
@@ -951,7 +951,7 @@ A host is transmitting a broadcast. Which host or hosts will receive it?
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-When a broadcast is sent to the broadcast address of a subnet, all hosts within that same subnet will receive it. This is a common characteristic of traditional IP networks. However, it’s important to note that the use of broadcasts is discouraged in modern networking due to its potential for causing network congestion. Multicast and unicast communication are generally more eccicient and common ways to transmit data to specific hosts or groups of hosts in a network.
+When a broadcast is sent to the broadcast address of a subnet, all hosts within that same subnet will receive it. This is a common characteristic of traditional IP networks. However, it’s important to note that the use of broadcasts is discouraged in modern networking due to its potential for causing network congestion. Multicast and unicast communication are generally more efficient and common ways to transmit data to specific hosts or groups of hosts in a network.
 
 ---
 
@@ -996,7 +996,7 @@ A host is transmitting a multicast. Which host or hosts will receive it?
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-When a host is transmitting a multicast, the data is sent to a specially defined group of hosts, and only those hosts that have joined that multicast group will receive the communication. This allows for eccicient one-to-many or many-to-many communication to a specific group of interested hosts, making it a useful and eccicient way to share data with selected recipients.
+When a host is transmitting a multicast, the data is sent to a specially defined group of hosts, and only those hosts that have joined that multicast group will receive the communication. This allows for efficient one-to-many or many-to-many communication to a specific group of interested hosts, making it a useful and efficient way to share data with selected recipients.
 
 ---
 
@@ -1011,7 +1011,7 @@ A host is transmitting a multicast. Which host or hosts will receive it?
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-When a host is transmitting a multicast, the data is sent to a specially defined group of hosts, and only those hosts that have joined that multicast group will receive the communication. This allows for eccicient one-to-many or many-to-many communication to a specific group of interested hosts, making it a useful and eccicient way to share data with selected recipients.
+When a host is transmitting a multicast, the data is sent to a specially defined group of hosts, and only those hosts that have joined that multicast group will receive the communication. This allows for efficient one-to-many or many-to-many communication to a specific group of interested hosts, making it a useful and efficient way to share data with selected recipients.
 
 ---
 
@@ -1026,7 +1026,7 @@ A host is transmitting a multicast. Which host or hosts will receive it?
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-When a host is transmitting a multicast, the data is sent to a specially defined group of hosts, and only those hosts that have joined that multicast group will receive the communication. This allows for eccicient one-to-many or many-to-many communication to a specific group of interested hosts, making it a useful and eccicient way to share data with selected recipients.
+When a host is transmitting a multicast, the data is sent to a specially defined group of hosts, and only those hosts that have joined that multicast group will receive the communication. This allows for efficient one-to-many or many-to-many communication to a specific group of interested hosts, making it a useful and efficient way to share data with selected recipients.
 
 ---
 
@@ -1041,7 +1041,7 @@ A host is transmitting a multicast. Which host or hosts will receive it?
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-When a host is transmitting a multicast, the data is sent to a specially defined group of hosts, and only those hosts that have joined that multicast group will receive the communication. This allows for eccicient one-to-many or many-to-many communication to a specific group of interested hosts, making it a useful and eccicient way to share data with selected recipients.
+When a host is transmitting a multicast, the data is sent to a specially defined group of hosts, and only those hosts that have joined that multicast group will receive the communication. This allows for efficient one-to-many or many-to-many communication to a specific group of interested hosts, making it a useful and efficient way to share data with selected recipients.
 
 ---
 
@@ -1056,7 +1056,7 @@ A host is transmitting a multicast. Which host or hosts will receive it?
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-When a host is transmitting a multicast, the data is sent to a specially defined group of hosts, and only those hosts that have joined that multicast group will receive the communication. This allows for eccicient one-to-many or many-to-many communication to a specific group of interested hosts, making it a useful and eccicient way to share data with selected recipients.
+When a host is transmitting a multicast, the data is sent to a specially defined group of hosts, and only those hosts that have joined that multicast group will receive the communication. This allows for efficient one-to-many or many-to-many communication to a specific group of interested hosts, making it a useful and efficient way to share data with selected recipients.
 
 ---
 
@@ -1071,7 +1071,7 @@ A host is transmitting a broadcast. Which host or hosts will receive it?
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-When a broadcast is sent to the broadcast address of a subnet, all hosts within that same subnet will receive it. This is a common characteristic of traditional IP networks. However, it’s important to note that the use of broadcasts is discouraged in modern networking due to its potential for causing network congestion. Multicast and unicast communication are generally more eccicient and common ways to transmit data to specific hosts or groups of hosts in a network.
+When a broadcast is sent to the broadcast address of a subnet, all hosts within that same subnet will receive it. This is a common characteristic of traditional IP networks. However, it’s important to note that the use of broadcasts is discouraged in modern networking due to its potential for causing network congestion. Multicast and unicast communication are generally more efficient and common ways to transmit data to specific hosts or groups of hosts in a network.
 
 ---
 
@@ -1086,7 +1086,7 @@ A host is transmitting a broadcast. Which host or hosts will receive it?
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-When a broadcast is sent to the broadcast address of a subnet, all hosts within that same subnet will receive it. This is a common characteristic of traditional IP networks. However, it’s important to note that the use of broadcasts is discouraged in modern networking due to its potential for causing network congestion. Multicast and unicast communication are generally more eccicient and common ways to transmit data to specific hosts or groups of hosts in a network.
+When a broadcast is sent to the broadcast address of a subnet, all hosts within that same subnet will receive it. This is a common characteristic of traditional IP networks. However, it’s important to note that the use of broadcasts is discouraged in modern networking due to its potential for causing network congestion. Multicast and unicast communication are generally more efficient and common ways to transmit data to specific hosts or groups of hosts in a network.
 
 ---
 
@@ -1293,23 +1293,23 @@ A user issues a ping 10.10.14.67 command and receives a response that includes a
 - [ ] protocol unreachable
 - [ ] port unreachable
 - [ ] host unreachable
-- [ ] Host Unreachable: A response code of “0” after issuing a ping command indicates that the host is reachable. This is the opposite of the “host unreachable” error, which would typically be indicated by a diccerent ICMP error code.
+- [ ] Host Unreachable: A response code of “0” after issuing a ping command indicates that the host is reachable. This is the opposite of the “host unreachable” error, which would typically be indicated by a different ICMP error code.
 - [ ] Network Unreachable: This error occurs when the packet cannot find a route to the destination network. A code of “0” means that the network was indeed reachable.
 - [ ] Protocol Unreachable: This error is typically related to an inability to communicate using the specified network protocol. A code of “0” implies that the protocol was reachable and functional.
-- [ ] Port Unreachable: Generally associated with UDP traccic when a packet is sent to a port with no application listening. Since ping uses ICMP, which does not use port numbers, this error is irrelevant to the ping command. Moreover, a code of “0” confirms successful communication, not an unreachable port.
+- [ ] Port Unreachable: Generally associated with UDP traffic when a packet is sent to a port with no application listening. Since ping uses ICMP, which does not use port numbers, this error is irrelevant to the ping command. Moreover, a code of “0” confirms successful communication, not an unreachable port.
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
 Correct Answer:
 Host Unreachable:
- A response code of “0” after issuing a ping command indicates that the host is reachable. This is the opposite of the “host unreachable” error, which would typically be indicated by a diccerent ICMP error code.
+ A response code of “0” after issuing a ping command indicates that the host is reachable. This is the opposite of the “host unreachable” error, which would typically be indicated by a different ICMP error code.
 Incorrect Answers:
 Network Unreachable:
  This error occurs when the packet cannot find a route to the destination network. A code of “0” means that the network was indeed reachable.
 Protocol Unreachable:
  This error is typically related to an inability to communicate using the specified network protocol. A code of “0” implies that the protocol was reachable and functional.
 Port Unreachable:
- Generally associated with UDP traccic when a packet is sent to a port with no application listening. Since ping uses ICMP, which does not use port numbers, this error is irrelevant to the ping command. Moreover, a code of “0” confirms successful communication, not an unreachable port.
+ Generally associated with UDP traffic when a packet is sent to a port with no application listening. Since ping uses ICMP, which does not use port numbers, this error is irrelevant to the ping command. Moreover, a code of “0” confirms successful communication, not an unreachable port.
 In summary, a response code of “0” signifies successful communication with the target host, negating the scenarios of network, protocol, port, or host being unreachable.
 
 ---
@@ -1337,21 +1337,21 @@ A user issues a ping 198.133.219.8 command and receives a response that includes
 - [ ] protocol unreachable
 - [ ] port unreachable
 - [ ] host unreachable
-- [ ] Network Unreachable: In the standard context of ICMP (Internet Control Message Protocol) used by the ping command, a response with a code of “0” typically indicates successful communication, not an error. However, in your scenario, if a code of “0” is explicitly defined or interpreted as “network unreachable,” it would represent an exception to the standard interpretation. Normally, “network unreachable” would be indicated by a diccerent ICMP error code.
+- [ ] Network Unreachable: In the standard context of ICMP (Internet Control Message Protocol) used by the ping command, a response with a code of “0” typically indicates successful communication, not an error. However, in your scenario, if a code of “0” is explicitly defined or interpreted as “network unreachable,” it would represent an exception to the standard interpretation. Normally, “network unreachable” would be indicated by a different ICMP error code.
 - [ ] Protocol Unreachable: This error is not indicated by a code of “0.” It would refer to a situation where the network protocol necessary for communication is not available or compatible, which is not implied by a successful ping response.
-- [ ] Port Unreachable: This error is related to UDP traccic and occurs when a message is sent to a port without a listening application. Since the ping command uses ICMP, which does not involve TCP/UDP ports, this error is not applicable. A code of “0” in ping typically indicates successful communication, not an unreachable port scenario.
+- [ ] Port Unreachable: This error is related to UDP traffic and occurs when a message is sent to a port without a listening application. Since the ping command uses ICMP, which does not involve TCP/UDP ports, this error is not applicable. A code of “0” in ping typically indicates successful communication, not an unreachable port scenario.
 - [ ] Host Unreachable: This error signifies that the destination host could not be reached. In standard ICMP ping operations, a code of “0” is understood as indicating the opposite: that the host was successfully reached.
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
 Correct Answer:
 Network Unreachable:
- In the standard context of ICMP (Internet Control Message Protocol) used by the ping command, a response with a code of “0” typically indicates successful communication, not an error. However, in your scenario, if a code of “0” is explicitly defined or interpreted as “network unreachable,” it would represent an exception to the standard interpretation. Normally, “network unreachable” would be indicated by a diccerent ICMP error code.
+ In the standard context of ICMP (Internet Control Message Protocol) used by the ping command, a response with a code of “0” typically indicates successful communication, not an error. However, in your scenario, if a code of “0” is explicitly defined or interpreted as “network unreachable,” it would represent an exception to the standard interpretation. Normally, “network unreachable” would be indicated by a different ICMP error code.
 Incorrect Answers:
 Protocol Unreachable:
  This error is not indicated by a code of “0.” It would refer to a situation where the network protocol necessary for communication is not available or compatible, which is not implied by a successful ping response.
 Port Unreachable:
- This error is related to UDP traccic and occurs when a message is sent to a port without a listening application. Since the ping command uses ICMP, which does not involve TCP/UDP ports, this error is not applicable. A code of “0” in ping typically indicates successful communication, not an unreachable port scenario.
+ This error is related to UDP traffic and occurs when a message is sent to a port without a listening application. Since the ping command uses ICMP, which does not involve TCP/UDP ports, this error is not applicable. A code of “0” in ping typically indicates successful communication, not an unreachable port scenario.
 Host Unreachable:
  This error signifies that the destination host could not be reached. In standard ICMP ping operations, a code of “0” is understood as indicating the opposite: that the host was successfully reached.
 It’s important to note that the interpretation of ICMP response codes, including “0,” can vary depending on specific network configurations or custom implementations. However, under standard conventions, a code “0” response in ping is usually associated with successful communication, not a “network unreachable” error.

@@ -88,7 +88,7 @@
       "Hosts that are connected to the switch can use the switch default gateway address to forward packets to a remote destination.",
       "A switch must have a default gateway to be accessible by Telnet and SSH.",
       "The default gateway address is used to forward packets originating from the switch to remote networks.",
-      "It provides a next-hop address for all traccic that flows through the switch."
+      "It provides a next-hop address for all traffic that flows through the switch."
     ],
     "correct_answers": [
       "The default gateway address is used to forward packets originating from the switch to remote networks."
@@ -120,29 +120,29 @@
       "Time-to-Live",
       "Sequence Number",
       "Acknowledgment Number",
-      "Diccerentiated Services"
+      "Differentiated Services"
     ],
     "correct_answers": [
       "Time-to-Live"
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nThe value of the Time-to-Live (TTL) field in the IPv4 header is used to limit the lifetime of a packet. The sending host sets the initial TTL value; which is decreased by one each time the packet is processed by a router. If the TTL field decrements to zero, the router discards the packet and sends an Internet Control Message Protocol (ICMP) Time Exceeded message to the source IP address. The Diccerentiated Services (DS) field is used to determine the priority of each packet. Sequence Number and Acknowledgment Number are two fields in the TCP header.",
+    "explanation": "Answers Explanation & Hints:\nThe value of the Time-to-Live (TTL) field in the IPv4 header is used to limit the lifetime of a packet. The sending host sets the initial TTL value; which is decreased by one each time the packet is processed by a router. If the TTL field decrements to zero, the router discards the packet and sends an Internet Control Message Protocol (ICMP) Time Exceeded message to the source IP address. The Differentiated Services (DS) field is used to determine the priority of each packet. Sequence Number and Acknowledgment Number are two fields in the TCP header.",
     "is_matching": false
   },
   {
     "number": 9,
-    "question": "What is one advantage that the IPv6 simplified header occers over IPv4?",
+    "question": "What is one advantage that the IPv6 simplified header offers over IPv4?",
     "options": [
       "smaller-sized header",
       "little requirement for processing checksums",
       "smaller-sized source and destination IP addresses",
-      "eccicient packet handling"
+      "efficient packet handling"
     ],
     "correct_answers": [
-      "eccicient packet handling"
+      "efficient packet handling"
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nThe IPv6 simplified header occers several advantages over IPv4:\n\n· Better routing ecciciency and eccicient packet handling for performance and forwarding-rate scalability\n\n· No requirement for processing checksums\n\n· Simplified and more eccicient extension header mechanisms (as opposed to the IPv4 Options field)\n\n· A Flow Label field for per-flow processing with no need to open the transport inner packet to identify the various traccic flows",
+    "explanation": "Answers Explanation & Hints:\nThe IPv6 simplified header offers several advantages over IPv4:\n\n· Better routing efficiency and efficient packet handling for performance and forwarding-rate scalability\n\n· No requirement for processing checksums\n\n· Simplified and more efficient extension header mechanisms (as opposed to the IPv4 Options field)\n\n· A Flow Label field for per-flow processing with no need to open the transport inner packet to identify the various traffic flows",
     "is_matching": false
   },
   {
@@ -152,13 +152,13 @@
       "Protocol",
       "Identification",
       "Version",
-      "Diccerentiated Services"
+      "Differentiated Services"
     ],
     "correct_answers": [
       "Protocol"
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nIt is the Protocol field in the IP header that identifies the upper-layer protocol the packet is carrying. The Version field identifies the IP version. The Diccerential Services field is used for setting packet priority. The Identification field is used to reorder fragmented packets.",
+    "explanation": "Answers Explanation & Hints:\nIt is the Protocol field in the IP header that identifies the upper-layer protocol the packet is carrying. The Version field identifies the IP version. The Differential Services field is used for setting packet priority. The Identification field is used to reorder fragmented packets.",
     "is_matching": false
   },
   {
@@ -241,8 +241,8 @@
     "options": [
       "Next Header",
       "Flow Label",
-      "Traccic Class",
-      "Diccerentiated Services"
+      "Traffic Class",
+      "Differentiated Services"
     ],
     "correct_answers": [
       "Flow Label"
@@ -255,9 +255,9 @@
     "number": 16,
     "question": "What statement describes the function of the Address Resolution Protocol?",
     "options": [
-      "ARP is used to discover the IP address of any host on a diccerent network.",
+      "ARP is used to discover the IP address of any host on a different network.",
       "ARP is used to discover the IP address of any host on the local network.",
-      "ARP is used to discover the MAC address of any host on a diccerent network.",
+      "ARP is used to discover the MAC address of any host on a different network.",
       "ARP is used to discover the MAC address of any host on the local network."
     ],
     "correct_answers": [
@@ -307,15 +307,15 @@
     "options": [
       "0.0.0.0",
       "255.255.255.255",
-      "cccc.cccc.cccc",
+      "ffff.ffff.ffff",
       "AAAA.AAAA.AAAA",
       "the physical address of the destination host"
     ],
     "correct_answers": [
-      "cccc.cccc.cccc"
+      "ffff.ffff.ffff"
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nThe purpose of an ARP request is to find the MAC address of the destination host on an Ethernet LAN. The ARP process sends a Layer 2 broadcast to all devices on the Ethernet LAN. The frame contains the IP address of the destination and the broadcast MAC address, cccc.cccc.cccc. The host with the IP address that matches the IP address in the ARP request will reply with a unicast frame that includes the MAC address of the host. Thus the original sending host will obtain the destination IP and MAC address pair to continue the encapsulation process for data transmission.",
+    "explanation": "Answers Explanation & Hints:\nThe purpose of an ARP request is to find the MAC address of the destination host on an Ethernet LAN. The ARP process sends a Layer 2 broadcast to all devices on the Ethernet LAN. The frame contains the IP address of the destination and the broadcast MAC address, ffff.ffff.ffff. The host with the IP address that matches the IP address in the ARP request will reply with a unicast frame that includes the MAC address of the host. Thus the original sending host will obtain the destination IP and MAC address pair to continue the encapsulation process for data transmission.",
     "is_matching": false
   },
   {
@@ -591,7 +591,7 @@
   },
   {
     "number": 34,
-    "question": "The global configuration command ip default-gateway 172.16.100.1 is applied to a switch. What is the eccect of this command?",
+    "question": "The global configuration command ip default-gateway 172.16.100.1 is applied to a switch. What is the effect of this command?",
     "options": [
       "The switch will have a management interface with the address 172.16.100.1.",
       "The switch can be remotely managed from a host on another network.",
@@ -722,7 +722,7 @@
   },
   {
     "number": 41,
-    "question": "What is the eccect of using the Router# copy running-config startup-config command on a router?",
+    "question": "What is the effect of using the Router# copy running-config startup-config command on a router?",
     "options": [
       "The contents of ROM will change.",
       "The contents of RAM will change.",
@@ -759,16 +759,16 @@
     "options": [
       "Manually configuring static ARP associations could facilitate ARP poisoning or MAC address spoofing.",
       "On large networks with low bandwidth, multiple ARP broadcasts could cause data communication delays.",
-      "Network attackers could manipulate MAC address and IP address mappings in ARP messages with the intent of intercepting network traccic.",
+      "Network attackers could manipulate MAC address and IP address mappings in ARP messages with the intent of intercepting network traffic.",
       "Large numbers of ARP request broadcasts could cause the host MAC address table to overflow and prevent the host from communicating on the network.",
       "Multiple ARP replies result in the switch MAC address table containing entries that match the MAC addresses of hosts that are connected to the relevant switch port."
     ],
     "correct_answers": [
       "On large networks with low bandwidth, multiple ARP broadcasts could cause data communication delays.",
-      "Network attackers could manipulate MAC address and IP address mappings in ARP messages with the intent of intercepting network traccic."
+      "Network attackers could manipulate MAC address and IP address mappings in ARP messages with the intent of intercepting network traffic."
     ],
     "image_urls": [],
-    "explanation": "Answers Explanation & Hints:\nLarge numbers of ARP broadcast messages could cause momentary data communications delays. Network attackers could manipulate MAC address and IP address mappings in ARP messages with the intent to intercept network traccic. ARP requests and replies cause entries to be made into the ARP table, not the MAC address table. ARP table overflows are very unlikely. Manually configuring static ARP associations is a way to prevent, not facilitate, ARP poisoning and MAC address spoofing. Multiple ARP replies resulting in the switch MAC address table containing entries that match the MAC addresses of connected nodes and are associated with the relevant switch port are required for normal switch frame forwarding operations. It is not an ARP caused network problem.",
+    "explanation": "Answers Explanation & Hints:\nLarge numbers of ARP broadcast messages could cause momentary data communications delays. Network attackers could manipulate MAC address and IP address mappings in ARP messages with the intent to intercept network traffic. ARP requests and replies cause entries to be made into the ARP table, not the MAC address table. ARP table overflows are very unlikely. Manually configuring static ARP associations is a way to prevent, not facilitate, ARP poisoning and MAC address spoofing. Multiple ARP replies resulting in the switch MAC address table containing entries that match the MAC addresses of connected nodes and are associated with the relevant switch port are required for normal switch frame forwarding operations. It is not an ARP caused network problem.",
     "is_matching": false
   },
   {
@@ -827,16 +827,16 @@
     "number": 47,
     "question": "Which term describes a field in the IPv4 packet header that contains an 8-bit binary value used to determine the priority of each packet?",
     "options": [
-      "diccerentiated services",
+      "differentiated services",
       "destination IPv4 address",
       "source IPv4 address",
       "protocol"
     ],
     "correct_answers": [
-      "diccerentiated services"
+      "differentiated services"
     ],
     "image_urls": [],
-    "explanation": "Explanation & Hint:\nThe term that describes a field in the IPv4 packet header that contains an 8-bit binary value used to determine the priority of each packet is “Diccerentiated Services” (often abbreviated as DSCP or DS field). The Diccerentiated Services field is used for Quality of Service (QoS) and packet prioritization in IP networks. It allows packets to be marked with a value that represents their relative priority, and routers and network devices can use this value to make forwarding and queuing decisions based on the desired quality of service for diccerent types of traccic.",
+    "explanation": "Explanation & Hint:\nThe term that describes a field in the IPv4 packet header that contains an 8-bit binary value used to determine the priority of each packet is “Differentiated Services” (often abbreviated as DSCP or DS field). The Differentiated Services field is used for Quality of Service (QoS) and packet prioritization in IP networks. It allows packets to be marked with a value that represents their relative priority, and routers and network devices can use this value to make forwarding and queuing decisions based on the desired quality of service for different types of traffic.",
     "is_matching": false
   },
   {
@@ -916,7 +916,7 @@
       "TTL"
     ],
     "image_urls": [],
-    "explanation": "Explanation & Hint:\nThe term that describes a field in the IPv4 packet header used to limit the lifetime of a packet is “TTL,” which stands for “Time to Live.” The TTL field is an 8-bit value in the IPv4 header that represents the maximum number of hops (routers) that a packet can traverse before it is discarded. TTL helps prevent packets from circulating endlessly in the network and is primarily used for network stability and loop prevention. As each router processes the packet, it decrements the TTL value by one, and if the TTL reaches zero, the packet is dropped. This field ensures that packets do not endlessly loop through the network and helps in their eccicient delivery.",
+    "explanation": "Explanation & Hint:\nThe term that describes a field in the IPv4 packet header used to limit the lifetime of a packet is “TTL,” which stands for “Time to Live.” The TTL field is an 8-bit value in the IPv4 header that represents the maximum number of hops (routers) that a packet can traverse before it is discarded. TTL helps prevent packets from circulating endlessly in the network and is primarily used for network stability and loop prevention. As each router processes the packet, it decrements the TTL value by one, and if the TTL reaches zero, the packet is dropped. This field ensures that packets do not endlessly loop through the network and helps in their efficient delivery.",
     "is_matching": false
   },
   {
@@ -941,7 +941,7 @@
     "options": [
       "protocol",
       "version",
-      "diccerentiated services",
+      "differentiated services",
       "header checksum"
     ],
     "correct_answers": [
@@ -956,7 +956,7 @@
     "question": "Which term describes a field in the IPv4 packet header that contains a 4-bit binary value set to 0100?",
     "options": [
       "version",
-      "diccerentiated services",
+      "differentiated services",
       "header checksum",
       "TTL"
     ],
@@ -1004,7 +1004,7 @@
     "question": "What property of ARP allows MAC addresses of frequently used servers to be fixed in the ARP table?",
     "options": [
       "A static IP-to-MAC address entry can be entered manually into an ARP table.",
-      "The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.",
+      "The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.",
       "The source MAC address appears in the header of the Ethernet frame.",
       "The port-to-MAC address table on a switch has the same entries as the ARP table on the switch."
     ],
@@ -1017,10 +1017,10 @@
   },
   {
     "number": 59,
-    "question": "What property of ARP allows hosts on a LAN to send traccic to remote networks?",
+    "question": "What property of ARP allows hosts on a LAN to send traffic to remote networks?",
     "options": [
       "Local hosts learn the MAC address of the default gateway.",
-      "The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.",
+      "The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.",
       "The source MAC address appears in the header of the Ethernet frame.",
       "The port-to-MAC address table on a switch has the same entries as the ARP table on the switch."
     ],
@@ -1028,15 +1028,15 @@
       "Local hosts learn the MAC address of the default gateway."
     ],
     "image_urls": [],
-    "explanation": "Explanation & Hint:\nLocal hosts learn the MAC address of the default gateway.\n\nThis is the correct answer. ARP enables a host on a local network to discover the MAC address of the default gateway (usually a router), which is necessary to route traccic to a remote network. When a host sends a packet to a destination outside its local network, it uses ARP to find the MAC address of the default gateway. The packet is then sent to this MAC address, and the gateway routes it towards the remote network.\nThe destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.\n\nThis is incorrect in the context of ARP’s role in sending traccic to remote networks. The MAC address cc-cc-cc-cc-cc-cc is a broadcast address used in ARP requests within a local network, particularly when a device is trying to discover the MAC address associated with an IP address. This broadcast address is not used for sending traccic to remote networks.\nThe source MAC address appears in the header of the Ethernet frame.\n\nWhile this statement is true, it’s not specific to ARP’s functionality for remote network communication. The source MAC address is part of the Ethernet frame and is used to identify the sending device on the local network. This information is important in all Ethernet communications, not just in the context of ARP or communicating with remote networks.\nThe port-to-MAC address table on a switch has the same entries as the ARP table on the switch.\n\nThis statement is incorrect. The port-to-MAC address table (also known as the MAC address table) on a switch maps MAC addresses to switch ports, helping the switch ecciciently forward frames within the local network. On the other hand, the ARP table maps IP addresses to MAC addresses. These tables serve diccerent purposes and contain diccerent types of information. Additionally, switches typically do not maintain ARP tables as this is a function of devices that use IP addressing, like routers and hosts.",
+    "explanation": "Explanation & Hint:\nLocal hosts learn the MAC address of the default gateway.\n\nThis is the correct answer. ARP enables a host on a local network to discover the MAC address of the default gateway (usually a router), which is necessary to route traffic to a remote network. When a host sends a packet to a destination outside its local network, it uses ARP to find the MAC address of the default gateway. The packet is then sent to this MAC address, and the gateway routes it towards the remote network.\nThe destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.\n\nThis is incorrect in the context of ARP’s role in sending traffic to remote networks. The MAC address ff-ff-ff-ff-ff-ff is a broadcast address used in ARP requests within a local network, particularly when a device is trying to discover the MAC address associated with an IP address. This broadcast address is not used for sending traffic to remote networks.\nThe source MAC address appears in the header of the Ethernet frame.\n\nWhile this statement is true, it’s not specific to ARP’s functionality for remote network communication. The source MAC address is part of the Ethernet frame and is used to identify the sending device on the local network. This information is important in all Ethernet communications, not just in the context of ARP or communicating with remote networks.\nThe port-to-MAC address table on a switch has the same entries as the ARP table on the switch.\n\nThis statement is incorrect. The port-to-MAC address table (also known as the MAC address table) on a switch maps MAC addresses to switch ports, helping the switch efficiently forward frames within the local network. On the other hand, the ARP table maps IP addresses to MAC addresses. These tables serve different purposes and contain different types of information. Additionally, switches typically do not maintain ARP tables as this is a function of devices that use IP addressing, like routers and hosts.",
     "is_matching": false
   },
   {
     "number": 60,
-    "question": "What property of ARP allows hosts on a LAN to send traccic to remote networks?",
+    "question": "What property of ARP allows hosts on a LAN to send traffic to remote networks?",
     "options": [
       "Local hosts learn the MAC address of the default gateway.",
-      "The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.",
+      "The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.",
       "The source MAC address appears in the header of the Ethernet frame.",
       "ARP replies are broadcast on the network when a host receives an ARP request."
     ],
@@ -1044,23 +1044,23 @@
       "Local hosts learn the MAC address of the default gateway."
     ],
     "image_urls": [],
-    "explanation": "Explanation & Hint:\nThe property of ARP (Address Resolution Protocol) that allows hosts on a LAN to send traccic to remote networks is:\n“Local hosts learn the MAC address of the default gateway.”\n\nWhen a host on a local network wants to communicate with devices on remote networks, it needs to know the MAC address of its default gateway (typically a router). The local hosts learn the MAC address of the default gateway through ARP. They use the ARP protocol to resolve the IP address of the default gateway to its corresponding MAC address. Once they have this MAC address, they can encapsulate their data in Ethernet frames and send it to the default gateway, which is responsible for routing the traccic to remote networks.",
+    "explanation": "Explanation & Hint:\nThe property of ARP (Address Resolution Protocol) that allows hosts on a LAN to send traffic to remote networks is:\n“Local hosts learn the MAC address of the default gateway.”\n\nWhen a host on a local network wants to communicate with devices on remote networks, it needs to know the MAC address of its default gateway (typically a router). The local hosts learn the MAC address of the default gateway through ARP. They use the ARP protocol to resolve the IP address of the default gateway to its corresponding MAC address. Once they have this MAC address, they can encapsulate their data in Ethernet frames and send it to the default gateway, which is responsible for routing the traffic to remote networks.",
     "is_matching": false
   },
   {
     "number": 61,
     "question": "What property of ARP forces all Ethernet NICs to process an ARP request?",
     "options": [
-      "The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.",
+      "The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.",
       "The source MAC address appears in the header of the Ethernet frame.",
       "The type field 0x806 appears in the header of the Ethernet frame.",
       "ARP replies are broadcast on the network when a host receives an ARP request."
     ],
     "correct_answers": [
-      "The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame."
+      "The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame."
     ],
     "image_urls": [],
-    "explanation": "Explanation & Hint:\nThe property of ARP (Address Resolution Protocol) that forces all Ethernet NICs to process an ARP request is:\n“The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.”\n\nWhen an ARP request is sent, it is broadcast with a destination MAC address of cc-cc-cc-cc-cc-cc, which is a broadcast address. This means that the frame will be received and processed by all NICs on the local network segment, forcing each NIC to check whether the ARP request is relevant to it. NICs compare the target IP address in the ARP request to their own IP address, and the one that matches responds with an ARP reply. This is how ARP works to resolve IP addresses to MAC addresses on a local network.",
+    "explanation": "Explanation & Hint:\nThe property of ARP (Address Resolution Protocol) that forces all Ethernet NICs to process an ARP request is:\n“The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.”\n\nWhen an ARP request is sent, it is broadcast with a destination MAC address of ff-ff-ff-ff-ff-ff, which is a broadcast address. This means that the frame will be received and processed by all NICs on the local network segment, forcing each NIC to check whether the ARP request is relevant to it. NICs compare the target IP address in the ARP request to their own IP address, and the one that matches responds with an ARP reply. This is how ARP works to resolve IP addresses to MAC addresses on a local network.",
     "is_matching": false
   },
   {
@@ -1068,7 +1068,7 @@
     "question": "What property of ARP causes a reply only to the source sending an ARP request?",
     "options": [
       "The source MAC address appears in the header of the Ethernet frame.",
-      "The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.",
+      "The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.",
       "The type field 0x806 appears in the header of the Ethernet frame.",
       "ARP replies are broadcast on the network when a host receives an ARP request."
     ],
@@ -1083,16 +1083,16 @@
     "number": 63,
     "question": "What property of ARP causes the request to be flooded out all ports of a switch except for the port receiving the ARP request?",
     "options": [
-      "The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.",
+      "The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.",
       "The type field 0x806 appears in the header of the Ethernet frame.",
       "Entries in an ARP table are time-stamped and are purged after the timeout expires.",
       "ARP replies are broadcast on the network when a host receives an ARP request."
     ],
     "correct_answers": [
-      "The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame."
+      "The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame."
     ],
     "image_urls": [],
-    "explanation": "Explanation & Hint:\nThe property of ARP (Address Resolution Protocol) that causes the ARP request to be flooded out all ports of a switch except for the port receiving the ARP request is:\n“The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.”\n\nIn an ARP request, the destination MAC address is set to the broadcast address cc-cc-cc-cc-cc-cc. When the switch receives a frame with a broadcast MAC address, it floods the frame out to all ports except for the port from which the frame was received. This behavior ensures that all devices on the local network segment have the opportunity to process the ARP request and respond if necessary, as ARP requests are used to resolve IP addresses to MAC addresses and discover the MAC addresses of devices on the local network.",
+    "explanation": "Explanation & Hint:\nThe property of ARP (Address Resolution Protocol) that causes the ARP request to be flooded out all ports of a switch except for the port receiving the ARP request is:\n“The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.”\n\nIn an ARP request, the destination MAC address is set to the broadcast address ff-ff-ff-ff-ff-ff. When the switch receives a frame with a broadcast MAC address, it floods the frame out to all ports except for the port from which the frame was received. This behavior ensures that all devices on the local network segment have the opportunity to process the ARP request and respond if necessary, as ARP requests are used to resolve IP addresses to MAC addresses and discover the MAC addresses of devices on the local network.",
     "is_matching": false
   },
   {
@@ -1100,7 +1100,7 @@
     "question": "What property of ARP causes the NICs receiving an ARP request to pass the data portion of the Ethernet frame to the ARP process?",
     "options": [
       "The type field 0x806 appears in the header of the Ethernet frame.",
-      "The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.",
+      "The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.",
       "Entries in an ARP table are time-stamped and are purged after the timeout expires.",
       "ARP replies are broadcast on the network when a host receives an ARP request."
     ],
@@ -1116,7 +1116,7 @@
     "question": "What property of ARP causes the NICs receiving an ARP request to pass the data portion of the Ethernet frame to the ARP process?",
     "options": [
       "The type field 0x806 appears in the header of the Ethernet frame.",
-      "The destination MAC address cc-cc-cc-cc-cc-cc appears in the header of the Ethernet frame.",
+      "The destination MAC address ff-ff-ff-ff-ff-ff appears in the header of the Ethernet frame.",
       "Entries in an ARP table are time-stamped and are purged after the timeout expires.",
       "The port-to-MAC address table on a switch has the same entries as the ARP table on the switch."
     ],
@@ -1129,7 +1129,7 @@
   },
   {
     "number": 66,
-    "question": "Main(config)# interface gi0/1 \nMain(config-if)# description Connects to the Service LAN \nMain(config-if)# ip address 172.29.157.156 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# interface gi0/0 \nMain(config-if)# description Connects to the Engineering LAN \nMain(config-if)# ip address 172.29.156.36 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# interface s0/0/0 \nMain(config-if)# description Connects to the ISP \nMain(config-if)# ip address 10.156.157.254 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# interface s0/0/1 \nMain(config-if)# description Connects to the Head Occice WAN \nMain(config-if)# ip address 198.51.100.177 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Service LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "question": "Main(config)# interface gi0/1 \nMain(config-if)# description Connects to the Service LAN \nMain(config-if)# ip address 172.29.157.156 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# interface gi0/0 \nMain(config-if)# description Connects to the Engineering LAN \nMain(config-if)# ip address 172.29.156.36 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# interface s0/0/0 \nMain(config-if)# description Connects to the ISP \nMain(config-if)# ip address 10.156.157.254 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# interface s0/0/1 \nMain(config-if)# description Connects to the Head Office WAN \nMain(config-if)# ip address 198.51.100.177 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Service LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
     "options": [
       "172.29.157.156",
       "172.29.157.1",
@@ -1146,7 +1146,7 @@
   },
   {
     "number": 67,
-    "question": "BldgA(config)# interface gi0/1 \nBldgA(config-if)# description Connects to the Medical LAN \nBldgA(config-if)# ip address 192.168.191.189 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# interface gi0/0 \nBldgA(config-if)# description Connects to the Client LAN \nBldgA(config-if)# ip address 192.168.190.70 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# interface s0/0/0 \nBldgA(config-if)# description Connects to the ISP \nBldgA(config-if)# ip address 10.190.191.254 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# interface s0/0/1 \nBldgA(config-if)# description Connects to the Head Occice WAN \nBldgA(config-if)# ip address 198.51.100.213 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Medical LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "question": "BldgA(config)# interface gi0/1 \nBldgA(config-if)# description Connects to the Medical LAN \nBldgA(config-if)# ip address 192.168.191.189 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# interface gi0/0 \nBldgA(config-if)# description Connects to the Client LAN \nBldgA(config-if)# ip address 192.168.190.70 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# interface s0/0/0 \nBldgA(config-if)# description Connects to the ISP \nBldgA(config-if)# ip address 10.190.191.254 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# interface s0/0/1 \nBldgA(config-if)# description Connects to the Head Office WAN \nBldgA(config-if)# ip address 198.51.100.213 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Medical LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
     "options": [
       "192.168.191.189",
       "192.168.191.1",
@@ -1163,7 +1163,7 @@
   },
   {
     "number": 68,
-    "question": "Floor(config)# interface gi0/1 \nFloor(config-if)# description Connects to the Registrar LAN \nFloor(config-if)# ip address 192.168.225.223 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface gi0/0 \nFloor(config-if)# description Connects to the Manager LAN \nFloor(config-if)# ip address 192.168.224.103 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/0 \nFloor(config-if)# description Connects to the ISP \nFloor(config-if)# ip address 10.224.225.254 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/1 \nFloor(config-if)# description Connects to the Head Occice WAN \nFloor(config-if)# ip address 203.0.113.246 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Registrar LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "question": "Floor(config)# interface gi0/1 \nFloor(config-if)# description Connects to the Registrar LAN \nFloor(config-if)# ip address 192.168.225.223 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface gi0/0 \nFloor(config-if)# description Connects to the Manager LAN \nFloor(config-if)# ip address 192.168.224.103 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/0 \nFloor(config-if)# description Connects to the ISP \nFloor(config-if)# ip address 10.224.225.254 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/1 \nFloor(config-if)# description Connects to the Head Office WAN \nFloor(config-if)# ip address 203.0.113.246 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Registrar LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
     "options": [
       "192.168.225.223",
       "192.168.225.1",
@@ -1180,7 +1180,7 @@
   },
   {
     "number": 69,
-    "question": "Floor(config)# interface gi0/1 \nFloor(config-if)# description Connects to the Registrar LAN \nFloor(config-if)# ip address 10.118.63.65 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface gi0/0 \nFloor(config-if)# description Connects to the Manager LAN \nFloor(config-if)# ip address 10.118.62.196 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/0 \nFloor(config-if)# description Connects to the ISP \nFloor(config-if)# ip address 10.62.63.254 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/1 \nFloor(config-if)# description Connects to the Head Occice WAN \nFloor(config-if)# ip address 209.165.200.87 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Manager LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "question": "Floor(config)# interface gi0/1 \nFloor(config-if)# description Connects to the Registrar LAN \nFloor(config-if)# ip address 10.118.63.65 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface gi0/0 \nFloor(config-if)# description Connects to the Manager LAN \nFloor(config-if)# ip address 10.118.62.196 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/0 \nFloor(config-if)# description Connects to the ISP \nFloor(config-if)# ip address 10.62.63.254 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/1 \nFloor(config-if)# description Connects to the Head Office WAN \nFloor(config-if)# ip address 209.165.200.87 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Manager LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
     "options": [
       "10.118.62.196",
       "10.118.62.1",
@@ -1197,7 +1197,7 @@
   },
   {
     "number": 70,
-    "question": "HQ(config)# interface gi0/1 \nHQ(config-if)# description Connects to the Branch LAN \nHQ(config-if)# ip address 172.19.99.99 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# interface gi0/0 \nHQ(config-if)# description Connects to the Store LAN \nHQ(config-if)# ip address 172.19.98.230 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# interface s0/0/0 \nHQ(config-if)# description Connects to the ISP \nHQ(config-if)# ip address 10.98.99.254 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# interface s0/0/1 \nHQ(config-if)# description Connects to the Head Occice WAN \nHQ(config-if)# ip address 209.165.200.120 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Store LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "question": "HQ(config)# interface gi0/1 \nHQ(config-if)# description Connects to the Branch LAN \nHQ(config-if)# ip address 172.19.99.99 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# interface gi0/0 \nHQ(config-if)# description Connects to the Store LAN \nHQ(config-if)# ip address 172.19.98.230 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# interface s0/0/0 \nHQ(config-if)# description Connects to the ISP \nHQ(config-if)# ip address 10.98.99.254 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# interface s0/0/1 \nHQ(config-if)# description Connects to the Head Office WAN \nHQ(config-if)# ip address 209.165.200.120 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Store LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
     "options": [
       "172.19.98.230",
       "172.19.98.1",
@@ -1214,7 +1214,7 @@
   },
   {
     "number": 71,
-    "question": "HQ(config)# interface gi0/1 \nHQ(config-if)# description Connects to the Branch LAN \nHQ(config-if)# ip address 172.20.133.132 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# interface gi0/0 \nHQ(config-if)# description Connects to the Store LAN \nHQ(config-if)# ip address 172.20.132.13 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# interface s0/0/0 \nHQ(config-if)# description Connects to the ISP \nHQ(config-if)# ip address 10.132.133.254 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# interface s0/0/1 \nHQ(config-if)# description Connects to the Head Occice WAN \nHQ(config-if)# ip address 198.51.100.156 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Store LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "question": "HQ(config)# interface gi0/1 \nHQ(config-if)# description Connects to the Branch LAN \nHQ(config-if)# ip address 172.20.133.132 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# interface gi0/0 \nHQ(config-if)# description Connects to the Store LAN \nHQ(config-if)# ip address 172.20.132.13 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# interface s0/0/0 \nHQ(config-if)# description Connects to the ISP \nHQ(config-if)# ip address 10.132.133.254 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# interface s0/0/1 \nHQ(config-if)# description Connects to the Head Office WAN \nHQ(config-if)# ip address 198.51.100.156 255.255.255.0 \nHQ(config-if)# no shutdown \nHQ(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Store LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
     "options": [
       "172.20.132.13",
       "172.20.132.1",
@@ -1231,7 +1231,7 @@
   },
   {
     "number": 72,
-    "question": "Main(config)# interface gi0/1 \nMain(config-if)# description Connects to the Service LAN \nMain(config-if)# ip address 192.168.167.166 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# interface gi0/0 \nMain(config-if)# description Connects to the Engineering LAN \nMain(config-if)# ip address 192.168.166.46 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# interface s0/0/0 \nMain(config-if)# description Connects to the ISP \nMain(config-if)# ip address 10.166.167.254 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# interface s0/0/1 \nMain(config-if)# description Connects to the Head Occice WAN \nMain(config-if)# ip address 198.51.100.189 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Service LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "question": "Main(config)# interface gi0/1 \nMain(config-if)# description Connects to the Service LAN \nMain(config-if)# ip address 192.168.167.166 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# interface gi0/0 \nMain(config-if)# description Connects to the Engineering LAN \nMain(config-if)# ip address 192.168.166.46 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# interface s0/0/0 \nMain(config-if)# description Connects to the ISP \nMain(config-if)# ip address 10.166.167.254 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# interface s0/0/1 \nMain(config-if)# description Connects to the Head Office WAN \nMain(config-if)# ip address 198.51.100.189 255.255.255.0 \nMain(config-if)# no shutdown \nMain(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Service LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
     "options": [
       "192.168.167.166",
       "192.168.167.1",
@@ -1248,7 +1248,7 @@
   },
   {
     "number": 73,
-    "question": "BldgA(config)# interface gi0/1 \nBldgA(config-if)# description Connects to the Medical LAN \nBldgA(config-if)# ip address 192.168.201.200 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# interface gi0/0 \nBldgA(config-if)# description Connects to the Client LAN \nBldgA(config-if)# ip address 192.168.200.80 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# interface s0/0/0 \nBldgA(config-if)# description Connects to the ISP \nBldgA(config-if)# ip address 10.200.201.254 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# interface s0/0/1 \nBldgA(config-if)# description Connects to the Head Occice WAN \nBldgA(config-if)# ip address 203.0.113.222 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Medical LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "question": "BldgA(config)# interface gi0/1 \nBldgA(config-if)# description Connects to the Medical LAN \nBldgA(config-if)# ip address 192.168.201.200 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# interface gi0/0 \nBldgA(config-if)# description Connects to the Client LAN \nBldgA(config-if)# ip address 192.168.200.80 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# interface s0/0/0 \nBldgA(config-if)# description Connects to the ISP \nBldgA(config-if)# ip address 10.200.201.254 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# interface s0/0/1 \nBldgA(config-if)# description Connects to the Head Office WAN \nBldgA(config-if)# ip address 203.0.113.222 255.255.255.0 \nBldgA(config-if)# no shutdown \nBldgA(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Medical LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
     "options": [
       "192.168.201.200",
       "192.168.201.1",
@@ -1265,7 +1265,7 @@
   },
   {
     "number": 74,
-    "question": "Floor(config)# interface gi0/1 \nFloor(config-if)# description Connects to the Registrar LAN \nFloor(config-if)# ip address 192.168.235.234 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface gi0/0 \nFloor(config-if)# description Connects to the Manager LAN \nFloor(config-if)# ip address 192.168.234.114 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/0 \nFloor(config-if)# description Connects to the ISP \nFloor(config-if)# ip address 10.234.235.254 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/1 \nFloor(config-if)# description Connects to the Head Occice WAN \nFloor(config-if)# ip address 203.0.113.3 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Registrar LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "question": "Floor(config)# interface gi0/1 \nFloor(config-if)# description Connects to the Registrar LAN \nFloor(config-if)# ip address 192.168.235.234 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface gi0/0 \nFloor(config-if)# description Connects to the Manager LAN \nFloor(config-if)# ip address 192.168.234.114 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/0 \nFloor(config-if)# description Connects to the ISP \nFloor(config-if)# ip address 10.234.235.254 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# interface s0/0/1 \nFloor(config-if)# description Connects to the Head Office WAN \nFloor(config-if)# ip address 203.0.113.3 255.255.255.0 \nFloor(config-if)# no shutdown \nFloor(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Registrar LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
     "options": [
       "192.168.235.234",
       "192.168.235.1",
@@ -1282,7 +1282,7 @@
   },
   {
     "number": 75,
-    "question": "RTR1(config)# interface gi0/1 \nRTR1(config-if)# description Connects to the Marketing LAN \nRTR1(config-if)# ip address 10.27.15.17 255.255.255.0 \nRTR1(config-if)# no shutdown \nRTR1(config-if)# interface gi0/0 \nRTR1(config-if)# description Connects to the Payroll LAN \nRTR1(config-if)# ip address 10.27.14.148 255.255.255.0 \nRTR1(config-if)# no shutdown \nRTR1(config-if)# interface s0/0/0 \nRTR1(config-if)# description Connects to the ISP \nRTR1(config-if)# ip address 10.14.15.254 255.255.255.0 \nRTR1(config-if)# no shutdown \nRTR1(config-if)# interface s0/0/1 \nRTR1(config-if)# description Connects to the Head Occice WAN \nRTR1(config-if)# ip address 203.0.113.39 255.255.255.0 \nRTR1(config-if)# no shutdown \nRTR1(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Payroll LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "question": "RTR1(config)# interface gi0/1 \nRTR1(config-if)# description Connects to the Marketing LAN \nRTR1(config-if)# ip address 10.27.15.17 255.255.255.0 \nRTR1(config-if)# no shutdown \nRTR1(config-if)# interface gi0/0 \nRTR1(config-if)# description Connects to the Payroll LAN \nRTR1(config-if)# ip address 10.27.14.148 255.255.255.0 \nRTR1(config-if)# no shutdown \nRTR1(config-if)# interface s0/0/0 \nRTR1(config-if)# description Connects to the ISP \nRTR1(config-if)# ip address 10.14.15.254 255.255.255.0 \nRTR1(config-if)# no shutdown \nRTR1(config-if)# interface s0/0/1 \nRTR1(config-if)# description Connects to the Head Office WAN \nRTR1(config-if)# ip address 203.0.113.39 255.255.255.0 \nRTR1(config-if)# no shutdown \nRTR1(config-if)# end\n\nRefer to the exhibit. A network administrator is connecting a new host to the Payroll LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
     "options": [
       "10.27.14.148",
       "10.27.14.1",

@@ -40,7 +40,7 @@ running-config
 A Variable
 :
 
-A variable in a command represents a user-defined value or parameter that can change. It allows flexibility in the command to accept diccerent inputs. In the 
+A variable in a command represents a user-defined value or parameter that can change. It allows flexibility in the command to accept different inputs. In the 
 show running-config
  command, there are no variables; all parts of the command are fixed keywords.
 A Prompt
@@ -63,7 +63,7 @@ keyword
 
 ## Question 2
 
-An employee at a branch office is creating a quote for a customer. In order to do this, the employee needs to access confidential pricing information from internal servers at the Head Occice. What type of network would the employee access?
+An employee at a branch office is creating a quote for a customer. In order to do this, the employee needs to access confidential pricing information from internal servers at the Head Office. What type of network would the employee access?
 
 - [x] **an intranet**
 - [ ] the Internet
@@ -71,14 +71,14 @@ An employee at a branch office is creating a quote for a customer. In order to d
 - [ ] a local area network
 
 > [!NOTE]
-> **Explanation:** In this scenario, the employee at a branch occice would access:
+> **Explanation:** In this scenario, the employee at a branch office would access:
 
 An intranet
 Here’s an explanation of each option:
 An Intranet
 :
 
-An intranet is a private network accessible only to an organization’s stacc. It often contains confidential information, internal applications, and resources that are not available to the public. Since the employee is accessing confidential pricing information from internal servers at the Head Occice, they would use the intranet.
+An intranet is a private network accessible only to an organization’s staff. It often contains confidential information, internal applications, and resources that are not available to the public. Since the employee is accessing confidential pricing information from internal servers at the Head Office, they would use the intranet.
 The Internet
 :
 
@@ -90,7 +90,7 @@ An extranet is an extension of an intranet that allows access to external partne
 A Local Area Network (LAN)
 :
 
-A LAN is a network that connects devices within a limited area, such as a single building or campus. Since the employee is at a branch occice and needs to access information from the Head Occice, a LAN would not be suitable for this purpose.
+A LAN is a network that connects devices within a limited area, such as a single building or campus. Since the employee is at a branch office and needs to access information from the Head Office, a LAN would not be suitable for this purpose.
 Therefore, the appropriate type of network the employee would access is 
 an intranet
 .
@@ -150,11 +150,11 @@ Protect the network from unauthorized access.**
  ==> Provide redundant links and devices.
 
 Detail
-: Fault tolerance refers to the ability of a network to continue functioning even when one or more components fail. This is achieved by having redundant links (multiple pathways for data to travel) and devices (extra hardware such as routers or switches). If one path or device fails, the network can reroute traccic through another path or use a backup device, ensuring continuous operation and minimizing downtime.
+: Fault tolerance refers to the ability of a network to continue functioning even when one or more components fail. This is achieved by having redundant links (multiple pathways for data to travel) and devices (extra hardware such as routers or switches). If one path or device fails, the network can reroute traffic through another path or use a backup device, ensuring continuous operation and minimizing downtime.
 Scalability
  ==> Expand the network without degrading the service for existing users.
 Detail
-: Scalability is the ability of a network to grow and manage increased demand without compromising performance. A scalable network can handle additional devices, users, or data traccic by expanding its infrastructure (e.g., adding more bandwidth, servers, or networking equipment) while maintaining the quality of service for current users. This ensures that as new users or devices are added, the existing users do not experience a decrease in network performance.
+: Scalability is the ability of a network to grow and manage increased demand without compromising performance. A scalable network can handle additional devices, users, or data traffic by expanding its infrastructure (e.g., adding more bandwidth, servers, or networking equipment) while maintaining the quality of service for current users. This ensures that as new users or devices are added, the existing users do not experience a decrease in network performance.
 Security
  ==> Protect the network from unauthorized access.
 Detail
@@ -182,11 +182,11 @@ Explanation
 Fault Tolerance
 : This characteristic refers to the network’s ability to continue operating properly in the event of the failure of some of its components. It is not relevant to the issue of unauthorized data access.
 Scalability
-: This characteristic pertains to the network’s ability to grow and handle increased load without accecting performance. It does not address data access or privacy concerns.
+: This characteristic pertains to the network’s ability to grow and handle increased load without affecting performance. It does not address data access or privacy concerns.
 Security
 : Security involves protecting the network and its data from unauthorized access and breaches. In this scenario, patients being able to see each other’s medical records represents a significant security breach, violating the confidentiality and privacy of sensitive information.
 Quality of Service (QoS)
-: This refers to the ability to prioritize certain types of traccic to ensure the performance of critical applications. It is not related to data access control.
+: This refers to the ability to prioritize certain types of traffic to ensure the performance of critical applications. It is not related to data access control.
 Reliability
 : Reliability concerns the network’s consistent performance and uptime. While important, it does not specifically address issues of data access and privacy.
 Therefore, the violation pertains to 
@@ -215,7 +215,7 @@ DSL**
  ==> Satellite
 
 Detail
-: Satellite internet can be accected by heavy tree cover and other obstructions that block the line of sight between the satellite dish and the satellite in space, making it less suitable for heavily wooded areas.
+: Satellite internet can be affected by heavy tree cover and other obstructions that block the line of sight between the satellite dish and the satellite in space, making it less suitable for heavily wooded areas.
 Uses coaxial cable as a medium
  ==> Cable
 Detail
@@ -223,11 +223,11 @@ Detail
 Typically has very low bandwidth
  ==> Dial-up telephone
 Detail
-: Dial-up internet access uses the public switched telephone network (PSTN) to establish a connection to an Internet service provider (ISP), and it typically occers very low bandwidth, usually up to 56 kbps.
+: Dial-up internet access uses the public switched telephone network (PSTN) to establish a connection to an Internet service provider (ISP), and it typically offers very low bandwidth, usually up to 56 kbps.
 High bandwidth connection that runs over telephone line
  ==> DSL
 Detail
-: Digital Subscriber Line (DSL) technology provides high-speed internet access over standard telephone lines. DSL occers higher bandwidth than dial-up and is widely used for residential and small business internet connections.
+: Digital Subscriber Line (DSL) technology provides high-speed internet access over standard telephone lines. DSL offers higher bandwidth than dial-up and is widely used for residential and small business internet connections.
 
 ---
 
@@ -246,7 +246,7 @@ What two criteria are used to help select a network medium from various network 
 :
 
 Detail
-: While the type of data and its priority (e.g., video streaming vs. simple text data) can influence network configurations and Quality of Service (QoS) settings, it is not a primary criterion for selecting the physical network medium. The focus here is more on managing and prioritizing traccic rather than choosing the medium itself.
+: While the type of data and its priority (e.g., video streaming vs. simple text data) can influence network configurations and Quality of Service (QoS) settings, it is not a primary criterion for selecting the physical network medium. The focus here is more on managing and prioritizing traffic rather than choosing the medium itself.
 The cost of the end devices utilized in the network
 :
 Detail
@@ -254,11 +254,11 @@ Detail
 The distance the selected medium can successfully carry a signal
 :
 Detail
-: This is a critical factor in selecting a network medium. Diccerent media have diccerent eccective transmission ranges. For instance, twisted pair copper cables (like Cat5e or Cat6) are typically used for shorter distances (up to 100 meters), whereas fiber optic cables can transmit data over much longer distances (several kilometers) without significant signal loss.
+: This is a critical factor in selecting a network medium. Different media have different effective transmission ranges. For instance, twisted pair copper cables (like Cat5e or Cat6) are typically used for shorter distances (up to 100 meters), whereas fiber optic cables can transmit data over much longer distances (several kilometers) without significant signal loss.
 The number of intermediate devices installed in the network
 :
 Detail
-: The number of intermediate devices, such as switches and routers, can accect network design and performance but does not directly influence the choice of network medium. However, it can impact the overall network architecture and layout.
+: The number of intermediate devices, such as switches and routers, can affect network design and performance but does not directly influence the choice of network medium. However, it can impact the overall network architecture and layout.
 The environment where the selected medium is to be installed
 :
 Detail
@@ -273,7 +273,7 @@ The environment where the selected medium is to be installed
 
 ## Question 8
 
-What type of network traccic requires QoS?
+What type of network traffic requires QoS?
 
 - [ ] email
 - [ ] on-line purchasing
@@ -281,19 +281,19 @@ What type of network traccic requires QoS?
 - [ ] wiki
 
 > [!NOTE]
-> **Explanation:** The type of network traccic that requires Quality of Service (QoS) is:
+> **Explanation:** The type of network traffic that requires Quality of Service (QoS) is:
 
 Video Conferencing
 Explanation
 :
 Email
-: Email traccic is generally not sensitive to delays or variations in network performance. Emails can tolerate some latency and do not require real-time transmission. Therefore, QoS is not typically required for email traccic.
+: Email traffic is generally not sensitive to delays or variations in network performance. Emails can tolerate some latency and do not require real-time transmission. Therefore, QoS is not typically required for email traffic.
 Online Purchasing
-: While online purchasing involves transactions that should be completed reliably, it does not require real-time data transmission. The web pages and transactions can tolerate some delay without significantly accecting the user experience. Thus, QoS is not usually needed for online purchasing.
+: While online purchasing involves transactions that should be completed reliably, it does not require real-time data transmission. The web pages and transactions can tolerate some delay without significantly affecting the user experience. Thus, QoS is not usually needed for online purchasing.
 Video Conferencing
-: Video conferencing is highly sensitive to latency, jitter, and packet loss. It requires a steady and reliable stream of data to maintain audio and video quality in real time. Any delays or interruptions can significantly impact the quality of the video conference, making QoS essential to prioritize this type of traccic and ensure a smooth experience.
+: Video conferencing is highly sensitive to latency, jitter, and packet loss. It requires a steady and reliable stream of data to maintain audio and video quality in real time. Any delays or interruptions can significantly impact the quality of the video conference, making QoS essential to prioritize this type of traffic and ensure a smooth experience.
 Wiki
-: Accessing or editing a wiki involves web traccic that can tolerate some latency and does not require real-time data transmission. Therefore, QoS is not typically necessary for wiki traccic.
+: Accessing or editing a wiki involves web traffic that can tolerate some latency and does not require real-time data transmission. Therefore, QoS is not typically necessary for wiki traffic.
 Thus, the correct answer is 
 video conferencing
 .
@@ -311,11 +311,11 @@ A user is implementing security on a small office network. Which two actions wou
 - [ ] adding a dedicated intrusion prevention device
 
 > [!NOTE]
-> **Explanation:** To provide the minimum security requirements for a small occice network, the two actions that should be implemented are:
+> **Explanation:** To provide the minimum security requirements for a small office network, the two actions that should be implemented are:
 
 Implementing a firewall
 Detail
-: A firewall is essential for protecting a network by controlling incoming and outgoing network traccic based on predetermined security rules. It acts as a barrier between the internal network and external threats, helping to prevent unauthorized access and attacks.
+: A firewall is essential for protecting a network by controlling incoming and outgoing network traffic based on predetermined security rules. It acts as a barrier between the internal network and external threats, helping to prevent unauthorized access and attacks.
 Installing antivirus software
 Detail
 : Antivirus software is crucial for detecting, preventing, and removing malware, including viruses, trojans, and other malicious software. This protects the network’s devices from being compromised by malicious code that can steal data, corrupt files, or take control of the systems.
@@ -323,7 +323,7 @@ Other options explained:
 Installing a wireless network
 : This does not provide security; rather, it introduces another potential point of vulnerability if not properly secured.
 Implementing an intrusion detection system (IDS)
-: While useful for monitoring network traccic for suspicious activity and potential threats, an IDS alone does not provide the basic, essential security measures required to protect a small occice network.
+: While useful for monitoring network traffic for suspicious activity and potential threats, an IDS alone does not provide the basic, essential security measures required to protect a small office network.
 Adding a dedicated intrusion prevention device
 : This provides advanced security by not only detecting but also preventing potential threats. However, it is typically part of a more comprehensive security strategy rather than a minimum requirement.
 Thus, the two actions providing the minimum security requirements are:
@@ -401,7 +401,7 @@ The console port interface
 The switch virtual interface (SVI)
 : An SVI is a virtual interface on a switch that allows for remote management. It is assigned an IP address and used for in-band management of the switch via protocols like SSH or Telnet.
 The first Ethernet port interface
-: This is a physical port used for data traccic on the network, not specifically for management purposes. Although it can be used for management traccic in some configurations, it is not specifically designated for remote management.
+: This is a physical port used for data traffic on the network, not specifically for management purposes. Although it can be used for management traffic in some configurations, it is not specifically designated for remote management.
 Therefore, the correct answer is 
 the switch virtual interface (SVI)
 .
@@ -470,9 +470,9 @@ Delete the vlan.dat file and reboot the device
 vlan.dat
  file is related to VLAN configurations on the switch and deleting it will remove VLAN configurations but won’t revert the router’s overall configuration to the startup configuration.
 Close and reopen the terminal emulation software
-: This is incorrect. Closing and reopening the terminal emulation software does not accect the router’s configuration. It only accects the session you have with the router.
+: This is incorrect. Closing and reopening the terminal emulation software does not affect the router’s configuration. It only affects the session you have with the router.
 Issue the copy startup-config running-config command
-: This command merges the startup configuration with the current running configuration but does not discard the current running configuration entirely. It might not eccectively revert to the original configuration if there have been many conflicting changes.
+: This command merges the startup configuration with the current running configuration but does not discard the current running configuration entirely. It might not effectively revert to the original configuration if there have been many conflicting changes.
 Therefore, the correct action is to 
 issue the reload command without saving the running configuration
 .
@@ -485,7 +485,7 @@ An administrator uses the Ctrl-Shift-6 key combination on a switch after issuing
 
 - [ ] to restart the ping process
 - [x] **to interrupt the ping process**
-- [ ] to exit to a diccerent configuration mode
+- [ ] to exit to a different configuration mode
 - [ ] to allow the user to complete the command
 
 > [!NOTE]
@@ -500,7 +500,7 @@ To restart the ping process
 : This is incorrect. Ctrl-Shift-6 does not restart the ping process.
 To interrupt the ping process
 : This is correct. The Ctrl-Shift-6 key combination is used to send a break sequence to interrupt an ongoing process in the command-line interface, such as a continuous ping.
-To exit to a diccerent configuration mode
+To exit to a different configuration mode
 : This is incorrect. Ctrl-Shift-6 does not change the configuration mode.
 To allow the user to complete the command
 : This is incorrect. Ctrl-Shift-6 is used to interrupt a process, not to complete a command.
@@ -527,12 +527,18 @@ Refer to the exhibit. A network administrator is configuring access control to s
 > **Explanation:** To determine which password is needed to access user EXEC mode via a console connection to switch SW1, let’s examine the configuration snippet provided in the exhibit.
 
 Here is the configuration typically shown in such scenarios:
-enable secret secretin
-line con 0
-password lineconin
-login
-line vty 0 4
-password linevtyin
+enable secret secretin
+
+line con 0
+
+password lineconin
+
+login
+
+line vty 0 4
+
+password linevtyin
+
 login
 Based on this configuration:
 enable secret secretin
@@ -702,7 +708,7 @@ SwBranch799
 
 ## Question 20
 
-How is SSH diccerent from Telnet?
+How is SSH different from Telnet?
 
 - [ ] SSH makes connections over the network, whereas Telnet is for out-of-band access.
 - [x] **SSH provides security to remote sessions by encrypting messages and using user authentication. Telnet is considered insecure and sends messages in plaintext.**
@@ -710,7 +716,7 @@ How is SSH diccerent from Telnet?
 - [ ] SSH must be configured over an active network connection, whereas Telnet is used to connect to a device from a console connection.
 
 > [!NOTE]
-> **Explanation:** The key diccerence between SSH and Telnet is:
+> **Explanation:** The key difference between SSH and Telnet is:
 
 SSH provides security to remote sessions by encrypting messages and using user authentication. Telnet is considered insecure and sends messages in plaintext.
 Explanation
@@ -797,7 +803,7 @@ What are three characteristics of an SVI? (Choose three.)
 
 - [ ] It is designed as a security protocol to protect switch ports.
 - [x] **It is not associated with any physical interface on a switch.**
-- [ ] It is a special interface that allows connectivity by diccerent types of media.
+- [ ] It is a special interface that allows connectivity by different types of media.
 - [ ] It is required to allow connectivity by any device at any location.
 - [x] **It provides a means to remotely manage a switch.**
 - [x] **It is associated with VLAN1 by default.**
@@ -817,8 +823,8 @@ Detail
 Other options explained:
 It is designed as a security protocol to protect switch ports.
 : This is incorrect. An SVI is not a security protocol but a virtual interface for a VLAN.
-It is a special interface that allows connectivity by diccerent types of media.
-: This is incorrect. An SVI provides IP-based connectivity within a VLAN and does not relate to diccerent types of physical media.
+It is a special interface that allows connectivity by different types of media.
+: This is incorrect. An SVI provides IP-based connectivity within a VLAN and does not relate to different types of physical media.
 It is required to allow connectivity by any device at any location.
 : This is incorrect. An SVI allows remote management and VLAN connectivity but is not required for device connectivity at any location.
 Therefore, the correct characteristics of an SVI are:
@@ -862,7 +868,7 @@ Match the description with the associated IOS mode.
 
 ![exhibit](https://infraexam.com/wp-content/uploads/2026/03/CCNA1-Module-1-3-Checkpoint-Exam-Basic-Network-Connectivity-and-Communications-Exam-Answers-004.png)
 
-- [x] **changes made accect the operation of the device as a whole ==> 
+- [x] **changes made affect the operation of the device as a whole ==> 
 global configuration mode**
 - [x] **accessed by entering the enable command ==> 
 privileged EXEC mode**
@@ -876,11 +882,11 @@ global configuration mode**
 user EXEC mode**
 
 > [!NOTE]
-> **Explanation:** Changes made accect the operation of the device as a whole
+> **Explanation:** Changes made affect the operation of the device as a whole
  ==> 
 Global Configuration Mode
 Detail
-: In Global Configuration Mode, changes accect the entire device. This mode is used to configure global settings.
+: In Global Configuration Mode, changes affect the entire device. This mode is used to configure global settings.
 Accessed by entering the enable command
  ==> 
 Privileged EXEC Mode
@@ -915,7 +921,7 @@ Detail
 >
  prompt.
 Therefore, the matches are:
-Changes made accect the operation of the device as a whole
+Changes made affect the operation of the device as a whole
  ==> 
 Global Configuration Mode
 Accessed by entering the enable command
@@ -1030,7 +1036,7 @@ running-config
 running-config
  specifies that the command should display the current configuration of the device.
 A Variable
-: A variable in a command represents a user-defined value or parameter that can change. It allows flexibility in the command to accept diccerent inputs. In the 
+: A variable in a command represents a user-defined value or parameter that can change. It allows flexibility in the command to accept different inputs. In the 
 show running-config
  command, there are no variables; all parts of the command are fixed keywords.
 A Prompt
@@ -1075,7 +1081,7 @@ The new configuration will be loaded if the switch is restarted
 copy running-config startup-config
  command saves the current running configuration to the startup configuration file in NVRAM. This ensures that the new configuration will be loaded the next time the switch is restarted.
 The current IOS file will be replaced with the newly configured file
-: This is incorrect. The IOS file is separate from the configuration files and is not accected by the 
+: This is incorrect. The IOS file is separate from the configuration files and is not affected by the 
 copy running-config startup-config
  command.
 The configuration changes will be removed and the original configuration will be restored
@@ -1133,7 +1139,7 @@ What method can be used by two computers to ensure that packets are not dropped 
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-In order for two computers to be able to communicate eccectively, there must be a mechanism that allows both the source and destination to set the timing of the transmission and receipt of data. Flow control allows for this by ensuring that data is not sent too fast for it to be received properly.
+In order for two computers to be able to communicate effectively, there must be a mechanism that allows both the source and destination to set the timing of the transmission and receipt of data. Flow control allows for this by ensuring that data is not sent too fast for it to be received properly.
 
 ---
 
@@ -1200,7 +1206,7 @@ Which name is assigned to the transport layer PDU?
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Application data is passed down the protocol stack on its way to be transmitted across the network media. During the process, various protocols add information to it at each level. At each stage of the process, a PDU (protocol data unit) has a diccerent name to reflect its new functions. The PDUs are named according to the protocols of the TCP/IP suite: Data – The general term for the PDU used at the application layer.
+Application data is passed down the protocol stack on its way to be transmitted across the network media. During the process, various protocols add information to it at each level. At each stage of the process, a PDU (protocol data unit) has a different name to reflect its new functions. The PDUs are named according to the protocols of the TCP/IP suite: Data – The general term for the PDU used at the application layer.
 
 Segment – transport layer PDU
 
@@ -1451,7 +1457,7 @@ Which statement is correct about network protocols?
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-Network protocols are implemented in hardware, or software, or both. They interact with each other within diccerent layers of a protocol stack. Protocols have nothing to do with the installation of the network equipment. Network protocols are required to exchange information between source and destination devices in both local and remote networks.
+Network protocols are implemented in hardware, or software, or both. They interact with each other within different layers of a protocol stack. Protocols have nothing to do with the installation of the network equipment. Network protocols are required to exchange information between source and destination devices in both local and remote networks.
 
 ---
 
@@ -1460,13 +1466,13 @@ Network protocols are implemented in hardware, or software, or both. They intera
 What is an advantage of network devices using open standard protocols?
 
 - [ ] Network communications is confined to data transfers between devices from the same vendor.
-- [x] **A client host and a server running diccerent operating systems can successfully exchange data.**
+- [x] **A client host and a server running different operating systems can successfully exchange data.**
 - [ ] Internet access can be controlled by a single ISP in each market.
 - [ ] Competition and innovation are limited to specific types of products.
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-An advantage of network devices implementing open standard protocols, such as from the TCP/IP suite, is that clients and servers running diccerent operating systems can communicate with each other. Open standard protocols facilitate innovation and competition between vendors and across markets, and can reduce the occurrence of monopolies in networking markets.
+An advantage of network devices implementing open standard protocols, such as from the TCP/IP suite, is that clients and servers running different operating systems can communicate with each other. Open standard protocols facilitate innovation and competition between vendors and across markets, and can reduce the occurrence of monopolies in networking markets.
 
 ---
 
@@ -1481,7 +1487,7 @@ Which device performs the function of determining the path that messages should 
 
 > [!NOTE]
 > **Explanation:** Answers Explanation & Hints:
-A router is used to determine the path that the messages should take through the network. A firewall is used to filter incoming and outgoing traccic. A DSL modem is used to provide Internet connection for a home or an organization.
+A router is used to determine the path that the messages should take through the network. A firewall is used to filter incoming and outgoing traffic. A DSL modem is used to provide Internet connection for a home or an organization.
 
 ---
 
@@ -1538,7 +1544,7 @@ In order to enter global configuration mode, the command configure terminal , or
 
 ## Question 54
 
-What term describes a network owned by one organization that provides safe and secure access to individuals who work for a diccerent organization?
+What term describes a network owned by one organization that provides safe and secure access to individuals who work for a different organization?
 
 - [x] **extranet**
 - [ ] cloud
@@ -1547,7 +1553,7 @@ What term describes a network owned by one organization that provides safe and s
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-The term that describes a network owned by one organization that provides safe and secure access to individuals who work for a diccerent organization is “extranet.” An extranet is a private network that allows authorized users from external organizations to access certain resources, such as files, applications, or communication tools, while maintaining security and controlled access.
+The term that describes a network owned by one organization that provides safe and secure access to individuals who work for a different organization is “extranet.” An extranet is a private network that allows authorized users from external organizations to access certain resources, such as files, applications, or communication tools, while maintaining security and controlled access.
 
 ---
 
@@ -1562,7 +1568,7 @@ What term describes storing personal files on servers over the internet to provi
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-The term that describes storing personal files on servers over the internet to provide access anywhere, anytime, and on any device is “cloud.” This approach is commonly referred to as “cloud storage” or “cloud computing,” where data is stored and managed in remote data centers accessible via the internet, occering convenience and accessibility across various devices and locations.
+The term that describes storing personal files on servers over the internet to provide access anywhere, anytime, and on any device is “cloud.” This approach is commonly referred to as “cloud storage” or “cloud computing,” where data is stored and managed in remote data centers accessible via the internet, offering convenience and accessibility across various devices and locations.
 
 ---
 
@@ -1583,7 +1589,7 @@ The term that describes a network where one computer can be both a client and a 
 
 ## Question 57
 
-What term describes a type of network used by people who work from home or from a small remote occice?
+What term describes a type of network used by people who work from home or from a small remote office?
 
 - [x] **SOHO network**
 - [ ] BYOD
@@ -1592,7 +1598,7 @@ What term describes a type of network used by people who work from home or from 
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-The term that describes a type of network used by people who work from home or from a small remote occice is a “SOHO network.” SOHO stands for “Small Occice/Home Occice,” and it refers to networks designed to meet the needs of individuals or small businesses working from home or in small remote occice locations. These networks are typically smaller in scale compared to large corporate networks and are tailored to the requirements of remote or home-based workers.
+The term that describes a type of network used by people who work from home or from a small remote office is a “SOHO network.” SOHO stands for “Small Office/Home Office,” and it refers to networks designed to meet the needs of individuals or small businesses working from home or in small remote office locations. These networks are typically smaller in scale compared to large corporate networks and are tailored to the requirements of remote or home-based workers.
 
 ---
 
@@ -1613,7 +1619,7 @@ The term that describes a computing model where server software runs on dedicate
 
 ## Question 59
 
-What term describes a type of network used by people who work from home or from a small remote occice?
+What term describes a type of network used by people who work from home or from a small remote office?
 
 - [x] **SOHO network**
 - [ ] internet
@@ -1622,7 +1628,7 @@ What term describes a type of network used by people who work from home or from 
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-The term that describes a type of network used by people who work from home or from a small remote occice is a “SOHO network.” SOHO stands for “Small Occice/Home Occice,” and it refers to networks designed to meet the needs of individuals or small businesses working from home or in small remote occice locations. These networks are typically smaller in scale compared to large corporate networks and are tailored to the requirements of remote or home-based workers.
+The term that describes a type of network used by people who work from home or from a small remote office is a “SOHO network.” SOHO stands for “Small Office/Home Office,” and it refers to networks designed to meet the needs of individuals or small businesses working from home or in small remote office locations. These networks are typically smaller in scale compared to large corporate networks and are tailored to the requirements of remote or home-based workers.
 
 ---
 
@@ -1637,7 +1643,7 @@ What term describes a technology that allows devices to connect to the LAN using
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-The term that describes a technology that allows devices to connect to the LAN (Local Area Network) using an electrical outlet is “powerline networking.” Powerline networking uses a building’s existing electrical wiring to transmit data signals between devices, eccectively turning electrical outlets into network connections. This technology is a convenient way to extend network connectivity within a building without the need for additional Ethernet cables or Wi-Fi networks.
+The term that describes a technology that allows devices to connect to the LAN (Local Area Network) using an electrical outlet is “powerline networking.” Powerline networking uses a building’s existing electrical wiring to transmit data signals between devices, effectively turning electrical outlets into network connections. This technology is a convenient way to extend network connectivity within a building without the need for additional Ethernet cables or Wi-Fi networks.
 
 ---
 
@@ -1652,7 +1658,7 @@ What term describes a policy that allows network devices to manage the flow of d
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-The term that describes a policy that allows network devices to manage the flow of data to give priority to voice and video is “quality of service” or “QoS.” Quality of service is a set of techniques and mechanisms used to prioritize certain types of data traccic over others to ensure a consistent and acceptable level of service quality, especially for real-time or latency-sensitive applications like voice and video communication. QoS policies help manage and allocate network resources to ensure a smoother and more reliable experience for these applications.
+The term that describes a policy that allows network devices to manage the flow of data to give priority to voice and video is “quality of service” or “QoS.” Quality of service is a set of techniques and mechanisms used to prioritize certain types of data traffic over others to ensure a consistent and acceptable level of service quality, especially for real-time or latency-sensitive applications like voice and video communication. QoS policies help manage and allocate network resources to ensure a smoother and more reliable experience for these applications.
 
 ---
 
@@ -1697,7 +1703,7 @@ At which OSI layer is a source IP address added to a PDU during the encapsulatio
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-The source IP address is added to a Protocol Data Unit (PDU) at the “network layer,” which is also known as OSI Layer 3. The network layer is responsible for routing and forwarding data between diccerent networks, and IP addresses are used to uniquely identify the source and destination of data at this layer.
+The source IP address is added to a Protocol Data Unit (PDU) at the “network layer,” which is also known as OSI Layer 3. The network layer is responsible for routing and forwarding data between different networks, and IP addresses are used to uniquely identify the source and destination of data at this layer.
 
 ---
 
@@ -1742,7 +1748,7 @@ At which OSI layer is a source IP address added to a PDU during the encapsulatio
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-A source IP address is added to a Protocol Data Unit (PDU) during the encapsulation process at the “network layer,” which is also known as OSI Layer 3. The network layer is responsible for routing and forwarding data between diccerent networks, and IP addresses are used to uniquely identify the source and destination of data at this layer.
+A source IP address is added to a Protocol Data Unit (PDU) during the encapsulation process at the “network layer,” which is also known as OSI Layer 3. The network layer is responsible for routing and forwarding data between different networks, and IP addresses are used to uniquely identify the source and destination of data at this layer.
 
 ---
 
@@ -1772,7 +1778,7 @@ At which OSI layer is a destination IP address added to a PDU during the encapsu
 
 > [!NOTE]
 > **Explanation:** Explanation & Hint:
-A destination IP address is added to a Protocol Data Unit (PDU) during the encapsulation process at the “network layer,” which is also known as OSI Layer 3. The network layer is responsible for routing and forwarding data between diccerent networks, and IP addresses are used to uniquely identify the source and destination of data at this layer.
+A destination IP address is added to a Protocol Data Unit (PDU) during the encapsulation process at the “network layer,” which is also known as OSI Layer 3. The network layer is responsible for routing and forwarding data between different networks, and IP addresses are used to uniquely identify the source and destination of data at this layer.
 
 ---
 
