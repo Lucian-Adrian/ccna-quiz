@@ -38,7 +38,6 @@ const STORAGE_KEY = "quizos-v2-progress";
 const STORAGE_BACKUP_KEY = "quizos-v2-progress-backup";
 const DECK_KEY = "quizos-v2-selected-deck";
 const BANK_KEY = "quizos-v2-selected-bank";
-const PRACTICE_SET_SIZE = 24;
 const EXAM_QUESTION_COUNT = 90;
 const EXAM_DURATION_SECONDS = 20 * 60;
 
@@ -151,6 +150,19 @@ function currentDeck() {
   return deckById.get(state.deckId) ?? decks[0];
 }
 
+function examDeckOptions() {
+  return decks.filter((deck) => deck.type === "midterm" || deck.type === "final");
+}
+
+function isExamDeck(deck) {
+  return deck?.type === "midterm" || deck?.type === "final";
+}
+
+function currentExamDeck() {
+  const deck = currentDeck();
+  return isExamDeck(deck) ? deck : examDeckOptions()[0] ?? deck;
+}
+
 function currentQuestion() {
   return state.session?.questions[state.session.index] ?? null;
 }
@@ -222,7 +234,7 @@ function startSubjectShuffle() {
 }
 
 function startPracticeExam() {
-  const deck = currentDeck();
+  const deck = currentExamDeck();
   const questions = buildSession(deck, {
     mode: "exam",
     limit: EXAM_QUESTION_COUNT,
@@ -249,7 +261,7 @@ function startPracticeQueue(questions) {
 }
 
 function startRealExam() {
-  const deck = currentDeck();
+  const deck = currentExamDeck();
   const questions = buildSession(deck, {
     mode: "exam",
     limit: EXAM_QUESTION_COUNT,
@@ -269,7 +281,7 @@ function startRealExam() {
 function startFocusSession() {
   const deck = currentDeck();
   const questions = buildSmartReview(deck, state.progress, {
-    limit: PRACTICE_SET_SIZE,
+    limit: deck.questions.length,
     seed: Date.now(),
   });
 
@@ -282,12 +294,12 @@ function startFocusSession() {
 
 function startDueReview() {
   const dueQuestions = getDueQuestions(currentDeck(), state.progress);
-  if (dueQuestions.length > 0) startPracticeQueue(dueQuestions.slice(0, PRACTICE_SET_SIZE));
+  if (dueQuestions.length > 0) startPracticeQueue(dueQuestions);
 }
 
 function startNewCards() {
   const newQuestions = getNewQuestions(currentDeck(), state.progress);
-  if (newQuestions.length > 0) startPracticeQueue(newQuestions.slice(0, PRACTICE_SET_SIZE));
+  if (newQuestions.length > 0) startPracticeQueue(newQuestions);
 }
 
 function startWeakReview() {
@@ -295,7 +307,7 @@ function startWeakReview() {
   const weakQuestions = getWeakQuestions(deck, state.progress);
   if (weakQuestions.length === 0) return;
 
-  startPracticeQueue(weakQuestions.slice(0, PRACTICE_SET_SIZE));
+  startPracticeQueue(weakQuestions);
 }
 
 function toggleAnswer(option) {
@@ -589,12 +601,13 @@ function renderHome() {
 
 function renderPracticeHub() {
   const deck = currentDeck();
+  const examDeck = currentExamDeck();
   const bank = currentBank();
   const summary = getLearningSummary(deck, state.progress);
   const weakCount = getWeakQuestions(deck, state.progress).length;
   const dueCount = getDueQuestions(deck, state.progress).length;
   const newCount = getNewQuestions(deck, state.progress).length;
-  const eligibleCount = getExamEligibleQuestions(deck).length;
+  const eligibleCount = getExamEligibleQuestions(examDeck).length;
   const practiceExamCount = Math.min(EXAM_QUESTION_COUNT, eligibleCount);
 
   return `
@@ -614,9 +627,11 @@ function renderPracticeHub() {
         <article class="mode-card">
           <span class="eyebrow">Learn</span>
           <h2>Practice subject</h2>
-          <p>No timer. Check each answer, read the explanation, and update your module progress.</p>
+          <p>No timer. All questions in this scope. Check each answer, read the explanation, and update your module progress.</p>
           <div class="mode-options">
-            <button class="primary primary-action" type="button" data-action="start-focus">${dueCount ? "Review due" : "Start subject practice"}</button>
+            <button class="primary primary-action" type="button" data-action="start-focus">${
+              dueCount ? "Review due questions" : "Practice all subject questions"
+            }</button>
             <button class="secondary" type="button" data-action="learn-new" ${newCount === 0 ? "disabled" : ""}>New only</button>
             <button class="secondary" type="button" data-action="review-weak" ${weakCount === 0 ? "disabled" : ""}>Weak only</button>
             <button class="secondary" type="button" data-action="shuffle-subject">Shuffle all</button>
@@ -628,7 +643,7 @@ function renderPracticeHub() {
           <p>90 questions, 20-minute timer, answers shown after you respond. Going over time is allowed.</p>
           <div class="mode-options single">
             <button class="primary primary-action" type="button" data-action="practice-exam" ${practiceExamCount === 0 ? "disabled" : ""}>Start practice exam</button>
-            <small>${practiceExamCount} questions from ${deck.title}</small>
+            <small>${practiceExamCount} questions from ${examDeck.title}</small>
           </div>
         </article>
       </section>
@@ -646,7 +661,7 @@ function renderPracticeHub() {
 }
 
 function renderExamHub() {
-  const deck = currentDeck();
+  const deck = currentExamDeck();
   const bank = currentBank();
   const eligibleCount = getExamEligibleQuestions(deck).length;
   const examCount = Math.min(EXAM_QUESTION_COUNT, eligibleCount);
@@ -688,8 +703,42 @@ function renderExamHub() {
         </div>
       </section>
 
-      ${renderScopePicker("Choose exam scope")}
+      ${renderExamScopePicker()}
     </section>
+  `;
+}
+
+function renderExamScopePicker() {
+  return `
+    <h2 class="section-title">Choose exam scope</h2>
+    <h3 class="subsection-title">Midterms</h3>
+    <section class="deck-grid featured">
+      ${examDeckOptions()
+        .filter((item) => item.type === "midterm")
+        .map(renderExamDeckButton)
+        .join("")}
+    </section>
+
+    <h3 class="subsection-title">Final exams</h3>
+    <section class="deck-grid featured">
+      ${examDeckOptions()
+        .filter((item) => item.type === "final")
+        .map(renderExamDeckButton)
+        .join("")}
+    </section>
+  `;
+}
+
+function renderExamDeckButton(deck) {
+  const selected = deck.id === currentExamDeck().id;
+  const progress = getLearningSummary(deck, state.progress);
+
+  return `
+    <button class="deck-row ${selected ? "selected" : ""}" type="button" data-deck="${deck.id}" aria-pressed="${selected}">
+      <span class="deck-title">${deck.title}</span>
+      <span class="deck-row-action">${selected ? "Selected" : "Choose"}</span>
+      <small>${Math.min(EXAM_QUESTION_COUNT, getExamEligibleQuestions(deck).length)} exam questions · ${progress.percent}% done</small>
+    </button>
   `;
 }
 
