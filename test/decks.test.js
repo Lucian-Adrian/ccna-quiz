@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import {
   buildSmartReview,
+  buildBeginnerExplanation,
   buildSession,
   createCombinedDecks,
   createDecks,
@@ -66,6 +67,47 @@ test("creates final and combined decks across question banks", () => {
   assert.equal(byLogicalId.get("practice-final").count, 2);
   assert.equal(byLogicalId.get("all").count, 18);
   assert.equal(byLogicalId.get("all").questions.some((question) => question.id === "infra-m1-3-1"), true);
+});
+
+test("adds beginner explanations to Infra practice and final questions", () => {
+  const decks = createDecks(moduleSources, {
+    bankId: "infra",
+    bankTitle: "Infra",
+    deckPrefix: "infra",
+    sourcePrefix: "infra",
+    finalSources: {
+      "practice-final": [
+        {
+          number: 1,
+          question: "What characteristic describes spyware?",
+          options: ["software that collects information about the user", "an attack that slows a service"],
+          correct_answers: ["software that collects information about the user"],
+          explanation: "",
+        },
+      ],
+    },
+  });
+  const question = decks.find((deck) => deck.logicalId === "practice-final").questions[0];
+
+  assert.match(question.explanation, /Beginner explanation:/);
+  assert.match(question.explanation, /Correct answer:/);
+  assert.match(question.explanation, /Spyware is software/);
+});
+
+test("builds matching beginner explanations", () => {
+  const explanation = buildBeginnerExplanation(
+    {
+      question: "Match the MAC sublayer function.",
+      options: [],
+      explanation: "",
+    },
+    { id: "infra-final-exam", logicalId: "final-exam", bankId: "infra" },
+    ["Frame => MAC address"],
+    [{ left: "Frame", right: "MAC address" }],
+  );
+
+  assert.match(explanation, /Frame -> MAC address/);
+  assert.match(explanation, /MAC sublayer/);
 });
 
 test("exam sessions are limited and deterministic", () => {

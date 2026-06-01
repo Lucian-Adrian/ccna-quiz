@@ -23,12 +23,19 @@ function prefixedId(prefix, id) {
   return prefix ? `${prefix}-${id}` : id;
 }
 
+function isInfraFinalSource(source) {
+  return source.bankId === "infra" && ["practice-final", "final-exam"].includes(source.logicalId ?? source.id.replace(/^infra-/, ""));
+}
+
 export function normalizeQuestion(rawQuestion, source) {
   const matchingPairs = inferMatchingPairs(rawQuestion);
   const correctAnswers =
     matchingPairs.length > 0
       ? matchingPairs.map((pair) => formatMatchingAnswer(pair.left, pair.right))
       : rawQuestion.correct_answers ?? rawQuestion.answers ?? [];
+  const explanation = isInfraFinalSource(source)
+    ? buildBeginnerExplanation(rawQuestion, source, correctAnswers, matchingPairs)
+    : rawQuestion.explanation ?? "";
 
   return {
     id: `${source.id}-${rawQuestion.number}`,
@@ -42,11 +49,110 @@ export function normalizeQuestion(rawQuestion, source) {
     options: rawQuestion.options ?? [],
     correctAnswers,
     matchingPairs,
-    explanation: rawQuestion.explanation ?? "",
+    explanation,
     imageUrls: rawQuestion.image_urls ?? [],
     codeBlocks: rawQuestion.code_blocks ?? [],
     tables: rawQuestion.tables ?? [],
   };
+}
+
+export function buildBeginnerExplanation(rawQuestion, source, correctAnswers, matchingPairs = []) {
+  const question = cleanupText(rawQuestion.question ?? "");
+  const correct = correctAnswers.map(cleanupText).filter(Boolean);
+  const options = (rawQuestion.options ?? []).map(cleanupText).filter(Boolean);
+  const original = cleanupText(rawQuestion.explanation ?? "");
+  const wrongOptions = options.filter((option) => !correct.some((answer) => normalizeAnswer(answer) === normalizeAnswer(option)));
+  const concepts = conceptNotes(`${question} ${correct.join(" ")}`);
+  const clue = question.replace(/\s+/g, " ").slice(0, 220);
+
+  const sections = [
+    "Beginner explanation:",
+    `Correct answer${correct.length === 1 ? "" : "s"}: ${correct.join(" | ") || "Review the listed matches."}`,
+    `How to reason it out: first identify exactly what the question is asking, then match the key words in the prompt to the networking concept. Here the key prompt is: "${clue}". The correct answer is the option that satisfies that requirement directly; the other options may be real networking terms, but they solve a different problem or belong to a different layer, protocol, or device role.`,
+  ];
+
+  if (matchingPairs.length > 0) {
+    sections.push(
+      `For the matching part, read each left-side item as the requirement and each right-side item as the exact result that fulfills it. The correct pairs are: ${matchingPairs
+        .map((pair) => `${cleanupText(pair.left)} -> ${cleanupText(pair.right)}`)
+        .join("; ")}.`,
+    );
+  }
+
+  if (concepts.length > 0) {
+    sections.push(`Core concept: ${concepts.join(" ")}`);
+  }
+
+  if (wrongOptions.length > 0) {
+    sections.push(
+      `Why the other choices are not best: ${wrongOptions
+        .slice(0, 6)
+        .map((option) => `Option "${shorten(option)}" does not answer the exact condition in the prompt.`)
+        .join(" ")}`,
+    );
+  }
+
+  sections.push(
+    "Exam tip: do not choose an answer just because it contains a familiar word. Ask: what layer, protocol, address type, device role, or security goal is the question testing?",
+  );
+
+  if (original && !sections.join(" ").toLowerCase().includes(original.toLowerCase())) {
+    sections.push(`Source note: ${original}`);
+  }
+
+  return sections.join("\n\n");
+}
+
+function cleanupText(value) {
+  return String(value).replace(/\s+/g, " ").trim();
+}
+
+function shorten(value, maxLength = 140) {
+  const cleaned = cleanupText(value);
+  return cleaned.length > maxLength ? `${cleaned.slice(0, maxLength - 3)}...` : cleaned;
+}
+
+function conceptNotes(text) {
+  const normalized = text.toLowerCase();
+  const notes = [
+    ["imap", "IMAP uses TCP port 143 and lets an email client read mail stored on a mail server."],
+    ["telnet", "Telnet is remote CLI access on port 23 and is not encrypted."],
+    ["ssh", "SSH is encrypted remote CLI access, normally using TCP port 22."],
+    ["ftp", "FTP transfers files and commonly uses TCP ports 20 and 21."],
+    ["dns", "DNS translates human-readable names into IP addresses so hosts can find services."],
+    ["dhcp", "DHCP automatically gives hosts IP settings such as address, mask, gateway, and DNS server."],
+    ["arp", "ARP maps an IPv4 address to a MAC address on the local network."],
+    ["mac address", "A MAC address is the Layer 2 hardware address used inside an Ethernet LAN."],
+    ["mac sublayer", "The MAC sublayer builds Ethernet frames, adds MAC addressing, and handles frame access details."],
+    ["data link", "The data link layer prepares frames for delivery across one local link."],
+    ["network layer", "The network layer uses logical IP addressing and routing between networks."],
+    ["transport layer", "The transport layer uses TCP or UDP ports to identify the application conversation."],
+    ["tcp", "TCP is connection-oriented and provides reliable delivery with acknowledgments and retransmission."],
+    ["udp", "UDP is lightweight and connectionless, used when low overhead matters more than built-in reliability."],
+    ["switch", "A switch forwards Ethernet frames using MAC addresses within a LAN."],
+    ["router", "A router forwards packets between different IP networks using Layer 3 information."],
+    ["default gateway", "The default gateway is the router a host uses to reach remote networks."],
+    ["subnet", "A subnet is a smaller IP network created from a larger address block."],
+    ["subnet mask", "The subnet mask or prefix length separates the network bits from the host bits."],
+    ["ipv4", "IPv4 addresses are 32-bit logical addresses written in dotted decimal form."],
+    ["ipv6", "IPv6 addresses are 128-bit logical addresses written in hexadecimal groups."],
+    ["vlan", "A VLAN is a separate Layer 2 broadcast domain on switched infrastructure."],
+    ["trunk", "A trunk carries traffic for multiple VLANs over one link by tagging frames."],
+    ["ethernet", "Ethernet defines common LAN frame formats, MAC addressing, and media access behavior."],
+    ["wireless", "Wireless LANs use radio instead of copper or fiber, but still need addressing, access control, and security."],
+    ["security", "Network security protects confidentiality, integrity, and availability of systems and data."],
+    ["spyware", "Spyware is software that secretly collects information from a user or device."],
+    ["malware", "Malware is malicious software designed to damage, steal, spy, or gain unauthorized access."],
+    ["firewall", "A firewall permits or blocks traffic based on security rules."],
+    ["ips", "An IPS watches traffic and can actively block malicious activity."],
+    ["dos", "A denial-of-service attack tries to make a device or service unavailable."],
+    ["phishing", "Phishing tricks users into revealing credentials or sensitive information."],
+    ["qos", "QoS gives priority treatment to traffic that is sensitive to delay, loss, or jitter."],
+    ["intermediary", "Intermediary devices move or protect traffic between end devices; examples include switches, routers, firewalls, wireless controllers, and IPS devices."],
+    ["end device", "End devices are the source or destination of user data, such as PCs, phones, servers, printers, and scanners."],
+  ];
+
+  return notes.filter(([term]) => normalized.includes(term)).map(([, note]) => note).slice(0, 4);
 }
 
 export function inferMatchingPairs(rawQuestion) {
@@ -89,6 +195,7 @@ export function createModuleDecks(moduleSources, options = {}) {
     const source = {
       ...group,
       id: prefixedId(sourcePrefix, group.id),
+      logicalId: group.id,
       bankId: options.bankId ?? "itexam",
       bankTitle: options.bankTitle ?? "",
     };
@@ -130,6 +237,7 @@ export function createDecks(moduleSources, options = {}) {
     const source = {
       ...finalGroup,
       id: prefixedId(options.sourcePrefix ?? "", finalGroup.id),
+      logicalId: finalGroup.id,
       bankId: options.bankId ?? "itexam",
       bankTitle: options.bankTitle ?? "",
     };

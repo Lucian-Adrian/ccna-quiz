@@ -732,6 +732,23 @@ h1 {
   font-weight: 760;
 }
 
+.missed-item .correct-answer {
+  margin: 8px 0 0;
+}
+
+.missed-item details {
+  margin-top: 12px;
+  color: #45484e;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.missed-item summary {
+  color: var(--ink);
+  font-weight: 820;
+  cursor: pointer;
+}
+
 .table-wrap {
   overflow-x: auto;
   margin: 16px 0;

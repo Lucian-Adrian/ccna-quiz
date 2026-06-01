@@ -90,7 +90,7 @@ const bankDecks = {
 const questionBanks = [
   { id: "combined", title: "Combined", subtitle: "Both sources", decks: bankDecks.combined },
   { id: "itexam", title: "ITExam", subtitle: "Original set", decks: bankDecks.itexam },
-  { id: "infra", title: "Infra", subtitle: "New set", decks: bankDecks.infra },
+  { id: "infra", title: "Infra", subtitle: "Primary set", decks: bankDecks.infra },
 ];
 
 const savedBankId = loadBankId();
@@ -110,7 +110,7 @@ const state = {
 
 function loadBankId() {
   const savedBankId = localStorage.getItem(BANK_KEY);
-  return questionBanks.some((bank) => bank.id === savedBankId) ? savedBankId : "combined";
+  return questionBanks.some((bank) => bank.id === savedBankId) ? savedBankId : "infra";
 }
 
 function loadDeckId(bankId) {
@@ -731,13 +731,18 @@ function renderExplanation(question, selected) {
   return `
     <section class="explanation ${correct ? "correct" : "wrong"}">
       <strong>${correct ? "Correct" : "Review this"}</strong>
-      <p class="correct-answer">${
-        hasMatching ? "Review the correct matches below." : question.correctAnswers.map(escapeHtml).join(" · ")
-      }</p>
+      ${renderCorrectAnswerLine(question)}
       ${renderAnswerAssets(question)}
       <div>${formatExplanation(question.explanation)}</div>
     </section>
   `;
+}
+
+function renderCorrectAnswerLine(question) {
+  const hasMatching = (question.matchingPairs?.length ?? 0) > 0;
+  return `<p class="correct-answer">${
+    hasMatching ? "Review the correct matches below." : question.correctAnswers.map(escapeHtml).join(" · ")
+  }</p>`;
 }
 
 function renderAnswerAssets(question) {
@@ -775,7 +780,11 @@ function renderExamResult(score) {
                 (question) => `
                   <article class="missed-item">
                     <strong>${escapeHtml(question.question)}</strong>
-                    <span>${question.correctAnswers.map(escapeHtml).join(" · ")}</span>
+                    ${renderCorrectAnswerLine(question)}
+                    <details open>
+                      <summary>Explanation</summary>
+                      <div>${formatExplanation(question.explanation)}</div>
+                    </details>
                   </article>
                 `,
               )
