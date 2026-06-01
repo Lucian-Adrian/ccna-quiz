@@ -217,10 +217,10 @@ h1 {
 
 .study-board {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, auto);
+  gap: 24px;
   align-items: center;
-  padding: 0 0 22px;
+  padding: 0 0 24px;
   border-bottom: 1px solid var(--line);
   margin-bottom: 18px;
 }
@@ -239,17 +239,42 @@ h1 {
 }
 
 .next-line strong {
-  margin-top: 8px;
-  font-size: 42px;
-  line-height: 1.04;
+  max-width: 680px;
+  margin-top: 7px;
+  font-size: clamp(34px, 4.2vw, 52px);
+  line-height: 1;
   font-weight: 880;
 }
 
 .next-line small {
-  margin-top: 8px;
+  margin-top: 10px;
   color: var(--muted);
   font-size: 14px;
   font-weight: 700;
+}
+
+.study-actions {
+  display: grid;
+  gap: 10px;
+  justify-items: stretch;
+}
+
+.primary-action {
+  min-height: 54px;
+  min-width: 210px;
+  font-size: 16px;
+}
+
+.secondary-actions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(84px, 1fr));
+  gap: 8px;
+}
+
+.secondary-actions .secondary {
+  min-height: 42px;
+  padding-inline: 12px;
+  color: #2d2f33;
 }
 
 .learning-strip,
@@ -266,10 +291,10 @@ h1 {
   align-items: center;
   justify-content: space-between;
   gap: 16px;
-  padding: 0 0 22px;
+  padding: 0 0 20px;
   border-bottom: 1px solid var(--line);
   background: #fff;
-  margin-bottom: 26px;
+  margin-bottom: 24px;
 }
 
 .selected-line strong,
@@ -277,7 +302,7 @@ h1 {
   display: block;
 }
 
-.selected-line strong {
+.selected-line strong:not(.scope-count) {
   font-size: 17px;
 }
 
@@ -288,10 +313,33 @@ h1 {
   font-weight: 650;
 }
 
+.selected-line .scope-label {
+  margin-top: 0;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.scope-count {
+  min-width: 58px;
+  text-align: right;
+  font-size: 23px;
+  line-height: 1;
+}
+
+.scope-count span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
 .learning-strip div,
 .stat-grid div {
-  min-height: 104px;
-  padding: 17px 0;
+  min-height: 82px;
+  padding: 14px 0;
   border-right: 1px solid var(--line);
   background: #fff;
 }
@@ -311,8 +359,8 @@ h1 {
 .learning-strip strong,
 .stat-grid strong {
   display: block;
-  margin-top: 18px;
-  font-size: 31px;
+  margin-top: 11px;
+  font-size: 25px;
   line-height: 1;
   font-weight: 850;
 }
@@ -323,15 +371,23 @@ h1 {
 }
 
 .section-title {
-  margin: 28px 0 10px;
-  font-size: 16px;
+  margin: 24px 0 14px;
+  font-size: 18px;
   font-weight: 840;
+}
+
+.subsection-title {
+  margin: 18px 0 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
 }
 
 .deck-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  gap: 12px 18px;
 }
 
 .deck-grid.featured {
@@ -348,7 +404,7 @@ h1 {
   min-height: 78px;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: 6px 14px;
+  gap: 8px 14px;
   align-items: center;
   border: 0;
   border-bottom: 1px solid var(--line);
@@ -360,19 +416,37 @@ h1 {
   cursor: pointer;
 }
 
-.deck-row.selected {
-  box-shadow: inset 4px 0 0 var(--ink);
-  padding-left: 14px;
+.deck-row:hover {
+  border-bottom-color: var(--line-strong);
 }
 
-.deck-row span {
+.deck-row.selected {
+  box-shadow: inset 3px 0 0 var(--ink);
+  padding-left: 12px;
+}
+
+.deck-title {
   font-size: 15px;
   font-weight: 820;
 }
 
-.deck-row strong {
-  font-size: 16px;
-  line-height: 1;
+.deck-row-action {
+  display: inline-flex;
+  min-height: 30px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: 0 11px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 820;
+}
+
+.deck-row.selected .deck-row-action {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
 }
 
 .deck-row small {
@@ -758,8 +832,8 @@ pre {
 
   .topbar,
   .question-top {
-    min-height: 78px;
-    padding: 18px 20px 14px;
+    min-height: 70px;
+    padding: 16px 20px 12px;
   }
 
   .topbar {
@@ -779,7 +853,7 @@ pre {
   }
 
   .content {
-    padding: 18px 20px 94px;
+    padding: 16px 20px 94px;
   }
 
   .trainer {
@@ -792,13 +866,13 @@ pre {
 
   .study-board {
     grid-template-columns: 1fr;
-    gap: 16px;
-    padding-bottom: 18px;
+    gap: 14px;
+    padding-bottom: 16px;
   }
 
   .next-line strong {
-    max-width: 310px;
-    font-size: 35px;
+    max-width: 100%;
+    font-size: 36px;
     line-height: 1.07;
   }
 
@@ -807,44 +881,71 @@ pre {
     grid-template-columns: 1fr 1fr;
   }
 
-  .study-board .hero-actions.compact,
-  .selected-line .hero-actions.compact {
-    grid-template-columns: repeat(3, 1fr);
+  .study-actions {
+    width: 100%;
+  }
+
+  .primary-action {
+    width: 100%;
+    min-width: 0;
+    min-height: 52px;
+  }
+
+  .secondary-actions {
+    grid-template-columns: repeat(auto-fit, minmax(96px, 1fr));
   }
 
   .hero-actions > * {
     min-width: 0;
   }
 
-  .learning-strip,
+  .learning-strip {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    margin-bottom: 18px;
+  }
+
   .stat-grid {
     grid-template-columns: repeat(2, 1fr);
     margin-bottom: 22px;
   }
 
   .selected-line {
-    align-items: stretch;
-    flex-direction: column;
-    margin-bottom: 24px;
+    align-items: flex-start;
+    flex-direction: row;
+    margin-bottom: 20px;
   }
 
-  .learning-strip div,
+  .learning-strip div {
+    min-height: 62px;
+    padding: 10px 0;
+  }
+
   .stat-grid div {
     min-height: 82px;
     padding: 14px 0;
   }
 
-  .learning-strip div:nth-child(2n),
   .stat-grid div:nth-child(2n) {
     border-right: 0;
   }
 
-  .learning-strip div:nth-child(-n + 2),
   .stat-grid div:nth-child(-n + 2) {
     border-bottom: 1px solid var(--line);
   }
 
-  .learning-strip strong,
+  .learning-strip div:last-child {
+    border-right: 0;
+  }
+
+  .learning-strip span {
+    font-size: 12px;
+  }
+
+  .learning-strip strong {
+    margin-top: 8px;
+    font-size: 22px;
+  }
+
   .stat-grid strong {
     margin-top: 12px;
     font-size: 26px;
@@ -855,9 +956,17 @@ pre {
     grid-template-columns: 1fr;
   }
 
+  .section-title {
+    margin: 20px 0 12px;
+  }
+
+  .subsection-title {
+    margin: 14px 0 6px;
+  }
+
   .deck-row {
-    min-height: 72px;
-    padding: 12px 0;
+    min-height: 64px;
+    padding: 10px 0;
   }
 
   .question-card {

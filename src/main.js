@@ -12,7 +12,6 @@ import {
   getDueQuestions,
   getLearningSummary,
   getNewQuestions,
-  getRecommendedDeck,
   getWeakQuestions,
   isCorrect,
   scheduleProgress,
@@ -25,6 +24,7 @@ import "./styles.css";
 
 const STORAGE_KEY = "quizos-v2-progress";
 const STORAGE_BACKUP_KEY = "quizos-v2-progress-backup";
+const DECK_KEY = "quizos-v2-selected-deck";
 const EXAM_LIMIT = 24;
 
 const moduleSources = {
@@ -42,12 +42,17 @@ const app = document.querySelector("#app");
 
 const state = {
   screen: "home",
-  deckId: "midterm-1",
+  deckId: loadDeckId(),
   progress: loadProgress(),
   session: null,
   savedAt: Number(localStorage.getItem(`${STORAGE_KEY}-saved-at`) ?? 0),
   saveError: "",
 };
+
+function loadDeckId() {
+  const savedDeckId = localStorage.getItem(DECK_KEY);
+  return savedDeckId && deckById.has(savedDeckId) ? savedDeckId : "midterm-1";
+}
 
 function loadProgress() {
   return loadStoredProgress(localStorage, STORAGE_KEY, STORAGE_BACKUP_KEY);
@@ -98,7 +103,9 @@ function navigate(screen) {
 }
 
 function selectDeck(deckId) {
+  if (!deckById.has(deckId)) return;
   state.deckId = deckId;
+  localStorage.setItem(DECK_KEY, deckId);
   render();
 }
 
@@ -131,9 +138,8 @@ function startPracticeQueue(questions) {
 }
 
 function startFocusSession() {
-  const recommended = getRecommendedDeck(decks, state.progress) ?? currentDeck();
-  state.deckId = recommended.id;
-  const questions = buildSmartReview(recommended, state.progress, {
+  const deck = currentDeck();
+  const questions = buildSmartReview(deck, state.progress, {
     limit: EXAM_LIMIT,
     seed: Date.now(),
   });
@@ -359,32 +365,35 @@ function renderBottomNav() {
 function renderHome() {
   const deck = currentDeck();
   const summary = getLearningSummary(deck, state.progress);
-  const recommended = getRecommendedDeck(decks, state.progress) ?? deck;
-  const recommendedSummary = getLearningSummary(recommended, state.progress);
   const weakCount = getWeakQuestions(deck, state.progress).length;
   const dueCount = getDueQuestions(deck, state.progress).length;
   const newCount = getNewQuestions(deck, state.progress).length;
+  const primaryAction = dueCount ? "review-due" : "start-focus";
+  const primaryLabel = dueCount ? "Review due" : "Start review";
+  const nextDetail = `${dueCount} due · ${newCount} new · ${weakCount} weak`;
 
   return `
     <section class="topbar">
       <div>
         <h1>Study</h1>
-        <p>${deck.title} selected</p>
+        <p>${deck.title}</p>
       </div>
-      <button class="primary desktop-only" type="button" data-action="start-focus">Start focus</button>
     </section>
 
     <section class="content">
       <section class="study-board">
         <div class="next-line">
-          <span>Next</span>
-          <strong>${dueCount ? "Review due" : recommended.title}</strong>
-          <small>${dueCount ? `${dueCount} due now · ${weakCount} weak` : `${recommendedSummary.unseen} unseen · ${recommendedSummary.weak} weak`}</small>
+          <span>Next up</span>
+          <strong>${dueCount ? "Review due" : deck.title}</strong>
+          <small>${nextDetail}</small>
         </div>
-        <div class="hero-actions compact">
-          <button class="primary" type="button" data-action="${dueCount ? "review-due" : "start-focus"}">${dueCount ? "Review due" : "Smart review"}</button>
-          <button class="secondary" type="button" data-action="review-weak" ${weakCount === 0 ? "disabled" : ""}>Weak</button>
+        <div class="study-actions">
+          <button class="primary primary-action" type="button" data-action="${primaryAction}">${primaryLabel}</button>
+          <div class="secondary-actions">
+            ${weakCount > 0 ? `<button class="secondary" type="button" data-action="review-weak">Weak</button>` : ""}
+            ${newCount > 0 ? `<button class="secondary" type="button" data-action="learn-new">New</button>` : ""}
           <button class="secondary" type="button" data-start="exam">Exam</button>
+          </div>
         </div>
       </section>
 
@@ -397,22 +406,20 @@ function renderHome() {
 
       <section class="selected-line">
         <div>
+          <span class="scope-label">Current scope</span>
           <strong>${deck.title}</strong>
-          <span>${deck.count} questions · ${summary.due} due · ${summary.unseen} unseen</span>
+          <span>Tap a row below to change what you practice.</span>
         </div>
-        <div class="hero-actions compact">
-          <button class="primary" type="button" data-action="start-focus">Smart</button>
-          <button class="secondary" type="button" data-action="learn-new" ${newCount === 0 ? "disabled" : ""}>New</button>
-          <button class="secondary" type="button" data-start="exam">Exam</button>
-        </div>
+        <strong class="scope-count">${deck.count}<span>questions</span></strong>
       </section>
 
-      <h2 class="section-title">Midterms</h2>
+      <h2 class="section-title">Choose scope</h2>
+      <h3 class="subsection-title">Midterms</h3>
       <section class="deck-grid featured">
         ${decks.filter((item) => item.type === "midterm").map(renderDeckButton).join("")}
       </section>
 
-      <h2 class="section-title">Modules</h2>
+      <h3 class="subsection-title">Modules</h3>
       <section class="deck-grid">
         ${decks.filter((item) => item.type === "module").map(renderDeckButton).join("")}
       </section>
@@ -430,10 +437,10 @@ function renderDeckButton(deck) {
   const progress = getLearningSummary(deck, state.progress);
 
   return `
-    <button class="deck-row ${selected ? "selected" : ""}" type="button" data-deck="${deck.id}">
-      <span>${deck.title}</span>
-      <strong>${progress.seen}/${deck.count}</strong>
-      <small>${progress.due} due · ${progress.weak} weak · ${progress.percent}%</small>
+    <button class="deck-row ${selected ? "selected" : ""}" type="button" data-deck="${deck.id}" aria-pressed="${selected}">
+      <span class="deck-title">${deck.title}</span>
+      <span class="deck-row-action">${selected ? "Selected" : "Choose"}</span>
+      <small>${progress.due} due · ${progress.unseen} new · ${progress.percent}% done</small>
     </button>
   `;
 }
