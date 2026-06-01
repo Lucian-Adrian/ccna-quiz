@@ -165,6 +165,45 @@ test("hydrates table-only matching questions as answerable pairs", () => {
   assert.equal(buildSession(deck, { mode: "exam", limit: 10, seed: 1 }).questions.length, 1);
 });
 
+test("hydrates infra matching rows into column matching", () => {
+  const rawQuestion = {
+    number: 25,
+    question: "Match the definitions to their respective CLI hot keys and shortcuts.",
+    options: [
+      "displays the next screen ==>\u00a0\nspace bar",
+      "scrolls backwards through previously entered commands ==>\u00a0\nUp Arrow",
+      "provides context-sensitive help ==>\u00a0\n?",
+      "completes abbreviated commands and parameters ==>\u00a0\nTab",
+      "aborts commands such as trace and ping ==>\u00a0\nCtrl-Shift-6",
+    ],
+    correct_answers: [
+      "displays the next screen ==>\u00a0\nspace bar",
+      "scrolls backwards through previously entered commands ==>\u00a0\nUp Arrow",
+      "provides context-sensitive help ==>\u00a0\n?",
+      "completes abbreviated commands and parameters ==>\u00a0\nTab",
+      "aborts commands such as trace and ping ==>\u00a0\nCtrl-Shift-6",
+    ],
+    image_urls: ["answer-sheet.png"],
+    is_matching: true,
+  };
+
+  const [deck] = createDecks({ "m1-3": [rawQuestion] });
+  const [question] = deck.questions;
+
+  assert.deepEqual(question.options, []);
+  assert.deepEqual(question.matchingPairs, [
+    { left: "displays the next screen", right: "space bar" },
+    { left: "scrolls backwards through previously entered commands", right: "Up Arrow" },
+    { left: "provides context-sensitive help", right: "?" },
+    { left: "completes abbreviated commands and parameters", right: "Tab" },
+    { left: "aborts commands such as trace and ping", right: "Ctrl-Shift-6" },
+  ]);
+  assert.deepEqual(splitMatchingImages(question), {
+    exhibitImages: [],
+    answerImages: ["answer-sheet.png"],
+  });
+});
+
 test("splits matching images into exhibit and answer assets", () => {
   assert.deepEqual(
     splitMatchingImages({

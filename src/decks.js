@@ -46,7 +46,7 @@ export function normalizeQuestion(rawQuestion, source) {
     bankId: source.bankId,
     bankTitle: source.bankTitle,
     question: rawQuestion.question,
-    options: rawQuestion.options ?? [],
+    options: matchingPairs.length > 0 ? [] : rawQuestion.options ?? [],
     correctAnswers,
     matchingPairs,
     explanation,
@@ -158,9 +158,12 @@ function conceptNotes(text) {
 export function inferMatchingPairs(rawQuestion) {
   const questionText = rawQuestion.question ?? "";
   const table = rawQuestion.tables?.[0] ?? [];
+  const pairRows = rawQuestion.correct_answers?.length ? rawQuestion.correct_answers : rawQuestion.options ?? [];
   const hasChoiceAnswers = (rawQuestion.options ?? []).length > 0 || (rawQuestion.correct_answers ?? []).length > 0;
-  const looksLikeMatching = /match|place the options/i.test(questionText);
+  const looksLikeMatching = rawQuestion.is_matching || /match|place the options/i.test(questionText);
+  const pairsFromRows = parseMatchingRows(pairRows);
 
+  if (looksLikeMatching && pairsFromRows.length > 0) return pairsFromRows;
   if (hasChoiceAnswers || !looksLikeMatching) return [];
   if (!Array.isArray(table) || table.length < 2) return [];
   if (!table.every((row) => Array.isArray(row) && row.length === 2 && row[0] && row[1])) return [];
@@ -169,6 +172,20 @@ export function inferMatchingPairs(rawQuestion) {
     left: String(left),
     right: String(right),
   }));
+}
+
+function parseMatchingRows(rows) {
+  if (!Array.isArray(rows) || rows.length < 2) return [];
+
+  const pairs = rows
+    .map((row) => cleanupText(row).split(/\s*=+>\s*/))
+    .filter((parts) => parts.length === 2 && parts[0] && parts[1])
+    .map(([left, right]) => ({
+      left: cleanupText(left),
+      right: cleanupText(right),
+    }));
+
+  return pairs.length === rows.length ? pairs : [];
 }
 
 export function formatMatchingAnswer(left, right) {
