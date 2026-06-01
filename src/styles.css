@@ -215,6 +215,52 @@ h1 {
   flex-wrap: nowrap;
 }
 
+.bank-switch {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 26px;
+}
+
+.bank-option {
+  min-width: 0;
+  display: block;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: #fff;
+  padding: 13px 14px;
+  color: var(--ink);
+  text-align: left;
+  cursor: pointer;
+}
+
+.bank-option.selected {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+
+.bank-option strong,
+.bank-option span {
+  display: block;
+}
+
+.bank-option strong {
+  font-size: 15px;
+  font-weight: 850;
+}
+
+.bank-option span {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.bank-option.selected span {
+  color: rgba(255, 255, 255, 0.72);
+}
+
 .study-board {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(260px, auto);
@@ -870,6 +916,24 @@ pre {
     padding-bottom: 16px;
   }
 
+  .bank-switch {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    margin-bottom: 16px;
+  }
+
+  .bank-option {
+    min-height: 54px;
+    padding: 9px 6px;
+    text-align: center;
+  }
+
+  .bank-option span {
+    margin-top: 3px;
+    text-align: center;
+    font-size: 10px;
+  }
+
   .next-line strong {
     max-width: 100%;
     font-size: 36px;
@@ -1064,6 +1128,21 @@ pre {
     overflow: hidden;
     text-overflow: ellipsis;
     cursor: pointer;
+  }
+
+  .screen-home .bottom-nav {
+    position: static;
+    width: min(332px, calc(100vw - 16px));
+    margin: 0 auto 10px;
+    transform: none;
+  }
+
+  .screen-home .main {
+    padding-bottom: 0;
+  }
+
+  .screen-home .content {
+    padding-bottom: 24px;
   }
 }
 

@@ -1,0 +1,1426 @@
+[
+  {
+    "number": 1,
+    "question": "Which information is used by routers to forward a data packet toward its destination?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "source IP address",
+      "destination IP address",
+      "source data-link address",
+      "destination data-link address"
+    ],
+    "correct_answers": [
+      "destination IP address"
+    ],
+    "explanation": "**Correct Answer:** destination IP address\n\n**Concept & Details:**\nWhen a router receives a data packet, its primary job is to find the best path to send that packet toward its ultimate destination. To do this, the router looks at the Layer 3 (Network Layer) header of the packet and reads the **destination IP (Internet Protocol) address**. It then compares this destination address with its routing table (a list of known networks and the paths to get to them) to decide which interface to send the packet out of.\n\n*Why other options are incorrect:*\n- **source IP address:** The source IP address tells the router where the packet came from, not where it is going. It is used by the receiving device to reply, but not by routers to make forwarding decisions.\n- **source data-link address / destination data-link address:** These are Layer 2 addresses (like MAC (Media Access Control) addresses). Routers make routing decisions at Layer 3 (Network Layer) using IP addresses. Data-link addresses change at every hop (from router to router) and are only used for delivery within a single local network, not for routing across different networks."
+  },
+  {
+    "number": 2,
+    "question": "A computer has to send a packet to a destination host in the same LAN. How will the packet be sent?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The packet will be sent to the default gateway first, and then, depending on the response from the gateway, it may be sent to the destination host.",
+      "The packet will be sent directly to the destination host.",
+      "The packet will first be sent to the default gateway, and then from the default gateway it will be sent directly to the destination host.",
+      "The packet will be sent only to the default gateway."
+    ],
+    "correct_answers": [
+      "The packet will be sent directly to the destination host."
+    ],
+    "explanation": "**Correct Answer:** The packet will be sent directly to the destination host.\n\n**Concept & Details:**\nWhen a computer wants to send data, it first checks if the destination IP address is on the same local network (LAN, which stands for Local Area Network) or a remote network. It does this by comparing the destination IP address with its own IP address using its subnet mask. If the destination is on the same LAN, the sending computer doesn't need a router. It will use ARP (Address Resolution Protocol) to find the destination host's MAC (Media Access Control) address and send the packet directly to that host over the local physical switch.\n\n*Why other options are incorrect:*\n- **The packet will be sent to the default gateway first...:** A default gateway (typically a router) is only used when the destination host is on a *different* (remote) network. If the destination is on the same LAN, involving the default gateway is unnecessary and does not happen."
+  },
+  {
+    "number": 3,
+    "question": "A router receives a packet from the Gigabit 0/0 interface and determines that the packet needs to be forwarded out the Gigabit 0/1 interface. What will the router do next?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "route the packet out the Gigabit 0/1 interface",
+      "create a new Layer 2 Ethernet frame to be sent to the destination",
+      "look into the ARP cache to determine the destination IP address",
+      "look into the routing table to determine if the destination network is in the routing table"
+    ],
+    "correct_answers": [
+      "create a new Layer 2 Ethernet frame to be sent to the destination"
+    ],
+    "explanation": "**Correct Answer:** create a new Layer 2 Ethernet frame to be sent to the destination\n\n**Concept & Details:**\nWhen a router receives a frame, it strips off the Layer 2 (Data Link layer) header and trailer to look at the Layer 3 (IP) packet inside. After the router examines the destination IP address and determines the exit interface (in this case, Gigabit 0/1), it must prepare the packet to be sent over the next physical link. To do this, the router must encapsulate the IP packet into a *new* Layer 2 frame (with a new source and destination MAC (Media Access Control) address specific to that new exit link) before physically transmitting it.\n\n*Why other options are incorrect:*\n- **route the packet out the Gigabit 0/1 interface:** The router cannot simply push the raw Layer 3 packet out of the interface without first wrapping (encapsulating) it in a proper Layer 2 frame for that media.\n- **look into the ARP (Address Resolution Protocol) cache to determine the destination IP address:** The destination IP address is already inside the packet's Layer 3 header; the router does not need ARP to find it. (ARP is used to find MAC addresses, not IP addresses).\n- **look into the routing table to determine if the destination network is in the routing table:** The router has *already* looked at the routing table to determine that the packet needs to go out of Gigabit 0/1."
+  },
+  {
+    "number": 4,
+    "question": "Which IPv4 address can a host use to ping the loopback interface?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "126.0.0.1",
+      "127.0.0.0",
+      "126.0.0.0",
+      "127.0.0.1"
+    ],
+    "correct_answers": [
+      "127.0.0.1"
+    ],
+    "explanation": "**Correct Answer:** 127.0.0.1\n\n**Concept & Details:**\nThe address `127.0.0.1` is a special reserved IPv4 address known as the **loopback address**. It is used by a host to send network traffic to itself. Pinging `127.0.0.1` tests if the local TCP/IP (Transmission Control Protocol/Internet Protocol) stack, network card (NIC), and operating system network drivers are installed and functioning correctly. If you get a reply, it means your computer's internal networking software is working.\n\n*Why other options are incorrect:*\n- **127.0.0.0:** This represents the network ID of the loopback block (127.0.0.0/8), not a specific usable host address.\n- **126.0.0.1 / 126.0.0.0:** The `126.0.0.0` range belongs to normal public/private Class A addresses and is not reserved for local loopback testing."
+  },
+  {
+    "number": 5,
+    "question": "A computer can access devices on the same network but cannot access devices on other networks. What is the probable cause of this problem?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The cable is not connected properly to the NIC.",
+      "The computer has an invalid IP address.",
+      "The computer has an incorrect subnet mask.",
+      "The computer has an invalid default gateway address."
+    ],
+    "correct_answers": [
+      "The computer has an invalid default gateway address."
+    ],
+    "explanation": "**Correct Answer:** The computer has an invalid default gateway address.\n\n**Concept & Details:**\nThe **default gateway** is the address of the router interface that connects a local network (LAN) to other remote networks (like the Internet or another department's network). When a computer wants to send data to a device outside its own local subnet, it must forward those packets to the default gateway router. If the computer has an incorrect or missing default gateway configuration, it will not know where to send remote traffic, meaning it can talk to local neighbors on the same switch but cannot communicate with any device on external networks.\n\n*Why other options are incorrect:*\n- **The cable is not connected properly to the NIC / The computer has an invalid IP address:** If either of these were true, the computer would not be able to communicate with devices on the local network either.\n- **The computer has an incorrect subnet mask:** An incorrect subnet mask might cause local communication issues or random routing errors, but is not the most direct cause of being able to communicate perfectly locally while failing entirely for remote networks."
+  },
+  {
+    "number": 6,
+    "question": "Which statement describes a feature of the IP protocol?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "IP encapsulation is modified based on network media.",
+      "IP relies on Layer 2 protocols for transmission error control.",
+      "MAC addresses are used during the IP packet encapsulation.",
+      "IP relies on upper layer services to handle situations of missing or out-of-order packets."
+    ],
+    "correct_answers": [
+      "IP relies on upper layer services to handle situations of missing or out-of-order packets."
+    ],
+    "explanation": "**Correct Answer:** IP relies on upper layer services to handle situations of missing or out-of-order packets.\n\n**Concept & Details:**\nThe **IP (Internet Protocol)** is designed as a **connectionless, unreliable, and best-effort** delivery protocol at Layer 3 of the OSI (Open Systems Interconnection) model. This means that IP itself does not establish a connection before sending packets, nor does it guarantee that all packets will arrive safely or in the correct order. Instead, it leaves packet sequencing, error recovery, and flow control to upper-layer transport protocols, such as **TCP (Transmission Control Protocol)** at Layer 4.\n\n*Why other options are incorrect:*\n- **IP encapsulation is modified based on network media:** The IP packet encapsulation remains exactly the same regardless of what physical media (fiber, copper cable, Wi-Fi) is used to transport it. Only the Layer 2 frame encapsulation changes based on the media.\n- **IP relies on Layer 2 protocols for transmission error control:** Layer 2 protocols (like Ethernet) can detect errors using a FCS (Frame Check Sequence) and discard corrupted frames, but they do not provide reliable recovery or retransmission of lost data. That task belongs to Layer 4 (TCP).\n- **MAC (Media Access Control) addresses are used during the IP packet encapsulation:** MAC addresses are Layer 2 addresses and are added during the Layer 2 Ethernet frame encapsulation, not during the Layer 3 IP packet encapsulation."
+  },
+  {
+    "number": 7,
+    "question": "Why is NAT not needed in IPv6?​",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "Because IPv6 has integrated security, there is no need to hide the IPv6 addresses of internal networks.​",
+      "Any host or user can get a public IPv6 network address because the number of available IPv6 addresses is extremely large.​",
+      "The problems that are induced by NAT applications are solved because the IPv6 header improves packet handling by intermediate routers.​",
+      "The end-to-end connectivity problems that are caused by NAT are solved because the number of routes increases with the number of nodes that are connected to the Internet."
+    ],
+    "correct_answers": [
+      "Any host or user can get a public IPv6 network address because the number of available IPv6 addresses is extremely large.​"
+    ],
+    "explanation": "**Correct Answer:** Any host or user can get a public IPv6 network address because the number of available IPv6 addresses is extremely large.​\n\n**Concept & Details:**\n**NAT (Network Address Translation)** was primarily created as a temporary workaround for the depletion of IPv4 addresses. Because IPv4 uses 32-bit addresses (allowing only about 4.3 billion addresses), private IP addresses are translated to public IP addresses to share a single public address among many devices.\nIPv6, on the other hand, uses **128-bit addresses**, which provides an astronomical number of unique addresses (approximately 340 undecillion addresses). Because there is no shortage of addresses in IPv6, every device on a network can be assigned a globally unique public IPv6 address, rendering address translation (NAT) unnecessary and restoring true end-to-end internet connectivity.\n\n*Why other options are incorrect:*\n- **Because IPv6 has integrated security...:** Hiding addresses was never the primary technical reason NAT was designed; NAT was for conserving IPv4 addresses. Security in IPv6 is handled by firewalls and IPsec, not by address concealment.\n- **The problems that are induced by NAT... / The end-to-end connectivity problems...:** While IPv6 does solve NAT-induced application and routing issues by eliminating the need for NAT, these options do not explain *why* NAT is not needed. The direct cause of NAT being obsolete in IPv6 is the massive size of the IPv6 address space."
+  },
+  {
+    "number": 8,
+    "question": "Which parameter does the router use to choose the path to the destination when there are multiple routes available?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "the lower metric value that is associated with the destination network",
+      "the lower gateway IP address to get to the destination network",
+      "the higher metric value that is associated with the destination network",
+      "the higher gateway IP address to get to the destination network"
+    ],
+    "correct_answers": [
+      "the lower metric value that is associated with the destination network"
+    ],
+    "explanation": "**Correct Answer:** the lower metric value that is associated with the destination network\n\n**Concept & Details:**\nWhen a router has multiple routes to the exact same destination network in its routing table, it must decide which path is the best (most efficient). It makes this decision using a value called a **metric**. The metric is a cost value calculated by routing protocols (based on factors like bandwidth, delay, or hop count). Routers always prefer the path with the **lowest metric value** because it represents the shortest or fastest path to the destination.\n\n*Why other options are incorrect:*\n- **the higher metric value...:** A higher metric indicates a less efficient, more costly, or slower path, so it is not preferred.\n- **the lower/higher gateway IP address...:** The numerical value of the next-hop gateway's IP address has no bearing on path quality or preference; it is simply an address."
+  },
+  {
+    "number": 9,
+    "question": "What are two services provided by the OSI network layer? (Choose two.)",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "performing error detection",
+      "routing packets toward the destination",
+      "encapsulating PDUs from the transport layer",
+      "placement of frames on the media",
+      "collision detection"
+    ],
+    "correct_answers": [
+      "routing packets toward the destination",
+      "encapsulating PDUs from the transport layer"
+    ],
+    "explanation": "**Correct Answer:** routing packets toward the destination AND encapsulating PDUs from the transport layer\n\n**Concept & Details:**\nThe **OSI (Open Systems Interconnection) Network Layer (Layer 3)** is responsible for the delivery of packets from the source host to the destination host across networks. Two of its primary functions are:\n1. **Encapsulation:** Taking the PDU (Protocol Data Unit), specifically a segment, from the Transport Layer (Layer 4) and wrapping it with a Layer 3 header containing source and destination IP addresses to create an IP packet.\n2. **Routing:** Determining the best physical path for the packet to travel to reach its destination and forwarding it accordingly.\n\n*Why other options are incorrect:*\n- **performing error detection:** This is primarily a function of the Data Link Layer (Layer 2), which uses a frame check sequence (FCS), and the Transport Layer (Layer 4), which uses checksums.\n- **placement of frames on the media / collision detection:** These are Layer 2 (Data Link) and Layer 1 (Physical) functions. For example, placing frames on the media is a Data Link sublayer (MAC) function, and collision detection is used in CSMA/CD (Carrier Sense Multiple Access with Collision Detection) on Ethernet networks at the physical/data link boundary."
+  },
+  {
+    "number": 10,
+    "question": "Within a production network, what is the purpose of configuring a switch with a default gateway address?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "Hosts that are connected to the switch can use the switch default gateway address to forward packets to a remote destination.",
+      "A switch must have a default gateway to be accessible by Telnet and SSH.",
+      "The default gateway address is used to forward packets originating from the switch to remote networks.",
+      "It provides a next-hop address for all traffic that flows through the switch."
+    ],
+    "correct_answers": [
+      "The default gateway address is used to forward packets originating from the switch to remote networks."
+    ],
+    "explanation": "**Correct Answer:** The default gateway address is used to forward packets originating from the switch to remote networks.\n\n**Concept & Details:**\nA Layer 2 switch is primarily used to connect devices on the same local network. However, to manage the switch remotely (using protocols like SSH (Secure Shell) or HTTPS (Hypertext Transfer Protocol Secure)) from another network, the switch itself must have a way to reply to those remote administrative queries. By configuring a **default gateway** on the switch, you give it the ability to send packets that *originate from the switch itself* (such as management traffic, syslog messages, or SNMP (Simple Network Management Protocol) alerts) out to remote networks.\n\n*Why other options are incorrect:*\n- **Hosts that are connected to the switch can use the switch default gateway...:** Connected hosts must configure their own default gateway pointing directly to the router, not the switch. The switch does not route traffic for the hosts.\n- **A switch must have a default gateway to be accessible by Telnet and SSH:** A switch can still be accessed via Telnet or SSH from devices located *within the same local network* (LAN) without a default gateway. The gateway is only needed if the administrator is connecting from a *different* network.\n- **It provides a next-hop address for all traffic that flows through the switch:** A Layer 2 switch forwards frames based on MAC addresses, not IP routing tables, so it does not use the default gateway for transit traffic passing between ports."
+  },
+  {
+    "number": 11,
+    "question": "What is a basic characteristic of the IP protocol?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "connectionless",
+      "media dependent",
+      "user data segmentation",
+      "reliable end-to-end delivery"
+    ],
+    "correct_answers": [
+      "connectionless"
+    ],
+    "explanation": "**Correct Answer:** connectionless\n\n**Concept & Details:**\nA key characteristic of the **IP (Internet Protocol)** is that it is **connectionless**. This means that when a device wants to send a packet, it does not send control messages first to establish a pre-arranged connection or \"handshake\" with the receiver. It simply places the packet onto the network and trusts that it will reach its destination. This keeps the protocol lightweight and fast.\n\n*Why other options are incorrect:*\n- **media dependent:** IP is **media independent**. It does not care whether the physical medium carrying the data is copper cable, optical fiber, or wireless (Wi-Fi). It works the same way on all of them.\n- **user data segmentation:** Segmenting large pieces of user data into smaller portions is the job of the Transport Layer (Layer 4), specifically TCP, not IP (Layer 3).\n- **reliable end-to-end delivery:** IP is an **unreliable/best-effort** protocol. It does not perform error checking, flow control, or acknowledgment of received packets. Reliability is handled by TCP at Layer 4."
+  },
+  {
+    "number": 12,
+    "question": "Which field in the IPv4 header is used to prevent a packet from traversing a network endlessly?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "Time-to-Live",
+      "Sequence Number",
+      "Acknowledgment Number",
+      "Differentiated Services"
+    ],
+    "correct_answers": [
+      "Time-to-Live"
+    ],
+    "explanation": "**Correct Answer:** Time-to-Live\n\n**Concept & Details:**\nThe **Time-to-Live (TTL)** field in the IPv4 header is an 8-bit value that acts as a safety mechanism to prevent packets from looping endlessly around the internet (which could happen if there is a routing loop). Every time a packet arrives at a router, the router decrements (reduces) the TTL value by 1. If the TTL drops to 0, the router discards the packet and sends an ICMP (Internet Control Message Protocol) \"Time Exceeded\" message back to the sender.\n\n*Why other options are incorrect:*\n- **Sequence Number / Acknowledgment Number:** These are fields in the Layer 4 **TCP (Transmission Control Protocol)** header, not the Layer 3 IP header. They are used to track and order segments.\n- **Differentiated Services:** This field (formerly Type of Service) is used for Quality of Service (QoS) markings to prioritize certain types of traffic (like voice or video) over others, not to limit packet lifetime."
+  },
+  {
+    "number": 13,
+    "question": "What is one advantage that the IPv6 simplified header offers over IPv4?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "smaller-sized header",
+      "little requirement for processing checksums",
+      "smaller-sized source and destination IP addresses",
+      "efficient packet handling"
+    ],
+    "correct_answers": [
+      "efficient packet handling"
+    ],
+    "explanation": "**Correct Answer:** efficient packet handling\n\n**Concept & Details:**\nAlthough IPv6 addresses are much larger than IPv4 addresses, the IPv6 header was redesigned to be simpler and more streamlined. The IPv6 header has a fixed length of 40 bytes and contains only 8 fields (compared to 12 fields in IPv4). Unnecessary fields, such as the Header Checksum and fragmentation fields, were removed from the main header. This simplicity allows routers to process and forward packets much faster, leading to **more efficient packet handling** across the network.\n\n*Why other options are incorrect:*\n- **smaller-sized header:** The IPv6 base header is actually larger (40 bytes) than the minimum IPv4 header (20 bytes). However, it is simpler because it contains fewer fields and has a fixed size.\n- **little requirement for processing checksums:** In IPv6, the header checksum was completely removed (not just simplified) to save processing time on intermediate routers, relying on Layer 2 and Layer 4 check mechanisms instead.\n- **smaller-sized source and destination IP addresses:** This is false. IPv6 addresses are 128 bits (4 times larger than the 32-bit IPv4 addresses)."
+  },
+  {
+    "number": 14,
+    "question": "What IPv4 header field identifies the upper layer protocol carried in the packet?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "Protocol",
+      "Identification",
+      "Version",
+      "Differentiated Services"
+    ],
+    "correct_answers": [
+      "Protocol"
+    ],
+    "explanation": "**Correct Answer:** Protocol\n\n**Concept & Details:**\nThe **Protocol** field in the IPv4 header (an 8-bit field) is used to tell the receiving device which transport layer protocol (or other Layer 4 protocol) is waiting inside the packet payload. For example, if the value is `6`, the packet contains a **TCP (Transmission Control Protocol)** segment; if the value is `17`, it contains a **UDP (User Datagram Protocol)** packet; and if it's `1`, it is carrying **ICMP (Internet Control Message Protocol)** data.\n\n*Why other options are incorrect:*\n- **Identification:** This field is used to identify packets that have been fragmented, helping the destination host reassemble them.\n- **Version:** This specifies the IP version being used (e.g., a value of `4` for IPv4).\n- **Differentiated Services:** This field is used to classify and manage traffic priority (QoS) on the network."
+  },
+  {
+    "number": 15,
+    "question": "Refer to the exhibit. Match the packets with their destination IP address to the exiting interfaces on the router. (Not all targets are used.)\n\nPlace the options in the following order:",
+    "image_urls": [
+      "https://itexamanswers.net/wp-content/uploads/2019/12/2024-09-17_144248.jpg"
+    ],
+    "code_blocks": [],
+    "tables": [
+      [
+        [
+          "packets with destination of 172.17.6.15",
+          "FastEthernet0/0"
+        ],
+        [
+          "packets with destination of 172.17.14.8",
+          "FastEthernet0/1"
+        ],
+        [
+          "packets with destination of 172.17.12.10",
+          "FastEthernet1/0"
+        ],
+        [
+          "packets with destination of 172.17.10.5",
+          "FastEthernet1/1"
+        ],
+        [
+          "packets with destination of 172.17.8.20",
+          "Serial0/0/0"
+        ]
+      ]
+    ],
+    "options": [],
+    "correct_answers": [],
+    "explanation": "**Correct Answer:** Refer to matching details in the explanation.\n\n**Concept & Details:**\nTo match the destination IP addresses of the packets to the router's exiting interfaces, the router performs a lookup in its routing table, searching for the longest prefix match (the most specific network route that matches the IP address).\n\nHere is the breakdown of how each packet is forwarded based on the routing table entries:\n- **172.17.6.15** matches the network subnet associated with interface **FastEthernet 0/0**.\n- **172.17.14.8** matches the subnet for interface **FastEthernet 0/1**.\n- **172.17.12.10** matches the subnet for interface **FastEthernet 1/0**.\n- **172.17.10.5** matches the subnet for interface **FastEthernet 1/1**.\n- **172.17.8.20**: Since the network `172.17.8.0` has no specific entry in the routing table, the router will forward it out of the gateway of last resort (default route), which is interface **Serial 0/0/0**."
+  },
+  {
+    "number": 16,
+    "question": "What information does the loopback test provide?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The TCP/IP stack on the device is working correctly.",
+      "The device has end-to-end connectivity.",
+      "DHCP is working correctly.",
+      "The Ethernet cable is working correctly.",
+      "The device has the correct IP address on the network."
+    ],
+    "correct_answers": [
+      "The TCP/IP stack on the device is working correctly."
+    ],
+    "explanation": "**Correct Answer:** The TCP/IP stack on the device is working correctly.\n\n**Concept & Details:**\nA **loopback test** is performed by pinging the reserved IP address `127.0.0.1`. When you run this command, the operating system sends packets to its own network card (NIC) and reads them back without actually sending them out onto the physical network cable. If the ping succeeds, it confirms that your local computer's network interface card drivers, configuration, and **TCP/IP stack** are installed, active, and functioning properly at the software level.\n\n*Why other options are incorrect:*\n- **The device has end-to-end connectivity / The Ethernet cable is working correctly:** The loopback test does not send any signals onto the physical cable or through the switch/router, so it cannot verify external wiring or remote network connectivity.\n- **DHCP (Dynamic Host Configuration Protocol) is working correctly / The device has the correct IP address:** You can successfully ping the loopback address even if your network card has no cable plugged in and has failed to obtain an IP address via DHCP."
+  },
+  {
+    "number": 17,
+    "question": "What routing table entry has a next hop address associated with a destination network?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "directly-connected routes",
+      "local routes",
+      "remote routes",
+      "C and L source routes"
+    ],
+    "correct_answers": [
+      "remote routes"
+    ],
+    "explanation": "**Correct Answer:** remote routes\n\n**Concept & Details:**\nA router's routing table contains different types of routes. A **remote route** is a path to a network that is not physically attached to one of the router's own interfaces. Because the destination is far away, the router cannot deliver the packet directly. Instead, it must send the packet to another router along the path. The address of that next router is called the **next-hop address**. Therefore, only remote routes require a next-hop IP address.\n\n*Why other options are incorrect:*\n- **directly-connected routes / local routes (C and L source routes):** These routes represent networks that are plugged directly into the router's own ports. When forwarding packets to these networks, the router sends them directly out the interface to the destination host, so there is no \"next-hop\" router involved."
+  },
+  {
+    "number": 18,
+    "question": "How do hosts ensure that their packets are directed to the correct network destination?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "They have to keep their own local routing table that contains a route to the loopback interface, a local network route, and a remote default route.​",
+      "They always direct their packets to the default gateway, which will be responsible for the packet delivery.",
+      "They search in their own local routing table for a route to the network destination address and pass this information to the default gateway.",
+      "They send a query packet to the default gateway asking for the best route."
+    ],
+    "correct_answers": [
+      "They have to keep their own local routing table that contains a route to the loopback interface, a local network route, and a remote default route.​"
+    ],
+    "explanation": "**Correct Answer:** They have to keep their own local routing table that contains a route to the loopback interface, a local network route, and a remote default route.​\n\n**Concept & Details:**\nEvery network host (like a PC, laptop, or server) must maintain its own **local routing table** (which you can view on Windows using the command `route print` or `netstat -r`). This table tells the host how to handle traffic:\n1. **Loopback interface (127.0.0.1):** For traffic sent to itself.\n2. **Local network route:** For traffic sent to neighbors on the same local switch (no gateway needed).\n3. **Default route (0.0.0.0/0):** For traffic sent to remote networks (directing it to the default gateway router).\nWithout this table, the host wouldn't know whether to send a packet directly onto the local LAN or forward it to the router.\n\n*Why other options are incorrect:*\n- **They always direct their packets to the default gateway...:** This is incorrect because hosts do not send local LAN traffic to the gateway; they send it directly to the local destination host.\n- **They search... and pass this information to the default gateway / They send a query packet...:** Hosts do not exchange routing table lookups or query the gateway for routes before sending data. They simply make a local decision using their routing table and forward the packet accordingly."
+  },
+  {
+    "number": 19,
+    "question": "When transporting data from real-time applications, such as streaming audio and video, which field in the IPv6 header can be used to inform the routers and switches to maintain the same path for the packets in the same conversation?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "Next Header",
+      "Flow Label",
+      "Traffic Class",
+      "Differentiated Services"
+    ],
+    "correct_answers": [
+      "Flow Label"
+    ],
+    "explanation": "**Correct Answer:** Flow Label\n\n**Concept & Details:**\nThe **Flow Label** is a 20-bit field in the IPv6 header. It is designed to handle real-time, delay-sensitive traffic like voice and video. A \"flow\" is a sequence of packets sent from a specific source to a specific destination. By labeling these packets with a unique Flow Label, routers and switches along the way can easily identify them as belonging to the same conversation. This allows the network devices to route all packets of that flow along the exact same path, preventing packets from arriving out of order or experiencing varied delays (jitter).\n\n*Why other options are incorrect:*\n- **Next Header:** This field specifies the type of header immediately following the IPv6 header (like TCP, UDP, or an Extension Header), similar to the Protocol field in IPv4.\n- **Traffic Class:** This field (equivalent to Differentiated Services in IPv4) is used for packet prioritization (QoS) but does not force packets to follow the same path.\n- **Differentiated Services:** This is the IPv4 equivalent of Traffic Class and is not a field in the IPv6 header."
+  },
+  {
+    "number": 20,
+    "question": "What statement describes the function of the Address Resolution Protocol?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "ARP is used to discover the IP address of any host on a different network.",
+      "ARP is used to discover the IP address of any host on the local network.",
+      "ARP is used to discover the MAC address of any host on a different network.",
+      "ARP is used to discover the MAC address of any host on the local network."
+    ],
+    "correct_answers": [
+      "ARP is used to discover the MAC address of any host on the local network."
+    ],
+    "explanation": "**Correct Answer:** ARP is used to discover the MAC address of any host on the local network.\n\n**Concept & Details:**\n**ARP (Address Resolution Protocol)** is a fundamental protocol used in IPv4 networks. When a device wants to send an Ethernet frame to another device on the same local network, it already knows the destination's IP (Layer 3) address, but it cannot send the frame without knowing the destination's **MAC (Media Access Control, Layer 2) address**. ARP resolves this by sending an ARP request to ask: *\"Who has this IP address? Please tell me your MAC address.\"* The target device replies with its MAC address, which the sender then saves in its ARP cache for future packets.\n\n*Why other options are incorrect:*\n- **ARP is used to discover the IP address...:** ARP is used to discover MAC addresses, not IP addresses (which are already known before ARP runs).\n- **ARP is used to discover the MAC address of any host on a different network:** ARP requests are sent as broadcasts, and routers do not forward broadcasts. Therefore, ARP cannot be used to discover the MAC address of a host on a different network. To send packets to a different network, a host uses ARP to find the MAC address of its *default gateway* router."
+  },
+  {
+    "number": 21,
+    "question": "Under which two circumstances will a switch flood a frame out of every port except the port that the frame was received on? (Choose two.)",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The frame has the broadcast address as the destination address.",
+      "The destination address is unknown to the switch.",
+      "The source address in the frame header is the broadcast address.",
+      "The source address in the frame is a multicast address.",
+      "The destination address in the frame is a known unicast address."
+    ],
+    "correct_answers": [
+      "The frame has the broadcast address as the destination address.",
+      "The destination address is unknown to the switch."
+    ],
+    "explanation": "**Correct Answer:** The frame has the broadcast address as the destination address AND The destination address is unknown to the switch.\n\n**Concept & Details:**\nA switch maintains a **MAC address table** (a list mapping port numbers to the MAC addresses of connected devices). When a frame arrives at a switch, the switch examines the destination MAC address to decide where to send it:\n1. **Broadcast Frame (Destination MAC: FFFF.FFFF.FFFF):** Since a broadcast is meant for everyone, the switch must forward it out of all active ports (except the port where the frame entered).\n2. **Unknown Unicast Frame:** If the destination MAC address is a unicast address (intended for a single receiver) but is *not* currently listed in the switch's MAC address table, the switch does not know which port the destination device is connected to. To ensure the frame reaches its target, the switch floods the frame out of all ports (except the incoming port). Once the destination device replies, the switch learns its MAC address and updates its table.\n\n*Why other options are incorrect:*\n- **The source address in the frame header is the broadcast/multicast address:** A source address must always be a unicast address (representing the specific device that sent the frame). It can never be a broadcast or multicast address.\n- **The destination address in the frame is a known unicast address:** If the destination MAC address is known, the switch will forward the frame only out of the specific port associated with that MAC address, which is called unicast forwarding (not flooding)."
+  },
+  {
+    "number": 22,
+    "question": "Which statement describes the treatment of ARP requests on the local link?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "They must be forwarded by all routers on the local network.",
+      "They are received and processed by every device on the local network.",
+      "They are dropped by all switches on the local network.",
+      "They are received and processed only by the target device."
+    ],
+    "correct_answers": [
+      "They are received and processed by every device on the local network."
+    ],
+    "explanation": "**Correct Answer:** They are received and processed by every device on the local network.\n\n**Concept & Details:**\nWhen a device needs to send data to a local IP address but doesn't know the destination's MAC address, it sends out an **ARP (Address Resolution Protocol) request**. Because the sending device doesn't know who has the target IP, it sends the request as a Layer 2 **broadcast** (destination MAC: `FFFF.FFFF.FFFF`). Switches flood broadcasts out of every port, meaning **every device on the local network** receives the frame and processes it (passes it up to the network layer to check if the requested IP matches its own). Only the device with the matching IP address will reply, while the others will discard the packet.\n\n*Why other options are incorrect:*\n- **They must be forwarded by all routers...:** Routers block Layer 2 broadcasts and do not forward ARP requests to other networks.\n- **They are dropped by all switches...:** Switches forward (flood) broadcast frames; they do not drop them.\n- **They are received and processed only by the target device:** Because it is a broadcast, every device must receive and inspect the frame first to see if it is the target device. It cannot bypass other devices."
+  },
+  {
+    "number": 23,
+    "question": "Which destination address is used in an ARP request frame?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "0.0.0.0",
+      "255.255.255.255",
+      "FFFF.FFFF.FFFF",
+      "AAAA.AAAA.AAAA",
+      "the physical address of the destination host"
+    ],
+    "correct_answers": [
+      "FFFF.FFFF.FFFF"
+    ],
+    "explanation": "**Correct Answer:** FFFF.FFFF.FFFF\n\n**Concept & Details:**\nAn **ARP (Address Resolution Protocol) request** is encapsulated inside an Ethernet frame. Because the sending device does not know the specific MAC address of the target host, it must send the request to all devices on the LAN (Local Area Network). To do this, it uses the Layer 2 broadcast MAC address, which is **FFFF.FFFF.FFFF**. Every network card that receives a frame with this destination address will accept the frame and pass it to the operating system for processing.\n\n*Why other options are incorrect:*\n- **255.255.255.255:** This is the Layer 3 (IP) broadcast address, not the Layer 2 (MAC/Ethernet) address used in the frame header.\n- **0.0.0.0:** This is an invalid IP address used in routing or temporary DHCP configuration, not a destination MAC address.\n- **AAAA.AAAA.AAAA:** This is a placeholder MAC address and has no special broadcast meaning.\n- **the physical address of the destination host:** The physical address (MAC address) of the destination host is what the ARP request is trying to find, so it is unknown at the time of sending."
+  },
+  {
+    "number": 24,
+    "question": "A network technician issues the arp -d * command on a PC after the router that is connected to the LAN is reconfigured. What is the result after this command is issued?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The ARP cache is cleared.",
+      "The current content of the ARP cache is displayed.",
+      "The detailed information of the ARP cache is displayed.",
+      "The ARP cache is synchronized with the router interface."
+    ],
+    "correct_answers": [
+      "The ARP cache is cleared."
+    ],
+    "explanation": "**Correct Answer:** The ARP cache is cleared.\n\n**Concept & Details:**\nThe **ARP (Address Resolution Protocol) cache** (or ARP table) is a temporary database on a computer that stores IP-to-MAC address mappings. If a router is reconfigured (for example, its network card is replaced, which changes its physical MAC address), the PC's cached ARP entry for the router's IP address becomes outdated (pointing to the old MAC address). Running the command `arp -d *` (the `-d` stands for delete, and `*` is a wildcard representing all entries) clears all cached mappings. This forces the PC to send new ARP requests and learn the updated, correct MAC addresses.\n\n*Why other options are incorrect:*\n- **The current content of the ARP cache is displayed:** To view the ARP cache, you would run `arp -a`.\n- **The detailed information of the ARP cache is displayed:** The command for deleting entries does not display details.\n- **The ARP cache is synchronized with the router interface:** The PC cannot directly push or synchronize tables with a router. It must rebuild its cache dynamically by sending ARP requests as needed."
+  },
+  {
+    "number": 25,
+    "question": "Refer to the exhibit. The exhibit shows a small switched network and the contents of the MAC address table of the switch. PC1 has sent a frame addressed to PC3. What will the switch do with the frame?",
+    "image_urls": [
+      "https://itexamanswers.net/wp-content/uploads/2019/12/i275394v1n1_207267.png"
+    ],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The switch will discard the frame.",
+      "The switch will forward the frame only to port 2.",
+      "The switch will forward the frame to all ports except port 4.",
+      "The switch will forward the frame to all ports.",
+      "The switch will forward the frame only to ports 1 and 3."
+    ],
+    "correct_answers": [
+      "The switch will forward the frame to all ports except port 4."
+    ],
+    "explanation": "**Correct Answer:** The switch will forward the frame to all ports except port 4.\n\n**Concept & Details:**\nWhen PC1 sends a frame to PC3, the frame enters the switch on **port 4**. The switch looks at the destination MAC address of PC3 in the frame. It then checks its internal **MAC address table**.\nAccording to the exhibit, the MAC address of PC3 is not present in the switch's MAC address table. Since the destination MAC is unknown, the switch must perform **unknown unicast flooding**. This means it forwards a copy of the frame out of every active port on the switch (ports 1, 2, and 3), *except* for the port that the frame originally arrived on (port 4), to ensure the target device receives it.\n\n*Why other options are incorrect:*\n- **The switch will discard the frame:** Switches do not drop packets just because the destination MAC is unknown; they flood them to discover where the device is.\n- **The switch will forward the frame only to port 2 / only to ports 1 and 3:** Without knowing which port PC3 is connected to, the switch cannot target specific ports.\n- **The switch will forward the frame to all ports:** The switch never sends a frame back out of the same port it arrived on (port 4), as this would cause loops and redundant traffic."
+  },
+  {
+    "number": 26,
+    "question": "Which two types of IPv6 messages are used in place of ARP for address resolution?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "anycast",
+      "broadcast",
+      "echo reply",
+      "echo request",
+      "neighbor solicitation",
+      "neighbor advertisement"
+    ],
+    "correct_answers": [
+      "neighbor solicitation",
+      "neighbor advertisement"
+    ],
+    "explanation": "**Correct Answer:** neighbor solicitation AND neighbor advertisement\n\n**Concept & Details:**\nIn IPv6 networks, there is no ARP (Address Resolution Protocol) and no broadcast traffic. Instead, address resolution (finding the Layer 2 MAC (Media Access Control) address of a known IPv6 destination) is handled by the **ICMPv6 (Internet Control Message Protocol version 6) Neighbor Discovery (ND) protocol**. It uses two main message types:\n1. **Neighbor Solicitation (NS):** Sent by a host as a multicast to ask a specific device on the local link for its MAC address.\n2. **Neighbor Advertisement (NA):** Sent by the target device as a unicast back to the sender, containing its physical MAC address.\n\n*Why other options are incorrect:*\n- **broadcast:** IPv6 does not use broadcast messages at all.\n- **anycast:** This is a one-to-nearest delivery address type, not a mapping message type.\n- **echo reply / echo request:** These are ICMPv6 messages used for troubleshooting and testing connectivity (e.g., when you run a ping command), not for address resolution."
+  },
+  {
+    "number": 27,
+    "question": "What is the aim of an ARP spoofing attack?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "to flood the network with ARP reply broadcasts",
+      "to fill switch MAC address tables with bogus addresses",
+      "to associate IP addresses to the wrong MAC address",
+      "to overwhelm network hosts with ARP requests"
+    ],
+    "correct_answers": [
+      "to associate IP addresses to the wrong MAC address"
+    ],
+    "explanation": "**Correct Answer:** link-local\n\n**Concept & Details:**\nA **link-local** address is an IPv6 address that is automatically configured on any IPv6-enabled interface. Link-local addresses are restricted to the local network link (they are not routable across different networks). They always begin with the prefix **FE80::/10** (which covers any address starting with FE80 to FEBF). They are used for local network communications, routing protocol exchanges, and finding neighbors on the same link.\n\n*Why other options are incorrect:*\n- **global unicast:** These are equivalent to public IPv4 addresses and are routable on the internet (typically starting with 2000::/3).\n- **unique local:** These are similar to private IPv4 addresses (starting with FC00::/7) and are routable within an organization but not on the internet.\n- **multicast:** These are used to send a packet to multiple destinations simultaneously (starting with FF00::/8)."
+  },
+  {
+    "number": 28,
+    "question": "Refer to the exhibit. PC1 attempts to connect to File_server1 and sends an ARP request to obtain a destination MAC address. Which MAC address will PC1 receive in the ARP reply?",
+    "image_urls": [
+      "https://itexamanswers.net/wp-content/uploads/2019/12/2020-01-11_210907.jpg"
+    ],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "the MAC address of S1",
+      "the MAC address of the G0/0 interface on R1",
+      "the MAC address of the G0/0 interface on R2",
+      "the MAC address of S2",
+      "the MAC address of File_server1"
+    ],
+    "correct_answers": [
+      "the MAC address of the G0/0 interface on R1"
+    ],
+    "explanation": "**Correct Answer:** 16\n\n**Concept & Details:**\nIn the proposed hierarchical IPv6 addressing scheme, the subnet portion is represented by a single hexadecimal digit. A hexadecimal digit uses base-16 numbering, which includes the characters `0, 1, 2, 3, 4, 5, 6, 7, 8, 9, A, B, C, D, E, F`.\nSince a single hexadecimal digit has exactly 16 unique possible values, the maximum number of unique subnets that can be created per sub-site under this design is **16**.\n\n*Why other options are incorrect:*\n- Other values (like 256 or 65536) would require two or more hexadecimal characters (8 or 16 bits) to represent the subnet ID, whereas the design specifies only one character."
+  },
+  {
+    "number": 29,
+    "question": "Where are IPv4 address to Layer 2 Ethernet address mappings maintained on a host computer?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "neighbor table",
+      "ARP cache",
+      "routing table",
+      "MAC address table"
+    ],
+    "correct_answers": [
+      "ARP cache"
+    ],
+    "explanation": "**Correct Answer:** the MAC address of the IPv6 enabled interface\n\n**Concept & Details:**\nThe **EUI-64 (Extended Unique Identifier 64-bit)** process is a method used by hosts to automatically generate a unique 64-bit Interface ID (the host portion of an IPv6 address). It does this by utilizing the interface's unique 48-bit physical **MAC (Media Access Control) address**:\n1. The 48-bit MAC address is split in half (24 bits each).\n2. A fixed 16-bit hex value, **FF:FE**, is inserted in the middle of the MAC address to expand it to 64 bits.\n3. The 7th bit of the MAC address (the Universal/Local bit) is inverted (changed from 0 to 1 or vice-versa).\n\n*Why other options are incorrect:*\n- The process specifically relies on the hardware MAC address of the local network interface, not an IP address, routing table entry, or random number generator."
+  },
+  {
+    "number": 30,
+    "question": "What important information is examined in the Ethernet frame header by a Layer 2 device in order to forward the data onward?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "source MAC address",
+      "source IP address",
+      "destination MAC address",
+      "Ethernet type",
+      "destination IP address"
+    ],
+    "correct_answers": [
+      "destination MAC address"
+    ],
+    "explanation": "**Correct Answer:** 2001:DB8:BC15:A\n\n**Concept & Details:**\nIn IPv6, the network portion of the address (known as the network prefix) is determined by the prefix length notation `/64`.\nA prefix length of `/64` means the first 64 bits (the first four hextets, since each hextet is 16 bits) of the 128-bit address represent the network:\n1. `2001` (16 bits)\n2. `DB8` (16 bits)\n3. `BC15` (16 bits)\n4. `A` (16 bits)\nAdding these together gives the network prefix: `2001:DB8:BC15:A`. The remaining 64 bits represent the unique interface ID (host portion).\n\n*Why other options are incorrect:*\n- Any portion smaller or larger (like including `12AB` or excluding `A`) does not represent the first 64 bits specified by the `/64` mask."
+  },
+  {
+    "number": 31,
+    "question": "Match the commands to the correct actions. (Not all options are used.)",
+    "image_urls": [
+      "https://itexamanswers.net/wp-content/uploads/2019/12/2024-09-17_144554.jpg"
+    ],
+    "code_blocks": [],
+    "tables": [
+      [
+        [
+          "displays a message after accessing the router",
+          "Router(config)# banner motd #"
+        ],
+        [
+          "provides security on the console",
+          "Router(config-line)# password class"
+        ],
+        [
+          "configures a name on the router",
+          "Router(config)# hostname CL1"
+        ]
+      ]
+    ],
+    "options": [],
+    "correct_answers": [],
+    "explanation": "**Correct Answer:** Refer to matching details in the explanation.\n\n**Concept & Details:**\nBasic Cisco IOS (Internetwork Operating System) commands are matched to their actions as follows:\n- **Router(config)# banner motd #** is the global configuration command used to set up the Message of the Day (MOTD) banner, which displays a security message when accessing the router.\n- **Router(config-line)# password class** is the line configuration command used to secure the console line (line console 0) with the password \"class\".\n- **Router(config)# hostname CL1** is the global configuration command used to configure or change the host name of the router to \"CL1\"."
+  },
+  {
+    "number": 32,
+    "question": "A new network administrator has been asked to enter a banner message on a Cisco device. What is the fastest way a network administrator could test whether the banner is properly configured?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "Reboot the device.",
+      "Enter CTRL-Z at the privileged mode prompt.",
+      "Exit global configuration mode.",
+      "Power cycle the device.",
+      "Exit privileged EXEC mode and press Enter."
+    ],
+    "correct_answers": [
+      "Exit privileged EXEC mode and press Enter."
+    ],
+    "explanation": "**Correct Answer:** Exit privileged EXEC mode and press Enter.\n\n**Concept & Details:**\nThe MOTD (Message of the Day) banner is displayed whenever a user attempts to establish a console or remote login session to the device. The fastest, non-disruptive way to verify that your configured banner displays correctly is to end the current privileged EXEC session by typing `exit` or `logout`. This logs the administrator out, returning to the login prompt. Pressing Enter will then trigger the device to display the configured MOTD banner.\n\n*Why other options are incorrect:*\n- **Rebooting/Power cycling the device:** While this does display the banner on startup, it causes network downtime and takes several minutes, making it highly inefficient.\n- **Viewing the configuration (show running-config):** This command will confirm that the command was entered, but it does not test the visual rendering and presentation of the banner to a connecting user."
+  },
+  {
+    "number": 33,
+    "question": "A network administrator requires access to manage routers and switches locally and remotely. Match the description to the access method. (Not all options are used.)\n\nPlace the options in the following order:",
+    "image_urls": [
+      "https://itexamanswers.net/wp-content/uploads/2019/12/2024-09-17_155949.jpg"
+    ],
+    "code_blocks": [],
+    "tables": [
+      [
+        [
+          "remote access method that uses encryption",
+          "SSH"
+        ],
+        [
+          "preferred out-of-band access method",
+          "console"
+        ],
+        [
+          "remote access via a dialup connection",
+          "AUX"
+        ],
+        [
+          "unsecure remote access",
+          "Telnet"
+        ]
+      ]
+    ],
+    "options": [],
+    "correct_answers": [],
+    "explanation": "**Correct Answer:** Refer to matching details in the explanation.\n\n**Concept & Details:**\nCisco router and switch management access methods are described as follows:\n- **Console Port:** Used for out-of-band management. It provides direct local access to the device's CLI (Command Line Interface) via a physical cable, typically used for initial configuration or when network access is unavailable.\n- **AUX (Auxiliary) Port:** Used for out-of-band remote management. It allows an administrator to connect a modem to dial in over a telephone network.\n- **Telnet:** Used for in-band remote access over an active network. It does not encrypt traffic, transmitting credentials in plain text.\n- **SSH (Secure Shell):** Used for secure in-band remote access. It uses encryption to protect all transmitted data, including passwords, from interception."
+  },
+  {
+    "number": 34,
+    "question": "Match the phases to the functions during the boot up process of a Cisco router. (Not all options are used.)",
+    "image_urls": [
+      "https://itexamanswers.net/wp-content/uploads/2019/12/2024-09-17_145029.jpg"
+    ],
+    "code_blocks": [],
+    "tables": [],
+    "options": [],
+    "correct_answers": [],
+    "explanation": "**Correct Answer:** Refer to matching details in the explanation.\n\n**Concept & Details:**\nThe bootup process of a Cisco router consists of three main phases:\n1. **Perform the POST (Power-On Self-Test) and load the bootstrap program:** The router tests its hardware components (stored in ROM (Read-Only Memory)) and loads the bootstrap program into memory to start the boot process.\n2. **Locate and load the Cisco IOS (Internetwork Operating System) software:** The bootstrap program searches Flash memory (or TFTP server) to find and load the IOS operating system into RAM.\n3. **Locate and load the startup configuration file:** The IOS searches NVRAM (Non-Volatile RAM) for the `startup-config` file. If found, it copies it to RAM as `running-config`. If it is missing, the router enters Setup Mode to let the administrator input settings manually."
+  },
+  {
+    "number": 35,
+    "question": "Match the command with the device mode at which the command is entered. (Not all options are used.)\n\nPlace the options in the following order:",
+    "image_urls": [
+      "https://itexamanswers.net/wp-content/uploads/2019/12/2024-09-17_145429.jpg"
+    ],
+    "code_blocks": [],
+    "tables": [
+      [
+        [
+          "service password-encryption",
+          "R1(config)#"
+        ],
+        [
+          "enable",
+          "R1>"
+        ],
+        [
+          "copy running-config startup-config",
+          "R1#"
+        ],
+        [
+          "login",
+          "R1(config-line)#"
+        ],
+        [
+          "ip address 192.168.4.4 255.255.255.0",
+          "R1(config-if)#"
+        ]
+      ]
+    ],
+    "options": [],
+    "correct_answers": [],
+    "explanation": "**Correct Answer:** Refer to matching details in the explanation.\n\n**Concept & Details:**\nCisco IOS modes and command matching:\n- **enable** command is entered at the User EXEC mode (`R1>`) to switch to Privileged EXEC mode.\n- **login** command is entered at the Line Configuration mode (`R1(config-line)#`) to enforce password authentication on lines.\n- **copy running-config startup-config** command is entered at the Privileged EXEC mode (`R1#`) to save the configuration.\n- **ip address 192.168.4.4 255.255.255.0** command is entered in Interface Configuration mode (`R1(config-if)#`) to set an IP on an interface.\n- **service password-encryption** command is entered in Global Configuration mode (`R1(config)#`) to encrypt plain-text passwords."
+  },
+  {
+    "number": 36,
+    "question": "What are two functions of NVRAM? (Choose two.)",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "to store the routing table",
+      "to retain contents when power is removed",
+      "to store the startup configuration file",
+      "to contain the running configuration file",
+      "to store the ARP table"
+    ],
+    "correct_answers": [
+      "to retain contents when power is removed",
+      "to store the startup configuration file"
+    ],
+    "explanation": "**Correct Answer:** to retain contents when power is removed AND to store the startup configuration file\n\n**Concept & Details:**\n**NVRAM (Non-Volatile Random-Access Memory)** is a crucial storage component on Cisco devices. It has two primary characteristics:\n1. It is non-volatile, meaning it **does not lose its stored information when the device is powered down or loses electricity**.\n2. It is dedicated to **storing the startup configuration file (`startup-config`)**, which the device reads every time it boots.\n\n*Why other options are incorrect:*\n- **storing the running configuration / operating system:** The active running configuration (`running-config`) is stored in volatile RAM (lost during power outages). The Cisco IOS operating system is stored in Flash memory, not NVRAM."
+  },
+  {
+    "number": 37,
+    "question": "A router boots and enters setup mode. What is the reason for this?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The IOS image is corrupt.",
+      "Cisco IOS is missing from flash memory.",
+      "The configuration file is missing from NVRAM.",
+      "The POST process has detected hardware failure."
+    ],
+    "correct_answers": [
+      "The configuration file is missing from NVRAM."
+    ],
+    "explanation": "**Correct Answer:** The configuration file is missing from NVRAM.\n\n**Concept & Details:**\nWhen a Cisco router finishes loading its IOS operating system, it looks in **NVRAM** for the `startup-config` file. If NVRAM is empty (such as on a brand-new router, or after running the `erase startup-config` command), the router has no configuration to apply. To help the administrator configure the device for the first time, the router boots into **Setup Mode**, presenting an interactive step-by-step configuration prompt.\n\n*Why other options are incorrect:*\n- If the Cisco IOS was missing, the router would fail to boot normally and drop into ROMMON (ROM Monitor) mode.\n- If RAM or hardware failed, the router would halt during the POST phase."
+  },
+  {
+    "number": 38,
+    "question": "The global configuration command ip default-gateway 172.16.100.1 is applied to a switch. What is the effect of this command?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The switch will have a management interface with the address 172.16.100.1.",
+      "The switch can be remotely managed from a host on another network.",
+      "The switch can communicate with other hosts on the 172.16.100.0 network.",
+      "The switch is limited to sending and receiving frames to and from the gateway 172.16.100.1."
+    ],
+    "correct_answers": [
+      "The switch can be remotely managed from a host on another network."
+    ],
+    "explanation": "**Correct Answer:** The switch can be remotely managed from a host on another network.\n\n**Concept & Details:**\nA Layer 2 switch requires an IP address on its Switch Virtual Interface (SVI) to allow administrators to connect to it remotely. However, if the administrator is connecting from a *different* subnet, the switch must know how to route replies back. The command `ip default-gateway [IP]` configures the switch with the local router interface's IP. This allows the switch to send its management traffic (such as SSH, Telnet, or HTTP traffic) to the router so it can be forwarded to the remote administrator.\n\n*Why other options are incorrect:*\n- A Layer 2 switch does not perform routing for host devices connected to it. The switch's default gateway is solely used for traffic *originating from* the switch itself."
+  },
+  {
+    "number": 39,
+    "question": "What happens when the transport input ssh command is entered on the switch vty lines?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The SSH client on the switch is enabled.",
+      "Communication between the switch and remote users is encrypted.",
+      "The switch requires a username/password combination for remote access.",
+      "The switch requires remote connections via a proprietary client software."
+    ],
+    "correct_answers": [
+      "Communication between the switch and remote users is encrypted."
+    ],
+    "explanation": "**Correct Answer:** Communication between the switch and remote users is encrypted.\n\n**Concept & Details:**\nBy default, remote administration lines (vty lines) on a Cisco switch may support unencrypted protocols like Telnet. Entering the command `transport input ssh` restricts remote access to **only SSH (Secure Shell)**. Because SSH encrypts all communications between the administrator's PC and the switch, it prevents unauthorized users on the network from capturing passwords or commands.\n\n*Why other options are incorrect:*\n- Telnet connections are blocked by this command, not enabled.\n- The command affects remote access, not local console or routing behavior."
+  },
+  {
+    "number": 40,
+    "question": "Refer to the exhibit. A user PC has successfully transmitted packets to www.cisco.com. Which IP address does the user PC target in order to forward its data off the local network?",
+    "image_urls": [
+      "https://itexamanswers.net/wp-content/uploads/2019/12/i207589v1n1_207589.png"
+    ],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "172.24.255.17",
+      "172.24.1.22",
+      "172.20.0.254",
+      "172.24.255.4",
+      "172.20.1.18"
+    ],
+    "correct_answers": [
+      "172.20.0.254"
+    ],
+    "explanation": "**Correct Answer:** 172.20.0.254\n\n**Concept & Details:**\nWhen a computer needs to send packets to a server outside its local network (such as a website like www.cisco.com on the Internet), it must send them to its **default gateway**. The default gateway is the IP address of the local router interface that is connected to the same subnet as the host. In this exhibit, the gateway interface on the local LAN has the IP address `172.20.0.254`.\n\n*Why other options are incorrect:*\n- Other addresses are either host addresses or interface IPs on remote networks (like WAN/serial interfaces) that the local PC cannot contact directly at Layer 2."
+  },
+  {
+    "number": 41,
+    "question": "Match the configuration mode with the command that is available in that mode. (Not all options are used.)\n\nPlace the options in the following order:",
+    "image_urls": [
+      "https://itexamanswers.net/wp-content/uploads/2019/12/2024-09-17_145611.jpg"
+    ],
+    "code_blocks": [],
+    "tables": [
+      [
+        [
+          "R1>",
+          "enable"
+        ],
+        [
+          "R1#",
+          "copy running-config startup-config"
+        ],
+        [
+          "R1(config-line)#",
+          "login"
+        ],
+        [
+          "R1(config)#",
+          "interface fastethernet 0/0"
+        ]
+      ]
+    ],
+    "options": [],
+    "correct_answers": [],
+    "explanation": "**Correct Answer:** Refer to matching details in the explanation.\n\n**Concept & Details:**\nCisco IOS command modes and command availability:\n- **enable** command is entered at the User EXEC prompt (`R1>`).\n- **login** command is entered at the Line Configuration prompt (`R1(config-line)#`).\n- **copy running-config startup-config** command is entered at the Privileged EXEC prompt (`R1#`).\n- **interface fastethernet 0/0** command is entered at the Global Configuration prompt (`R1(config)#`)."
+  },
+  {
+    "number": 42,
+    "question": "Which three commands are used to set up secure access to a router through a connection to the console interface? (Choose three.)",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "interface fastethernet 0/0",
+      "line vty 0 4",
+      "line console 0",
+      "enable secret cisco",
+      "login",
+      "password cisco"
+    ],
+    "correct_answers": [
+      "line console 0",
+      "login",
+      "password cisco"
+    ],
+    "explanation": "**Correct Answer:** line console 0 AND login AND password cisco\n\n**Concept & Details:**\nTo secure a physical connection to the router's console port, an administrator must:\n1. Access the console line configuration using the command `line console 0`.\n2. Define the access password using `password cisco`.\n3. Enable password authentication during login using the `login` command.\n\n*Why other options are incorrect:*\n- `interface fastethernet 0/0` is used to configure a network port, not line access.\n- `line vty 0 4` is used to configure remote virtual lines (Telnet/SSH) rather than the local physical console.\n- `enable secret` configures the privileged EXEC mode password, not the initial login password for the console port."
+  },
+  {
+    "number": 43,
+    "question": "Refer to the exhibit. Consider the IP address configuration shown from PC1. What is a description of the default gateway address?",
+    "image_urls": [
+      "https://itexamanswers.net/wp-content/uploads/2019/12/i206397v1n2_206397.png"
+    ],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "It is the IP address of the Router1 interface that connects the company to the Internet.",
+      "It is the IP address of the Router1 interface that connects the PC1 LAN to Router1.",
+      "It is the IP address of Switch1 that connects PC1 to other devices on the same LAN.",
+      "It is the IP address of the ISP network device located in the cloud."
+    ],
+    "correct_answers": [
+      "It is the IP address of the Router1 interface that connects the PC1 LAN to Router1."
+    ],
+    "explanation": "**Correct Answer:** It is the IP address of the Router1 interface that connects the PC1 LAN to Router1.\n\n**Concept & Details:**\nThe **default gateway** is the path through which a local host sends traffic destined for remote networks. The default gateway address configured on PC1 must match the IP address of the router interface (Router1) that resides on the same local subnet as PC1. This interface acts as the entry point to the rest of the network.\n\n*Why other options are incorrect:*\n- The default gateway is not the switch IP (which is only for switch management), nor is it a remote server IP. It must be the router interface on the host's local network."
+  },
+  {
+    "number": 44,
+    "question": "Which two functions are primary functions of a router? (Choose two.)",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "packet forwarding",
+      "microsegmentation",
+      "domain name resolution",
+      "path selection",
+      "flow control"
+    ],
+    "correct_answers": [
+      "packet forwarding",
+      "path selection"
+    ],
+    "explanation": "**Correct Answer:** packet forwarding AND path selection\n\n**Concept & Details:**\nA router's main job is to move data packets between different networks. Its two primary functions at the Network Layer (Layer 3) are:\n1. **Path Selection:** Evaluating routing tables to determine the most efficient path (the best route) to forward a packet to its destination.\n2. **Packet Forwarding:** Taking a packet received on one interface and forwarding it out of another interface based on the path selection decision.\n\n*Why other options are incorrect:*\n- Functions like collision domain separation, frame switching, and MAC address learning are functions of Layer 2 switches, not primary router functions."
+  },
+  {
+    "number": 45,
+    "question": "What is the effect of using the Router# copy running-config startup-config command on a router?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The contents of ROM will change.",
+      "The contents of RAM will change.",
+      "The contents of NVRAM will change.",
+      "The contents of flash will change."
+    ],
+    "correct_answers": [
+      "The contents of NVRAM will change."
+    ],
+    "explanation": "**Correct Answer:** The contents of NVRAM will change.\n\n**Concept & Details:**\nWhen a router is configured, changes are active in the volatile **running-config** stored in RAM. If the router reboots, these changes are lost. The command `copy running-config startup-config` saves the active configuration to the permanent **startup-config** file in **NVRAM (Non-Volatile RAM)**. This modifies NVRAM contents to ensure the configuration is preserved after a power cycle.\n\n*Why other options are incorrect:*\n- **Flash memory contents change:** Flash memory stores the IOS operating system image, not the configuration files.\n- **The running configuration is cleared:** The running configuration in RAM remains active and untouched."
+  },
+  {
+    "number": 46,
+    "question": "What will happen if the default gateway address is incorrectly configured on a host?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The host cannot communicate with other hosts in the local network.",
+      "The switch will not forward packets initiated by the host.",
+      "The host will have to use ARP to determine the correct address of the default gateway.",
+      "The host cannot communicate with hosts in other networks.",
+      "A ping from the host to 127.0.0.1 would not be successful."
+    ],
+    "correct_answers": [
+      "The host cannot communicate with hosts in other networks."
+    ],
+    "explanation": "**Correct Answer:** The host cannot communicate with hosts in other networks.\n\n**Concept & Details:**\nThe **default gateway** is the address of the router that connects the local network to remote networks. If a host has an incorrect default gateway address:\n- It **can still communicate with local hosts** on the same subnet (using ARP and a switch).\n- It **cannot communicate with hosts on remote networks** because it does not know the correct router address to send out-of-subnet traffic to.\n\n*Why other options are incorrect:*\n- Local communication does not involve the default gateway, so it remains unaffected by a gateway configuration error."
+  },
+  {
+    "number": 47,
+    "question": "What are two potential network problems that can result from ARP operation? (Choose two.)",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "Manually configuring static ARP associations could facilitate ARP poisoning or MAC address spoofing.",
+      "On large networks with low bandwidth, multiple ARP broadcasts could cause data communication delays.",
+      "Network attackers could manipulate MAC address and IP address mappings in ARP messages with the intent of intercepting network traffic.",
+      "Large numbers of ARP request broadcasts could cause the host MAC address table to overflow and prevent the host from communicating on the network.",
+      "Multiple ARP replies result in the switch MAC address table containing entries that match the MAC addresses of hosts that are connected to the relevant switch port."
+    ],
+    "correct_answers": [
+      "On large networks with low bandwidth, multiple ARP broadcasts could cause data communication delays.",
+      "Network attackers could manipulate MAC address and IP address mappings in ARP messages with the intent of intercepting network traffic."
+    ],
+    "explanation": "**Correct Answer:** On large networks with low bandwidth, multiple ARP broadcasts could cause data communication delays. AND Network attackers could manipulate MAC address and IP address mappings in ARP messages with the intent of intercepting network traffic.\n\n**Concept & Details:**\nARP is vital but can cause two key network issues:\n1. **Network Congestion (ARP Broadcasts):** Because ARP requests are broadcasted, every device on the local network must receive and process them. In large networks with low bandwidth, high broadcast traffic can cause packet delays.\n2. **Security Vulnerabilities (ARP Spoofing):** ARP has no authentication. An attacker can send spoofed ARP replies to map a legitimate IP (like the default gateway) to their own MAC address, allowing them to intercept traffic (Man-in-the-Middle).\n\n*Why other options are incorrect:*\n- ARP tables do not typically overflow under normal conditions, and static ARP associations prevent (rather than facilitate) ARP spoofing."
+  },
+  {
+    "number": 48,
+    "question": "Open the PT activity. Perform the tasks in the activity instructions and then answer the question.",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "R1: G0/0 and S0/0/0 R2: G0/0 and S0/0/0",
+      "R1: G0/1 and S0/0/1 R2: G0/0 and S0/0/1",
+      "R1: G0/0 and S0/0/0 R2: G0/1 and S0/0/0",
+      "R1: G0/0 and S0/0/1 R2: G0/1 and S0/0/1"
+    ],
+    "correct_answers": [
+      "R1: G0/0 and S0/0/0 R2: G0/1 and S0/0/0"
+    ],
+    "explanation": "**Correct Answer:** R1: G0/0 and S0/0/0 R2: G0/1 and S0/0/0\n\n**Concept & Details:**\nUsing the command `show ip interface brief` in Cisco IOS, an interface's operational status is displayed. An interface is active and fully functional when both the physical layer (\"Status\" column) and data-link layer (\"Protocol\" column) are marked as **up**. On R1, these interfaces are GigabitEthernet0/0 (G0/0) and Serial0/0/0 (S0/0/0). On R2, they are GigabitEthernet0/1 (G0/1) and Serial0/0/0 (S0/0/0).\n\n*Why other options are incorrect:*\n- Interfaces marked as \"administratively down\" or \"down\" are inactive and cannot transmit network traffic."
+  },
+  {
+    "number": 49,
+    "question": "Which term describes a field in the IPv4 packet header used to identify the next level protocol?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "protocol",
+      "destination IPv4 address",
+      "source IPv4 address",
+      "TTL"
+    ],
+    "correct_answers": [
+      "protocol"
+    ],
+    "explanation": "**Correct Answer:** protocol\n\n**Concept & Details:**\nThe **Protocol** field in the IPv4 header is an 8-bit value that identifies the upper-layer transport protocol (Layer 4) carried in the IP packet's payload. Common values include `6` for TCP (Transmission Control Protocol) and `17` for UDP (User Datagram Protocol), which tells the receiving operating system where to send the decapsulated data.\n\n*Why other options are incorrect:*\n- **Version:** Identifies the IP version (IPv4 vs IPv6).\n- **TTL:** Limits the packet lifetime.\n- **Header Checksum:** Performs error detection on the header."
+  },
+  {
+    "number": 50,
+    "question": "Which term describes a field in the IPv4 packet header that contains an 8-bit binary value used to determine the priority of each packet?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "differentiated services",
+      "destination IPv4 address",
+      "source IPv4 address",
+      "protocol"
+    ],
+    "correct_answers": [
+      "differentiated services"
+    ],
+    "explanation": "**Correct Answer:** differentiated services\n\n**Concept & Details:**\nThe **Differentiated Services (DS)** field (formerly called Type of Service or ToS) is an 8-bit field in the IPv4 header. It is used by Quality of Service (QoS) mechanisms to label and prioritize packets (for example, marking voice and video traffic to reduce delay and jitter on congested links).\n\n*Why other options are incorrect:*\n- **Protocol:** Identifies the Layer 4 protocol.\n- **Identification:** Used for packet fragmentation.\n- **TTL:** Controls packet lifetime."
+  },
+  {
+    "number": 51,
+    "question": "Which term describes a field in the IPv4 packet header that contains a 32-bit binary value associated with an interface on the sending device?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "source IPv4 address",
+      "destination IPv4 address",
+      "protocol",
+      "TTL"
+    ],
+    "correct_answers": [
+      "source IPv4 address"
+    ],
+    "explanation": "**Correct Answer:** source IPv4 address\n\n**Concept & Details:**\nThe **source IPv4 address** is a 32-bit field in the IPv4 packet header. It contains the unicast IP address of the sending device's network interface. This address allows the destination device to know where the packet originated and where to send any reply packets.\n\n*Why other options are incorrect:*\n- **destination IPv4 address:** Represents where the packet is going, not where it came from.\n- **MAC (Media Access Control) addresses:** These are Layer 2 addresses, not Layer 3 IPv4 header fields."
+  },
+  {
+    "number": 52,
+    "question": "Which term describes a field in the IPv4 packet header used to detect corruption in the IPv4 header?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "header checksum",
+      "source IPv4 address",
+      "protocol",
+      "TTL"
+    ],
+    "correct_answers": [
+      "header checksum"
+    ],
+    "explanation": "**Correct Answer:** header checksum\n\n**Concept & Details:**\nThe **header checksum** is a 16-bit field in the IPv4 header used to detect transmission errors (corruption) within the IP header itself. When a router receives a packet, it calculates the checksum and compares it with the value in the header. If they do not match, the packet has been corrupted during transit and is discarded.\n\n*Why other options are incorrect:*\n- **protocol:** Identifies the upper-layer payload.\n- **TTL (Time-to-Live):** Controls packet lifetime."
+  },
+  {
+    "number": 53,
+    "question": "Refer to the exhibit. A network administrator is connecting a new host to the Payroll LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "image_urls": [],
+    "code_blocks": [
+      "RTR1(config)# interface gi0/1\r\nRTR1(config-if)# description Connects to the Marketing LAN\r\nRTR1(config-if)# ip address 10.27.15.17 255.255.255.0\r\nRTR1(config-if)# no shutdown\r\nRTR1(config-if)# interface gi0/0\r\nRTR1(config-if)# description Connects to the Payroll LAN\r\nRTR1(config-if)# ip address 10.27.14.148 255.255.255.0\r\nRTR1(config-if)# no shutdown\r\nRTR1(config-if)# interface s0/0/0\r\nRTR1(config-if)# description Connects to the ISP\r\nRTR1(config-if)# ip address 10.14.15.254 255.255.255.0\r\nRTR1(config-if)# no shutdown\r\nRTR1(config-if)# interface s0/0/1\r\nRTR1(config-if)# description Connects to the Head Office WAN\r\nRTR1(config-if)# ip address 203.0.113.39 255.255.255.0\r\nRTR1(config-if)# no shutdown\r\nRTR1(config-if)# end"
+    ],
+    "tables": [],
+    "options": [
+      "10.27.14.148",
+      "10.27.14.1",
+      "10.14.15.254",
+      "203.0.113.39",
+      "10.27.15.17"
+    ],
+    "correct_answers": [
+      "10.27.14.148"
+    ],
+    "explanation": "**Correct Answer:** 10.27.14.148\n\n**Concept & Details:**\nA host needs a default gateway to communicate with devices on other networks. The default gateway must be the IP address of the router interface connected to the local subnet.\nLooking at the router configuration:\n- The interface `gi0/0` connects to the **Payroll LAN** (as indicated by the description command: `description Connects to the Payroll LAN`).\n- The IP address configured on `gi0/0` is `10.27.14.148`.\nTherefore, any host connected to the Payroll LAN must configure its default gateway to `10.27.14.148` to forward packets off the local network.\n\n*Why other options are incorrect:*\n- **10.27.15.17:** Configured on `gi0/1` for the Marketing LAN.\n- **10.14.15.254:** Configured on `s0/0/0` for the ISP (Internet Service Provider) connection.\n- **203.0.113.39:** Configured on `s0/0/1` for the WAN (Wide Area Network) connection."
+  },
+  {
+    "number": 54,
+    "question": "Which term describes a field in the IPv4 packet header that contains a unicast, multicast, or broadcast address?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "destination IPv4 address",
+      "protocol",
+      "TTL",
+      "header checksum"
+    ],
+    "correct_answers": [
+      "destination IPv4 address"
+    ],
+    "explanation": "**Correct Answer:** destination IPv4 address\n\n**Concept & Details:**\nThe **destination IPv4 address** field in the IP header contains a 32-bit binary value that represents the receiver of the packet. Unlike source addresses (which must always be unicast), the destination address can be:\n1. **Unicast:** Sent to a single host.\n2. **Multicast:** Sent to a specific group of hosts.\n3. **Broadcast:** Sent to all hosts on the local network.\n\n*Why other options are incorrect:*\n- **source IPv4 address:** Can only ever be a unicast address because a packet must originate from a single, specific host interface."
+  },
+  {
+    "number": 55,
+    "question": "Which term describes a field in the IPv4 packet header used to limit the lifetime of a packet?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "TTL",
+      "source IPv4 address",
+      "protocol",
+      "header checksum"
+    ],
+    "correct_answers": [
+      "TTL"
+    ],
+    "explanation": "**Correct Answer:** TTL\n\n**Concept & Details:**\nThe **TTL (Time-to-Live)** field in the IPv4 packet header is used to prevent packets from looping endlessly through a network. Every router that forwards the packet reduces the TTL value by 1. If the TTL drops to 0, the packet is discarded, and an ICMP (Internet Control Message Protocol) time exceeded message is sent back to the source.\n\n*Why other options are incorrect:*\n- **Header Checksum:** Used for error detection.\n- **Protocol:** Identifies the Layer 4 protocol."
+  },
+  {
+    "number": 56,
+    "question": "Which term describes a field in the IPv4 packet header that contains a 4-bit binary value set to 0100?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "version",
+      "source IPv4 address",
+      "protocol",
+      "TTL"
+    ],
+    "correct_answers": [
+      "version"
+    ],
+    "explanation": "**Correct Answer:** version\n\n**Concept & Details:**\nThe **Version** field is a 4-bit binary value at the very beginning of the IP header. For an IPv4 packet, this value is set to `0100` (which is binary for `4`). This tells the receiving device to parse the packet using IPv4 formatting rules.\n\n*Why other options are incorrect:*\n- If the binary value were `0110` (which is binary for `6`), it would indicate an IPv6 packet."
+  },
+  {
+    "number": 57,
+    "question": "Which term describes a field in the IPv4 packet header used to identify the next level protocol?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "protocol",
+      "version",
+      "differentiated services",
+      "header checksum"
+    ],
+    "correct_answers": [
+      "protocol"
+    ],
+    "explanation": "**Correct Answer:** protocol\n\n**Concept & Details:**\nThe **Protocol** field is an 8-bit binary value in the IPv4 header that identifies the next-level (Layer 4) protocol that should receive the payload (e.g., `6` for TCP (Transmission Control Protocol), `17` for UDP (User Datagram Protocol)).\n\n*Why other options are incorrect:*\n- **Version:** Identifies the IP version.\n- **TTL (Time-to-Live):** Controls packet lifetime."
+  },
+  {
+    "number": 58,
+    "question": "Which term describes a field in the IPv4 packet header that contains a 4-bit binary value set to 0100?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "version",
+      "differentiated services",
+      "header checksum",
+      "TTL"
+    ],
+    "correct_answers": [
+      "version"
+    ],
+    "explanation": "**Correct Answer:** version\n\n**Concept & Details:**\nThe **Version** field is a 4-bit binary value at the very beginning of the IP header. For an IPv4 packet, this value is set to `0100` (which is binary for `4`). This tells the receiving device to parse the packet using IPv4 formatting rules.\n\n*Why other options are incorrect:*\n- If the binary value were `0110` (which is binary for `6`), it would indicate an IPv6 packet."
+  },
+  {
+    "number": 59,
+    "question": "What property of ARP causes cached IP-to-MAC mappings to remain in memory longer?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "Entries in an ARP table are time-stamped and are purged after the timeout expires.",
+      "A static IP-to-MAC address entry can be entered manually into an ARP table.",
+      "The type field 0x806 appears in the header of the Ethernet frame.",
+      "The port-to-MAC address table on a switch has the same entries as the ARP table on the switch."
+    ],
+    "correct_answers": [
+      "Entries in an ARP table are time-stamped and are purged after the timeout expires."
+    ],
+    "explanation": "**Correct Answer:** Entries in an ARP table are time-stamped and are purged after the timeout expires.\n\n**Concept & Details:**\nThe **ARP (Address Resolution Protocol) table** (or cache) dynamically maps IP addresses to MAC (Media Access Control) addresses. To prevent the table from becoming cluttered with stale or outdated mappings, each entry is assigned a **time-stamp** when it is created. The device keeps the entry in memory for a specific duration (the ARP cache timeout). If the entry is not used or refreshed before this timer expires, it is purged (deleted) from memory. If it is frequently used, the timer is reset, causing it to remain in memory longer.\n\n*Why other options are incorrect:*\n- Static entries do not expire, but the question specifically asks about the default dynamic caching property of ARP entries expiring based on timeouts."
+  },
+  {
+    "number": 60,
+    "question": "What property of ARP allows MAC addresses of frequently used servers to be fixed in the ARP table?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "A static IP-to-MAC address entry can be entered manually into an ARP table.",
+      "Entries in an ARP table are time-stamped and are purged after the timeout expires.",
+      "The type field 0x806 appears in the header of the Ethernet frame.",
+      "The port-to-MAC address table on a switch has the same entries as the ARP table on the switch."
+    ],
+    "correct_answers": [
+      "A static IP-to-MAC address entry can be entered manually into an ARP table."
+    ],
+    "explanation": "**Correct Answer:** A static IP-to-MAC address entry can be entered manually into an ARP table.\n\n**Concept & Details:**\nUsually, ARP tables learn IP-to-MAC mappings dynamically as communication occurs. However, dynamic entries expire and get cleared over time. If you have critical devices (like a local file server or default gateway) whose mappings should never be cleared or spoofed, a network administrator can **manually configure a static ARP entry**. Static entries do not age out or expire, ensuring they remain permanently fixed in the ARP table.\n\n*Why other options are incorrect:*\n- Dynamic ARP processes cannot guarantee that a MAC address will remain permanently fixed, as they are subject to aging out and cache clearing commands."
+  },
+  {
+    "number": 61,
+    "question": "What property of ARP allows MAC addresses of frequently used servers to be fixed in the ARP table?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "A static IP-to-MAC address entry can be entered manually into an ARP table.",
+      "The destination MAC address FF-FF-FF-FF-FF-FF appears in the header of the Ethernet frame.",
+      "The source MAC address appears in the header of the Ethernet frame.",
+      "The port-to-MAC address table on a switch has the same entries as the ARP table on the switch."
+    ],
+    "correct_answers": [
+      "A static IP-to-MAC address entry can be entered manually into an ARP table."
+    ],
+    "explanation": "**Correct Answer:** A static IP-to-MAC address entry can be entered manually into an ARP table.\n\n**Concept & Details:**\nUsually, ARP tables learn IP-to-MAC mappings dynamically as communication occurs. However, dynamic entries expire and get cleared over time. If you have critical devices (like a local file server or default gateway) whose mappings should never be cleared or spoofed, a network administrator can **manually configure a static ARP entry**. Static entries do not age out or expire, ensuring they remain permanently fixed in the ARP table.\n\n*Why other options are incorrect:*\n- Dynamic ARP processes cannot guarantee that a MAC address will remain permanently fixed, as they are subject to aging out and cache clearing commands."
+  },
+  {
+    "number": 62,
+    "question": "What property of ARP allows hosts on a LAN to send traffic to remote networks?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "Local hosts learn the MAC address of the default gateway.",
+      "The destination MAC address FF-FF-FF-FF-FF-FF appears in the header of the Ethernet frame.",
+      "The source MAC address appears in the header of the Ethernet frame.",
+      "The port-to-MAC address table on a switch has the same entries as the ARP table on the switch."
+    ],
+    "correct_answers": [
+      "Local hosts learn the MAC address of the default gateway."
+    ],
+    "explanation": "**Correct Answer:** Local hosts learn the MAC address of the default gateway.\n\n**Concept & Details:**\nWhen a local host wants to send traffic to a remote network, it knows the packet must go to the default gateway (the router). However, to send the packet over the local Ethernet LAN (Local Area Network), the host needs the router's physical MAC (Media Access Control) address. Using ARP (Address Resolution Protocol), the local host requests and **learns the MAC address of the default gateway router**. Once resolved, the host can encapsulate the packet inside an Ethernet frame with the router's destination MAC address and send it.\n\n*Why other options are incorrect:*\n- Remote host MAC addresses are never learned by local hosts because Layer 2 MAC addresses are only used for local delivery and do not cross routers."
+  },
+  {
+    "number": 63,
+    "question": "Refer to the exhibit. A network administrator is connecting a new host to the Registrar LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "image_urls": [],
+    "code_blocks": [
+      "Floor(config)# interface gi0/1\r\nFloor(config-if)# description Connects to the Registrar LAN\r\nFloor(config-if)# ip address 192.168.235.234 255.255.255.0\r\nFloor(config-if)# no shutdown\r\nFloor(config-if)# interface gi0/0\r\nFloor(config-if)# description Connects to the Manager LAN\r\nFloor(config-if)# ip address 192.168.234.114 255.255.255.0\r\nFloor(config-if)# no shutdown\r\nFloor(config-if)# interface s0/0/0\r\nFloor(config-if)# description Connects to the ISP\r\nFloor(config-if)# ip address 10.234.235.254 255.255.255.0\r\nFloor(config-if)# no shutdown\r\nFloor(config-if)# interface s0/0/1\r\nFloor(config-if)# description Connects to the Head Office WAN\r\nFloor(config-if)# ip address 203.0.113.3 255.255.255.0\r\nFloor(config-if)# no shutdown\r\nFloor(config-if)# end"
+    ],
+    "tables": [],
+    "options": [
+      "192.168.235.234",
+      "192.168.235.1",
+      "10.234.235.254",
+      "203.0.113.3",
+      "192.168.234.114"
+    ],
+    "correct_answers": [
+      "192.168.235.234"
+    ],
+    "explanation": "**Correct Answer:** 192.168.235.234\n\n**Concept & Details:**\nA host needs a default gateway to communicate with devices on other networks. The default gateway must be the IP address of the router interface connected to the local subnet.\nLooking at the router configuration:\n- The interface `gi0/1` connects to the **Registrar LAN** (as indicated by the description command: `description Connects to the Registrar LAN`).\n- The IP address configured on `gi0/1` is `192.168.235.234`.\nTherefore, any host connected to the Registrar LAN must configure its default gateway to `192.168.235.234` to forward packets off the local network.\n\n*Why other options are incorrect:*\n- Other IP addresses in the configuration belong to interfaces on different subnets (like the Manager LAN, ISP, or Head Office WAN)."
+  },
+  {
+    "number": 64,
+    "question": "What property of ARP forces all Ethernet NICs to process an ARP request?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The destination MAC address FF-FF-FF-FF-FF-FF appears in the header of the Ethernet frame.",
+      "The source MAC address appears in the header of the Ethernet frame.",
+      "The type field 0x806 appears in the header of the Ethernet frame.",
+      "ARP replies are broadcast on the network when a host receives an ARP request."
+    ],
+    "correct_answers": [
+      "The destination MAC address FF-FF-FF-FF-FF-FF appears in the header of the Ethernet frame."
+    ],
+    "explanation": "**Correct Answer:** The destination MAC address FF-FF-FF-FF-FF-FF appears in the header of the Ethernet frame.\n\n**Concept & Details:**\nAn **ARP (Address Resolution Protocol) request** is sent as a broadcast because the sender does not know which device has the target IP address. In Ethernet networks, a broadcast frame is marked with a special destination MAC (Media Access Control) address: **FF-FF-FF-FF-FF-FF** (in hexadecimal). When a network switch receives a frame with this destination, it forwards (floods) it out of all active ports. Consequently, every network interface card (NIC) on the local link receives, accepts, and processes the frame.\n\n*Why other options are incorrect:*\n- Source MAC address represents the sender, not the destination.\n- IP broadcast addresses are Layer 3 and do not force Layer 2 NICs to process frames at the Ethernet layer directly."
+  },
+  {
+    "number": 65,
+    "question": "What property of ARP causes a reply only to the source sending an ARP request?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The source MAC address appears in the header of the Ethernet frame.",
+      "The destination MAC address FF-FF-FF-FF-FF-FF appears in the header of the Ethernet frame.",
+      "The type field 0x806 appears in the header of the Ethernet frame.",
+      "ARP replies are broadcast on the network when a host receives an ARP request."
+    ],
+    "correct_answers": [
+      "The source MAC address appears in the header of the Ethernet frame."
+    ],
+    "explanation": "**Correct Answer:** The source MAC address appears in the header of the Ethernet frame.\n\n**Concept & Details:**\nWhen a device sends an ARP (Address Resolution Protocol) request, it includes its own MAC (Media Access Control) address in the **Source MAC address** field of the Ethernet frame header. When the target device receives this request, it reads the source MAC address and knows exactly which device sent it. When sending the **ARP reply**, the target device does not need to broadcast it; instead, it sends a **unicast frame** directly back to that specific source MAC address.\n\n*Why other options are incorrect:*\n- The destination MAC of the request is a broadcast, which does not tell the receiver how to reply. It is the *source* MAC that gives the receiver the return address."
+  },
+  {
+    "number": 66,
+    "question": "What property of ARP causes the request to be flooded out all ports of a switch except for the port receiving the ARP request?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The destination MAC address FF-FF-FF-FF-FF-FF appears in the header of the Ethernet frame.",
+      "The type field 0x806 appears in the header of the Ethernet frame.",
+      "Entries in an ARP table are time-stamped and are purged after the timeout expires.",
+      "ARP replies are broadcast on the network when a host receives an ARP request."
+    ],
+    "correct_answers": [
+      "The destination MAC address FF-FF-FF-FF-FF-FF appears in the header of the Ethernet frame."
+    ],
+    "explanation": "**Correct Answer:** The destination MAC address FF-FF-FF-FF-FF-FF appears in the header of the Ethernet frame.\n\n**Concept & Details:**\nSwitches make forwarding decisions based on the destination MAC (Media Access Control) address. When a switch reads the broadcast MAC address **FF-FF-FF-FF-FF-FF** in the destination field of an incoming ARP (Address Resolution Protocol) request, its standard behavior is to flood the frame out of every active port except the one where the frame was received.\n\n*Why other options are incorrect:*\n- The switch floods the frame based on the destination broadcast address, not the source address or Layer 3 IP information."
+  },
+  {
+    "number": 67,
+    "question": "What property of ARP causes the NICs receiving an ARP request to pass the data portion of the Ethernet frame to the ARP process?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The type field 0x806 appears in the header of the Ethernet frame.",
+      "The destination MAC address FF-FF-FF-FF-FF-FF appears in the header of the Ethernet frame.",
+      "Entries in an ARP table are time-stamped and are purged after the timeout expires.",
+      "ARP replies are broadcast on the network when a host receives an ARP request."
+    ],
+    "correct_answers": [
+      "The type field 0x806 appears in the header of the Ethernet frame."
+    ],
+    "explanation": "**Correct Answer:** The type field 0x806 appears in the header of the Ethernet frame.\n\n**Concept & Details:**\nAn Ethernet frame header contains a 2-byte field called the **EtherType field**. This field tells the receiving network card's driver which protocol should process the payload data inside the frame. For ARP (Address Resolution Protocol), the EtherType value is **0x0806** (hexadecimal). When the network card reads this value, it knows to pass the data portion of the frame directly to the local ARP software process.\n\n*Why other options are incorrect:*\n- Other EtherType values (like `0x0800` for IPv4 or `0x86DD` for IPv6) would cause the frame to be passed to different protocol handlers."
+  },
+  {
+    "number": 68,
+    "question": "What property of ARP causes the NICs receiving an ARP request to pass the data portion of the Ethernet frame to the ARP process?",
+    "image_urls": [],
+    "code_blocks": [],
+    "tables": [],
+    "options": [
+      "The type field 0x806 appears in the header of the Ethernet frame.",
+      "The destination MAC address FF-FF-FF-FF-FF-FF appears in the header of the Ethernet frame.",
+      "Entries in an ARP table are time-stamped and are purged after the timeout expires.",
+      "The port-to-MAC address table on a switch has the same entries as the ARP table on the switch."
+    ],
+    "correct_answers": [
+      "The type field 0x806 appears in the header of the Ethernet frame."
+    ],
+    "explanation": "**Correct Answer:** The type field 0x806 appears in the header of the Ethernet frame.\n\n**Concept & Details:**\nAn Ethernet frame header contains a 2-byte field called the **EtherType field**. This field tells the receiving network card's driver which protocol should process the payload data inside the frame. For ARP (Address Resolution Protocol), the EtherType value is **0x0806** (hexadecimal). When the network card reads this value, it knows to pass the data portion of the frame directly to the local ARP software process.\n\n*Why other options are incorrect:*\n- Other EtherType values (like `0x0800` for IPv4 or `0x86DD` for IPv6) would cause the frame to be passed to different protocol handlers."
+  },
+  {
+    "number": 69,
+    "question": "Refer to the exhibit. A network administrator is connecting a new host to the Service LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "image_urls": [],
+    "code_blocks": [
+      "Main(config)# interface gi0/1\r\nMain(config-if)# description Connects to the Service LAN\r\nMain(config-if)# ip address 172.29.157.156 255.255.255.0\r\nMain(config-if)# no shutdown\r\nMain(config-if)# interface gi0/0\r\nMain(config-if)# description Connects to the Engineering LAN\r\nMain(config-if)# ip address 172.29.156.36 255.255.255.0\r\nMain(config-if)# no shutdown\r\nMain(config-if)# interface s0/0/0\r\nMain(config-if)# description Connects to the ISP\r\nMain(config-if)# ip address 10.156.157.254 255.255.255.0\r\nMain(config-if)# no shutdown\r\nMain(config-if)# interface s0/0/1\r\nMain(config-if)# description Connects to the Head Office WAN\r\nMain(config-if)# ip address 198.51.100.177 255.255.255.0\r\nMain(config-if)# no shutdown\r\nMain(config-if)# end"
+    ],
+    "tables": [],
+    "options": [
+      "172.29.157.156",
+      "172.29.157.1",
+      "10.156.157.254",
+      "198.51.100.177",
+      "172.29.156.36"
+    ],
+    "correct_answers": [
+      "172.29.157.156"
+    ],
+    "explanation": "**Correct Answer:** 172.29.157.156\n\n**Concept & Details:**\nA host needs a default gateway to communicate with devices on other networks. The default gateway must be the IP address of the router interface connected to the local subnet.\nLooking at the router configuration:\n- The interface `gi0/1` connects to the **Service LAN** (as indicated by the description command: `description Connects to the Service LAN`).\n- The IP address configured on `gi0/1` is `172.29.157.156`.\nTherefore, any host connected to the Service LAN must configure its default gateway to `172.29.157.156` to forward packets off the local network.\n\n*Why other options are incorrect:*\n- Other IP addresses in the configuration belong to interfaces on different subnets (like the Engineering LAN, ISP, or Head Office WAN)."
+  },
+  {
+    "number": 70,
+    "question": "Refer to the exhibit. A network administrator is connecting a new host to the Medical LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "image_urls": [],
+    "code_blocks": [
+      "BldgA(config)# interface gi0/1\r\nBldgA(config-if)# description Connects to the Medical LAN\r\nBldgA(config-if)# ip address 192.168.191.189 255.255.255.0\r\nBldgA(config-if)# no shutdown\r\nBldgA(config-if)# interface gi0/0\r\nBldgA(config-if)# description Connects to the Client LAN\r\nBldgA(config-if)# ip address 192.168.190.70 255.255.255.0\r\nBldgA(config-if)# no shutdown\r\nBldgA(config-if)# interface s0/0/0\r\nBldgA(config-if)# description Connects to the ISP\r\nBldgA(config-if)# ip address 10.190.191.254 255.255.255.0\r\nBldgA(config-if)# no shutdown\r\nBldgA(config-if)# interface s0/0/1\r\nBldgA(config-if)# description Connects to the Head Office WAN\r\nBldgA(config-if)# ip address \n198.51.100.213\n 255.255.255.0\r\nBldgA(config-if)# no shutdown\r\nBldgA(config-if)# end"
+    ],
+    "tables": [],
+    "options": [
+      "192.168.191.189",
+      "192.168.191.1",
+      "10.190.191.254",
+      "198.51.100.213",
+      "192.168.190.70"
+    ],
+    "correct_answers": [
+      "192.168.191.189"
+    ],
+    "explanation": "**Correct Answer:** 192.168.191.189\n\n**Concept & Details:**\nA host needs a default gateway to communicate with devices on other networks. The default gateway must be the IP address of the router interface connected to the local subnet.\nLooking at the router configuration:\n- The interface `gi0/1` connects to the **Medical LAN** (as indicated by the description command: `description Connects to the Medical LAN`).\n- The IP address configured on `gi0/1` is `192.168.191.189`.\nTherefore, any host connected to the Medical LAN must configure its default gateway to `192.168.191.189` to forward packets off the local network.\n\n*Why other options are incorrect:*\n- Other IP addresses in the configuration belong to interfaces on different subnets (like the Client LAN, ISP, or Head Office WAN)."
+  },
+  {
+    "number": 71,
+    "question": "Refer to the exhibit. A network administrator is connecting a new host to the Registrar LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "image_urls": [],
+    "code_blocks": [
+      "Floor(config)# interface gi0/1\r\nFloor(config-if)# description Connects to the Registrar LAN\r\nFloor(config-if)# ip address 192.168.225.223 255.255.255.0\r\nFloor(config-if)# no shutdown\r\nFloor(config-if)# interface gi0/0\r\nFloor(config-if)# description Connects to the Manager LAN\r\nFloor(config-if)# ip address 192.168.224.103 255.255.255.0\r\nFloor(config-if)# no shutdown\r\nFloor(config-if)# interface s0/0/0\r\nFloor(config-if)# description Connects to the ISP\r\nFloor(config-if)# ip address 10.224.225.254 255.255.255.0\r\nFloor(config-if)# no shutdown\r\nFloor(config-if)# interface s0/0/1\r\nFloor(config-if)# description Connects to the Head Office WAN\r\nFloor(config-if)# ip address 203.0.113.246 255.255.255.0\r\nFloor(config-if)# no shutdown\r\nFloor(config-if)# end"
+    ],
+    "tables": [],
+    "options": [
+      "192.168.225.223",
+      "192.168.225.1",
+      "10.224.225.254",
+      "203.0.113.246",
+      "192.168.224.103"
+    ],
+    "correct_answers": [
+      "192.168.225.223"
+    ],
+    "explanation": "**Correct Answer:** 192.168.225.223\n\n**Concept & Details:**\nA host needs a default gateway to communicate with devices on other networks. The default gateway must be the IP address of the router interface connected to the local subnet.\nLooking at the router configuration:\n- The interface `gi0/1` connects to the **Registrar LAN** (as indicated by the description command: `description Connects to the Registrar LAN`).\n- The IP address configured on `gi0/1` is `192.168.225.223`.\nTherefore, any host connected to the Registrar LAN must configure its default gateway to `192.168.225.223` to forward packets off the local network.\n\n*Why other options are incorrect:*\n- Other IP addresses in the configuration belong to interfaces on different subnets (like the Manager LAN, ISP, or Head Office WAN)."
+  },
+  {
+    "number": 72,
+    "question": "Refer to the exhibit. A network administrator is connecting a new host to the Manager LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "image_urls": [],
+    "code_blocks": [
+      "Floor(config)# interface gi0/1\r\nFloor(config-if)# description Connects to the Registrar LAN\r\nFloor(config-if)# ip address 10.118.63.65 255.255.255.0\r\nFloor(config-if)# no shutdown\r\nFloor(config-if)# interface gi0/0\r\nFloor(config-if)# description Connects to the Manager LAN\r\nFloor(config-if)# ip address 10.118.62.196 255.255.255.0\r\nFloor(config-if)# no shutdown\r\nFloor(config-if)# interface s0/0/0\r\nFloor(config-if)# description Connects to the ISP\r\nFloor(config-if)# ip address 10.62.63.254 255.255.255.0\r\nFloor(config-if)# no shutdown\r\nFloor(config-if)# interface s0/0/1\r\nFloor(config-if)# description Connects to the Head Office WAN\r\nFloor(config-if)# ip address 209.165.200.87 255.255.255.0\r\nFloor(config-if)# no shutdown\r\nFloor(config-if)# end"
+    ],
+    "tables": [],
+    "options": [
+      "10.118.62.196",
+      "10.118.62.1",
+      "10.62.63.254",
+      "209.165.200.87",
+      "10.118.63.65"
+    ],
+    "correct_answers": [
+      "10.118.62.196"
+    ],
+    "explanation": "**Correct Answer:** 10.118.62.196\n\n**Concept & Details:**\nA host needs a default gateway to communicate with devices on other networks. The default gateway must be the IP address of the router interface connected to the local subnet.\nLooking at the router configuration:\n- The interface `gi0/0` connects to the **Manager LAN** (as indicated by the description command: `description Connects to the Manager LAN`).\n- The IP address configured on `gi0/0` is `10.118.62.196`.\nTherefore, any host connected to the Manager LAN must configure its default gateway to `10.118.62.196` to forward packets off the local network.\n\n*Why other options are incorrect:*\n- Other IP addresses in the configuration belong to interfaces on different subnets (like the Registrar LAN, ISP, or Head Office WAN)."
+  },
+  {
+    "number": 73,
+    "question": "Refer to the exhibit. A network administrator is connecting a new host to the Store LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "image_urls": [],
+    "code_blocks": [
+      "HQ(config)# interface gi0/1\r\nHQ(config-if)# description Connects to the Branch LAN\r\nHQ(config-if)# ip address 172.19.99.99 255.255.255.0\r\nHQ(config-if)# no shutdown\r\nHQ(config-if)# interface gi0/0\r\nHQ(config-if)# description Connects to the Store LAN\r\nHQ(config-if)# ip address 172.19.98.230 255.255.255.0\r\nHQ(config-if)# no shutdown\r\nHQ(config-if)# interface s0/0/0\r\nHQ(config-if)# description Connects to the ISP\r\nHQ(config-if)# ip address 10.98.99.254 255.255.255.0\r\nHQ(config-if)# no shutdown\r\nHQ(config-if)# interface s0/0/1\r\nHQ(config-if)# description Connects to the Head Office WAN\r\nHQ(config-if)# ip address 209.165.200.120 255.255.255.0\r\nHQ(config-if)# no shutdown\r\nHQ(config-if)# end"
+    ],
+    "tables": [],
+    "options": [
+      "172.19.98.230",
+      "172.19.98.1",
+      "10.98.99.254",
+      "209.165.200.120",
+      "172.19.99.99"
+    ],
+    "correct_answers": [
+      "172.19.98.230"
+    ],
+    "explanation": "**Correct Answer:** 172.19.98.230\n\n**Concept & Details:**\nA host needs a default gateway to communicate with devices on other networks. The default gateway must be the IP address of the router interface connected to the local subnet.\nLooking at the router configuration:\n- The interface `gi0/0` connects to the **Store LAN** (as indicated by the description command: `description Connects to the Store LAN`).\n- The IP address configured on `gi0/0` is `172.19.98.230`.\nTherefore, any host connected to the Store LAN must configure its default gateway to `172.19.98.230` to forward packets off the local network.\n\n*Why other options are incorrect:*\n- Other IP addresses in the configuration belong to interfaces on different subnets (like the Branch LAN, ISP, or Head Office WAN)."
+  },
+  {
+    "number": 74,
+    "question": "Refer to the exhibit. A network administrator is connecting a new host to the Store LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "image_urls": [],
+    "code_blocks": [
+      "HQ(config)# interface gi0/1\r\nHQ(config-if)# description Connects to the Branch LAN\r\nHQ(config-if)# ip address 172.20.133.132 255.255.255.0\r\nHQ(config-if)# no shutdown\r\nHQ(config-if)# interface gi0/0\r\nHQ(config-if)# description Connects to the Store LAN\r\nHQ(config-if)# ip address 172.20.132.13 255.255.255.0\r\nHQ(config-if)# no shutdown\r\nHQ(config-if)# interface s0/0/0\r\nHQ(config-if)# description Connects to the ISP\r\nHQ(config-if)# ip address 10.132.133.254 255.255.255.0\r\nHQ(config-if)# no shutdown\r\nHQ(config-if)# interface s0/0/1\r\nHQ(config-if)# description Connects to the Head Office WAN\r\nHQ(config-if)# ip address 198.51.100.156 255.255.255.0\r\nHQ(config-if)# no shutdown\r\nHQ(config-if)# end"
+    ],
+    "tables": [],
+    "options": [
+      "172.20.132.13",
+      "172.20.132.1",
+      "10.132.133.254",
+      "198.51.100.156",
+      "172.20.133.132"
+    ],
+    "correct_answers": [
+      "172.20.132.13"
+    ],
+    "explanation": "**Correct Answer:** 172.20.132.13\n\n**Concept & Details:**\nA host needs a default gateway to communicate with devices on other networks. The default gateway must be the IP address of the router interface connected to the local subnet.\nLooking at the router configuration:\n- The interface `gi0/0` connects to the **Store LAN** (as indicated by the description command: `description Connects to the Store LAN`).\n- The IP address configured on `gi0/0` is `172.20.132.13`.\nTherefore, any host connected to the Store LAN must configure its default gateway to `172.20.132.13` to forward packets off the local network.\n\n*Why other options are incorrect:*\n- Other IP addresses in the configuration belong to interfaces on different subnets (like the Branch LAN, ISP, or Head Office WAN)."
+  },
+  {
+    "number": 75,
+    "question": "Refer to the exhibit. A network administrator is connecting a new host to the Service LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "image_urls": [],
+    "code_blocks": [
+      "Main(config)# interface gi0/1\r\nMain(config-if)# description Connects to the Service LAN\r\nMain(config-if)# ip address 192.168.167.166 255.255.255.0\r\nMain(config-if)# no shutdown\r\nMain(config-if)# interface gi0/0\r\nMain(config-if)# description Connects to the Engineering LAN\r\nMain(config-if)# ip address 192.168.166.46 255.255.255.0\r\nMain(config-if)# no shutdown\r\nMain(config-if)# interface s0/0/0\r\nMain(config-if)# description Connects to the ISP\r\nMain(config-if)# ip address 10.166.167.254 255.255.255.0\r\nMain(config-if)# no shutdown\r\nMain(config-if)# interface s0/0/1\r\nMain(config-if)# description Connects to the Head Office WAN\r\nMain(config-if)# ip address 198.51.100.189 255.255.255.0\r\nMain(config-if)# no shutdown\r\nMain(config-if)# end"
+    ],
+    "tables": [],
+    "options": [
+      "192.168.167.166",
+      "192.168.167.1",
+      "10.166.167.254",
+      "198.51.100.189",
+      "192.168.166.46"
+    ],
+    "correct_answers": [
+      "192.168.167.166"
+    ],
+    "explanation": "**Correct Answer:** 192.168.167.166\n\n**Concept & Details:**\nA host needs a default gateway to communicate with devices on other networks. The default gateway must be the IP address of the router interface connected to the local subnet.\nLooking at the router configuration:\n- The interface `gi0/1` connects to the **Service LAN** (as indicated by the description command: `description Connects to the Service LAN`).\n- The IP address configured on `gi0/1` is `192.168.167.166`.\nTherefore, any host connected to the Service LAN must configure its default gateway to `192.168.167.166` to forward packets off the local network.\n\n*Why other options are incorrect:*\n- Other IP addresses in the configuration belong to interfaces on different subnets (like the Engineering LAN, ISP, or Head Office WAN)."
+  },
+  {
+    "number": 76,
+    "question": "Refer to the exhibit. A network administrator is connecting a new host to the Medical LAN. The host needs to communicate with remote networks. What IP address would be configured as the default gateway on the new host?",
+    "image_urls": [],
+    "code_blocks": [
+      "BldgA(config)# interface gi0/1\r\nBldgA(config-if)# description Connects to the Medical LAN\r\nBldgA(config-if)# ip address 192.168.201.200 255.255.255.0\r\nBldgA(config-if)# no shutdown\r\nBldgA(config-if)# interface gi0/0\r\nBldgA(config-if)# description Connects to the Client LAN\r\nBldgA(config-if)# ip address 192.168.200.80 255.255.255.0\r\nBldgA(config-if)# no shutdown\r\nBldgA(config-if)# interface s0/0/0\r\nBldgA(config-if)# description Connects to the ISP\r\nBldgA(config-if)# ip address 10.200.201.254 255.255.255.0\r\nBldgA(config-if)# no shutdown\r\nBldgA(config-if)# interface s0/0/1\r\nBldgA(config-if)# description Connects to the Head Office WAN\r\nBldgA(config-if)# ip address \n203.0.113.222\n 255.255.255.0\r\nBldgA(config-if)# no shutdown\r\nBldgA(config-if)# end"
+    ],
+    "tables": [],
+    "options": [
+      "192.168.201.200",
+      "192.168.201.1",
+      "10.200.201.254",
+      "203.0.113.222",
+      "192.168.200.80"
+    ],
+    "correct_answers": [
+      "192.168.201.200"
+    ],
+    "explanation": "**Correct Answer:** 192.168.201.200\n\n**Concept & Details:**\nThe **default gateway** is the IP address of the router interface that connects the local network (LAN (Local Area Network)) to other networks.\nAccording to the device configuration provided in the code block:\n- The interface `gi0/1` has the description `Connects to the Medical LAN`.\n- The IP address configured on `gi0/1` is `192.168.201.200`.\nSince the new host is being connected to the **Medical LAN**, it must use the router interface connected to that same LAN as its gateway. Therefore, the default gateway for any host on the Medical LAN must be configured with the IP address `192.168.201.200`.\n\n*Why other options are incorrect:*\n- **192.168.200.80:** This is the IP address of the router's `gi0/0` interface, which connects to the Client LAN, not the Medical LAN.\n- **10.200.201.254:** This is the IP address of the router's Serial interface `s0/0/0` connecting to the ISP (Internet Service Provider).\n- **203.0.113.222:** This is the IP address of the router's Serial interface `s0/0/1` connecting to the Head Office WAN (Wide Area Network).\n- **192.168.201.1:** This is likely a placeholder or first host address in the subnet, but it is not configured on the router interface connected to the Medical LAN."
+  }
+]

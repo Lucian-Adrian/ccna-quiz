@@ -12,7 +12,16 @@ export const MIDTERMS = [
   { id: "midterm-2", title: "Midterm 2", range: "8-17", sourceIds: ["m8-10", "m11-13", "m14-15", "m16-17"] },
 ];
 
+export const FINAL_GROUPS = [
+  { id: "practice-final", title: "Practice Final", range: "1-17" },
+  { id: "final-exam", title: "Final Exam", range: "1-17" },
+];
+
 const DAY_MS = 24 * 60 * 60 * 1000;
+
+function prefixedId(prefix, id) {
+  return prefix ? `${prefix}-${id}` : id;
+}
 
 export function normalizeQuestion(rawQuestion, source) {
   const matchingPairs = inferMatchingPairs(rawQuestion);
@@ -27,6 +36,8 @@ export function normalizeQuestion(rawQuestion, source) {
     sourceId: source.id,
     sourceTitle: source.title,
     range: source.range,
+    bankId: source.bankId,
+    bankTitle: source.bankTitle,
     question: rawQuestion.question,
     options: rawQuestion.options ?? [],
     correctAnswers,
@@ -71,12 +82,24 @@ export function splitMatchingImages(question) {
   };
 }
 
-export function createModuleDecks(moduleSources) {
+export function createModuleDecks(moduleSources, options = {}) {
+  const sourcePrefix = options.sourcePrefix ?? "";
+
   return MODULE_GROUPS.map((group) => {
-    const questions = (moduleSources[group.id] ?? []).map((question) => normalizeQuestion(question, group));
+    const source = {
+      ...group,
+      id: prefixedId(sourcePrefix, group.id),
+      bankId: options.bankId ?? "itexam",
+      bankTitle: options.bankTitle ?? "",
+    };
+    const questions = (moduleSources[group.id] ?? []).map((question) => normalizeQuestion(question, source));
 
     return {
       ...group,
+      id: prefixedId(options.deckPrefix ?? "", group.id),
+      logicalId: group.id,
+      bankId: options.bankId ?? "itexam",
+      bankTitle: options.bankTitle ?? "",
       type: "module",
       questions,
       count: questions.length,
@@ -84,34 +107,91 @@ export function createModuleDecks(moduleSources) {
   });
 }
 
-export function createDecks(moduleSources) {
-  const moduleDecks = createModuleDecks(moduleSources);
-  const byId = new Map(moduleDecks.map((deck) => [deck.id, deck]));
+export function createDecks(moduleSources, options = {}) {
+  const deckPrefix = options.deckPrefix ?? "";
+  const moduleDecks = createModuleDecks(moduleSources, options);
+  const byLogicalId = new Map(moduleDecks.map((deck) => [deck.logicalId, deck]));
 
   const midtermDecks = MIDTERMS.map((midterm) => {
-    const questions = midterm.sourceIds.flatMap((id) => byId.get(id)?.questions ?? []);
+    const questions = midterm.sourceIds.flatMap((id) => byLogicalId.get(id)?.questions ?? []);
     return {
       ...midterm,
+      id: prefixedId(deckPrefix, midterm.id),
+      logicalId: midterm.id,
+      bankId: options.bankId ?? "itexam",
+      bankTitle: options.bankTitle ?? "",
       type: "midterm",
       questions,
       count: questions.length,
     };
   });
 
-  const allQuestions = moduleDecks.flatMap((deck) => deck.questions);
+  const finalDecks = FINAL_GROUPS.map((finalGroup) => {
+    const source = {
+      ...finalGroup,
+      id: prefixedId(options.sourcePrefix ?? "", finalGroup.id),
+      bankId: options.bankId ?? "itexam",
+      bankTitle: options.bankTitle ?? "",
+    };
+    const questions = (options.finalSources?.[finalGroup.id] ?? []).map((question) => normalizeQuestion(question, source));
+
+    return {
+      ...finalGroup,
+      id: prefixedId(deckPrefix, finalGroup.id),
+      logicalId: finalGroup.id,
+      bankId: options.bankId ?? "itexam",
+      bankTitle: options.bankTitle ?? "",
+      type: "final",
+      questions,
+      count: questions.length,
+    };
+  }).filter((deck) => deck.count > 0);
+
+  const allQuestions = [...moduleDecks, ...finalDecks].flatMap((deck) => deck.questions);
 
   return [
     {
-      id: "all",
-      title: "All modules",
+      id: prefixedId(deckPrefix, "all"),
+      logicalId: "all",
+      title: "All questions",
       range: "1-17",
       type: "all",
+      bankId: options.bankId ?? "itexam",
+      bankTitle: options.bankTitle ?? "",
       questions: allQuestions,
       count: allQuestions.length,
     },
     ...midtermDecks,
     ...moduleDecks,
+    ...finalDecks,
   ];
+}
+
+export function createCombinedDecks(bankDecks, options = {}) {
+  const deckPrefix = options.deckPrefix ?? "combined";
+  const bankId = options.bankId ?? "combined";
+  const bankTitle = options.bankTitle ?? "Combined";
+  const logicalIds = ["all", ...MIDTERMS.map((item) => item.id), ...MODULE_GROUPS.map((item) => item.id), ...FINAL_GROUPS.map((item) => item.id)];
+
+  return logicalIds
+    .map((logicalId) => {
+      const parts = bankDecks.map((decks) => decks.find((deck) => deck.logicalId === logicalId)).filter(Boolean);
+      if (parts.length === 0) return null;
+
+      const [first] = parts;
+      const questions = parts.flatMap((deck) => deck.questions);
+
+      return {
+        ...first,
+        id: prefixedId(deckPrefix, logicalId),
+        logicalId,
+        bankId,
+        bankTitle,
+        questions,
+        count: questions.length,
+      };
+    })
+    .filter(Boolean);
 }
 
 export function shuffle(items, seed = Date.now()) {

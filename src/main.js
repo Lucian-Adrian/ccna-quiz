@@ -1,12 +1,23 @@
-import modules1To3 from "../CCNA1_v7_Modules_1-3.json";
-import modules4To7 from "../CCNA1_v7_Modules_4-7.json";
-import modules8To10 from "../CCNA1_v7_Modules_8-10.json";
-import modules11To13 from "../CCNA1_v7_Modules_11-13.json";
-import modules14To15 from "../CCNA1_v7_Modules_14-15.json";
-import modules16To17 from "../CCNA1_v7_Modules_16-17.json";
+import finalExamInfra from "../CCNA1_v7_Final_Exam_infra.json";
+import finalExamItexam from "../CCNA1_v7_Final_Exam_itexam.json";
+import modules1To3Infra from "../CCNA1_v7_Modules_1-3_infra.json";
+import modules1To3Itexam from "../CCNA1_v7_Modules_1-3_itexam.json";
+import modules4To7Infra from "../CCNA1_v7_Modules_4-7_infra.json";
+import modules4To7Itexam from "../CCNA1_v7_Modules_4-7_itexam.json";
+import modules8To10Infra from "../CCNA1_v7_Modules_8-10_infra.json";
+import modules8To10Itexam from "../CCNA1_v7_Modules_8-10_itexam.json";
+import modules11To13Infra from "../CCNA1_v7_Modules_11-13_infra.json";
+import modules11To13Itexam from "../CCNA1_v7_Modules_11-13_itexam.json";
+import modules14To15Infra from "../CCNA1_v7_Modules_14-15_infra.json";
+import modules14To15Itexam from "../CCNA1_v7_Modules_14-15_itexam.json";
+import modules16To17Infra from "../CCNA1_v7_Modules_16-17_infra.json";
+import modules16To17Itexam from "../CCNA1_v7_Modules_16-17_itexam.json";
+import practiceFinalInfra from "../CCNA1_v7_Practice_Final_infra.json";
+import practiceFinalItexam from "../CCNA1_v7_Practice_Final_itexam.json";
 import {
   buildSmartReview,
   buildSession,
+  createCombinedDecks,
   createDecks,
   formatMatchingAnswer,
   getDueQuestions,
@@ -25,33 +36,95 @@ import "./styles.css";
 const STORAGE_KEY = "quizos-v2-progress";
 const STORAGE_BACKUP_KEY = "quizos-v2-progress-backup";
 const DECK_KEY = "quizos-v2-selected-deck";
+const BANK_KEY = "quizos-v2-selected-bank";
 const EXAM_LIMIT = 24;
 
-const moduleSources = {
-  "m1-3": modules1To3,
-  "m4-7": modules4To7,
-  "m8-10": modules8To10,
-  "m11-13": modules11To13,
-  "m14-15": modules14To15,
-  "m16-17": modules16To17,
+const itexamSources = {
+  "m1-3": modules1To3Itexam,
+  "m4-7": modules4To7Itexam,
+  "m8-10": modules8To10Itexam,
+  "m11-13": modules11To13Itexam,
+  "m14-15": modules14To15Itexam,
+  "m16-17": modules16To17Itexam,
 };
 
-const decks = createDecks(moduleSources);
-const deckById = new Map(decks.map((deck) => [deck.id, deck]));
+const infraSources = {
+  "m1-3": modules1To3Infra,
+  "m4-7": modules4To7Infra,
+  "m8-10": modules8To10Infra,
+  "m11-13": modules11To13Infra,
+  "m14-15": modules14To15Infra,
+  "m16-17": modules16To17Infra,
+};
+
+const itexamDecks = createDecks(itexamSources, {
+  bankId: "itexam",
+  bankTitle: "ITExam",
+  finalSources: {
+    "practice-final": practiceFinalItexam,
+    "final-exam": finalExamItexam,
+  },
+});
+
+const infraDecks = createDecks(infraSources, {
+  bankId: "infra",
+  bankTitle: "Infra",
+  deckPrefix: "infra",
+  sourcePrefix: "infra",
+  finalSources: {
+    "practice-final": practiceFinalInfra,
+    "final-exam": finalExamInfra,
+  },
+});
+
+const bankDecks = {
+  combined: createCombinedDecks([itexamDecks, infraDecks], {
+    bankId: "combined",
+    bankTitle: "Combined",
+    deckPrefix: "combined",
+  }),
+  itexam: itexamDecks,
+  infra: infraDecks,
+};
+
+const questionBanks = [
+  { id: "combined", title: "Combined", subtitle: "Both sources", decks: bankDecks.combined },
+  { id: "itexam", title: "ITExam", subtitle: "Original set", decks: bankDecks.itexam },
+  { id: "infra", title: "Infra", subtitle: "New set", decks: bankDecks.infra },
+];
+
+const savedBankId = loadBankId();
+let decks = decksForBank(savedBankId);
+let deckById = new Map(decks.map((deck) => [deck.id, deck]));
 const app = document.querySelector("#app");
 
 const state = {
   screen: "home",
-  deckId: loadDeckId(),
+  bankId: savedBankId,
+  deckId: loadDeckId(savedBankId),
   progress: loadProgress(),
   session: null,
   savedAt: Number(localStorage.getItem(`${STORAGE_KEY}-saved-at`) ?? 0),
   saveError: "",
 };
 
-function loadDeckId() {
-  const savedDeckId = localStorage.getItem(DECK_KEY);
-  return savedDeckId && deckById.has(savedDeckId) ? savedDeckId : "midterm-1";
+function loadBankId() {
+  const savedBankId = localStorage.getItem(BANK_KEY);
+  return questionBanks.some((bank) => bank.id === savedBankId) ? savedBankId : "combined";
+}
+
+function loadDeckId(bankId) {
+  const savedDeckId = localStorage.getItem(`${DECK_KEY}-${bankId}`);
+  const fallback = decks.find((deck) => deck.logicalId === "midterm-1")?.id ?? decks[0]?.id;
+  return savedDeckId && deckById.has(savedDeckId) ? savedDeckId : fallback;
+}
+
+function decksForBank(bankId) {
+  return bankDecks[bankId] ?? bankDecks.combined;
+}
+
+function currentBank() {
+  return questionBanks.find((bank) => bank.id === state.bankId) ?? questionBanks[0];
 }
 
 function loadProgress() {
@@ -105,7 +178,24 @@ function navigate(screen) {
 function selectDeck(deckId) {
   if (!deckById.has(deckId)) return;
   state.deckId = deckId;
+  localStorage.setItem(`${DECK_KEY}-${state.bankId}`, deckId);
   localStorage.setItem(DECK_KEY, deckId);
+  render();
+}
+
+function selectBank(bankId) {
+  if (!bankDecks[bankId]) return;
+
+  const currentLogicalId = currentDeck()?.logicalId ?? "midterm-1";
+  state.bankId = bankId;
+  localStorage.setItem(BANK_KEY, bankId);
+  decks = decksForBank(bankId);
+  deckById = new Map(decks.map((deck) => [deck.id, deck]));
+
+  const savedDeckId = localStorage.getItem(`${DECK_KEY}-${bankId}`);
+  const matchingDeck = decks.find((deck) => deck.logicalId === currentLogicalId);
+  state.deckId = savedDeckId && deckById.has(savedDeckId) ? savedDeckId : matchingDeck?.id ?? decks[0]?.id;
+  localStorage.setItem(`${DECK_KEY}-${bankId}`, state.deckId);
   render();
 }
 
@@ -115,6 +205,17 @@ function startSession(mode) {
   state.session = buildSession(deck, {
     mode,
     limit: EXAM_LIMIT,
+    seed: Date.now(),
+  });
+  render();
+}
+
+function startFullExam() {
+  const deck = currentDeck();
+  state.screen = "exam";
+  state.session = buildSession(deck, {
+    mode: "exam",
+    limit: deck.questions.length,
     seed: Date.now(),
   });
   render();
@@ -314,7 +415,7 @@ function importProgress(file) {
 
 function render() {
   app.innerHTML = `
-    <div class="app-shell">
+    <div class="app-shell screen-${state.screen}">
       ${renderSidebar()}
       <main class="main">
         ${state.screen === "home" ? renderHome() : ""}
@@ -364,6 +465,7 @@ function renderBottomNav() {
 
 function renderHome() {
   const deck = currentDeck();
+  const bank = currentBank();
   const summary = getLearningSummary(deck, state.progress);
   const weakCount = getWeakQuestions(deck, state.progress).length;
   const dueCount = getDueQuestions(deck, state.progress).length;
@@ -376,11 +478,15 @@ function renderHome() {
     <section class="topbar">
       <div>
         <h1>Study</h1>
-        <p>${deck.title}</p>
+        <p>${bank.title} · ${deck.title}</p>
       </div>
     </section>
 
     <section class="content">
+      <section class="bank-switch" aria-label="Question bank">
+        ${questionBanks.map(renderBankButton).join("")}
+      </section>
+
       <section class="study-board">
         <div class="next-line">
           <span>Next up</span>
@@ -393,6 +499,7 @@ function renderHome() {
             ${weakCount > 0 ? `<button class="secondary" type="button" data-action="review-weak">Weak</button>` : ""}
             ${newCount > 0 ? `<button class="secondary" type="button" data-action="learn-new">New</button>` : ""}
           <button class="secondary" type="button" data-start="exam">Exam</button>
+          ${deck.count > EXAM_LIMIT ? `<button class="secondary" type="button" data-action="full-exam">Full exam</button>` : ""}
           </div>
         </div>
       </section>
@@ -408,7 +515,7 @@ function renderHome() {
         <div>
           <span class="scope-label">Current scope</span>
           <strong>${deck.title}</strong>
-          <span>Tap a row below to change what you practice.</span>
+          <span>${bank.title} bank · tap a row below to change what you practice.</span>
         </div>
         <strong class="scope-count">${deck.count}<span>questions</span></strong>
       </section>
@@ -424,10 +531,27 @@ function renderHome() {
         ${decks.filter((item) => item.type === "module").map(renderDeckButton).join("")}
       </section>
 
+      <h3 class="subsection-title">Finals</h3>
+      <section class="deck-grid featured">
+        ${decks.filter((item) => item.type === "final").map(renderDeckButton).join("")}
+      </section>
+
       <section class="all-row">
-        ${renderDeckButton(decks.find((item) => item.id === "all"))}
+        ${renderDeckButton(decks.find((item) => item.logicalId === "all"))}
       </section>
     </section>
+  `;
+}
+
+function renderBankButton(bank) {
+  const selected = bank.id === state.bankId;
+  const total = bank.decks.find((deck) => deck.logicalId === "all")?.count ?? 0;
+
+  return `
+    <button class="bank-option ${selected ? "selected" : ""}" type="button" data-bank="${bank.id}" aria-pressed="${selected}">
+      <strong>${bank.title}</strong>
+      <span>${total} questions · ${bank.subtitle}</span>
+    </button>
   `;
 }
 
@@ -760,6 +884,10 @@ function wireEvents() {
     button.addEventListener("click", () => selectDeck(button.dataset.deck));
   });
 
+  app.querySelectorAll("[data-bank]").forEach((button) => {
+    button.addEventListener("click", () => selectBank(button.dataset.bank));
+  });
+
   app.querySelectorAll("[data-start]").forEach((button) => {
     button.addEventListener("click", () => startSession(button.dataset.start));
   });
@@ -792,6 +920,7 @@ function wireEvents() {
       if (action === "review-due") startDueReview();
       if (action === "review-weak") startWeakReview();
       if (action === "learn-new") startNewCards();
+      if (action === "full-exam") startFullExam();
     });
   });
 }

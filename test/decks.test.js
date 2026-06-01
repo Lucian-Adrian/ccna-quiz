@@ -3,6 +3,7 @@ import { test } from "node:test";
 import {
   buildSmartReview,
   buildSession,
+  createCombinedDecks,
   createDecks,
   formatMatchingAnswer,
   getDueQuestions,
@@ -37,6 +38,34 @@ test("creates module and midterm decks from module sources", () => {
   assert.equal(byId.get("midterm-1").count, 3);
   assert.equal(byId.get("midterm-2").count, 4);
   assert.equal(byId.get("m1-3").questions[0].sourceTitle, "Modules 1-3");
+});
+
+test("creates final and combined decks across question banks", () => {
+  const itexamDecks = createDecks(moduleSources, {
+    finalSources: {
+      "practice-final": [{ number: 1, question: "PF", options: ["a"], correct_answers: ["a"] }],
+      "final-exam": [{ number: 1, question: "FE", options: ["b"], correct_answers: ["b"] }],
+    },
+  });
+  const infraDecks = createDecks(moduleSources, {
+    bankId: "infra",
+    bankTitle: "Infra",
+    deckPrefix: "infra",
+    sourcePrefix: "infra",
+    finalSources: {
+      "practice-final": [{ number: 1, question: "Infra PF", options: ["a"], correct_answers: ["a"] }],
+      "final-exam": [{ number: 1, question: "Infra FE", options: ["b"], correct_answers: ["b"] }],
+    },
+  });
+  const combinedDecks = createCombinedDecks([itexamDecks, infraDecks]);
+  const byLogicalId = new Map(combinedDecks.map((deck) => [deck.logicalId, deck]));
+
+  assert.equal(itexamDecks.find((deck) => deck.logicalId === "all").count, 9);
+  assert.equal(infraDecks.find((deck) => deck.logicalId === "practice-final").id, "infra-practice-final");
+  assert.equal(byLogicalId.get("midterm-1").count, 6);
+  assert.equal(byLogicalId.get("practice-final").count, 2);
+  assert.equal(byLogicalId.get("all").count, 18);
+  assert.equal(byLogicalId.get("all").questions.some((question) => question.id === "infra-m1-3-1"), true);
 });
 
 test("exam sessions are limited and deterministic", () => {
