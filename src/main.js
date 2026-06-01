@@ -110,6 +110,7 @@ const state = {
   savedAt: Number(localStorage.getItem(`${STORAGE_KEY}-saved-at`) ?? 0),
   saveError: "",
   now: Date.now(),
+  searchQuery: "",
 };
 
 let timerId = 0;
@@ -169,6 +170,10 @@ function currentQuestion() {
   return state.session?.questions[state.session.index] ?? null;
 }
 
+function allDeck() {
+  return decks.find((deck) => deck.logicalId === "all") ?? decks[0];
+}
+
 function selectedFor(question) {
   if (!question || !state.session) return [];
   return state.session.answers[question.id] ?? [];
@@ -177,6 +182,61 @@ function selectedFor(question) {
 function answeredCount(session = state.session) {
   if (!session) return 0;
   return session.questions.filter((question) => (session.answers[question.id] ?? []).length > 0).length;
+}
+
+function bookmarkedQuestions(deck = currentDeck()) {
+  return deck.questions.filter((question) => state.progress[question.id]?.bookmarked);
+}
+
+function mistakeQuestions(deck = currentDeck()) {
+  return getWeakQuestions(deck, state.progress);
+}
+
+function toggleBookmark(questionId) {
+  const question = allDeck().questions.find((item) => item.id === questionId) ?? currentQuestion();
+  if (!question) return;
+
+  const entry = state.progress[question.id] ?? {};
+  state.progress[question.id] = {
+    ...entry,
+    bookmarked: !entry.bookmarked,
+  };
+  saveProgress();
+  render();
+}
+
+function startQuestion(questionId) {
+  const question = allDeck().questions.find((item) => item.id === questionId);
+  if (!question) return;
+  startPracticeQueue([question]);
+}
+
+function startBookmarkedPractice() {
+  startPracticeQueue(bookmarkedQuestions());
+}
+
+function startMistakesPractice() {
+  startPracticeQueue(mistakeQuestions());
+}
+
+function searchResults() {
+  const query = state.searchQuery.trim().toLowerCase();
+  if (query.length < 2) return [];
+
+  return allDeck()
+    .questions.filter((question) => {
+      const haystack = [
+        question.question,
+        question.sourceTitle,
+        ...(question.options ?? []),
+        ...(question.correctAnswers ?? []),
+        ...(question.matchingPairs ?? []).flatMap((pair) => [pair.left, pair.right]),
+      ]
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(query);
+    })
+    .slice(0, 10);
 }
 
 function setScreen(screen) {
@@ -685,6 +745,8 @@ function renderHome() {
         <div><span>Mastered</span><strong>${summary.masteryPercent}%</strong></div>
       </section>
 
+      ${renderSearchPanel()}
+
       <section class="selected-line">
         <div>
           <span class="scope-label">Current scope</span>
@@ -699,12 +761,55 @@ function renderHome() {
   `;
 }
 
+function renderSearchPanel() {
+  const results = searchResults();
+  const query = escapeAttr(state.searchQuery);
+
+  return `
+    <section class="search-panel">
+      <label>
+        <span>Search question bank</span>
+        <input type="search" placeholder="Find a concept, command, IP, port..." value="${query}" data-search-input>
+      </label>
+      ${
+        state.searchQuery.trim().length >= 2
+          ? `<div class="search-results">
+              ${
+                results.length
+                  ? results
+                      .map(
+                        (question) => `
+                          <article class="search-result">
+                            <div>
+                              <strong>${escapeHtml(question.question)}</strong>
+                              <small>${escapeHtml(question.sourceTitle)} · ${question.options.length ? "Choice" : question.matchingPairs.length ? "Matching" : "Study"}</small>
+                            </div>
+                            <div class="search-actions">
+                              <button class="secondary compact-button" type="button" data-bookmark-id="${escapeAttr(question.id)}">${
+                                state.progress[question.id]?.bookmarked ? "Saved" : "Save"
+                              }</button>
+                              <button class="primary compact-button" type="button" data-question-id="${escapeAttr(question.id)}">Practice</button>
+                            </div>
+                          </article>
+                        `,
+                      )
+                      .join("")
+                  : `<p>No matching questions found.</p>`
+              }
+            </div>`
+          : ""
+      }
+    </section>
+  `;
+}
+
 function renderPracticeHub() {
   const deck = currentDeck();
   const examDeck = currentExamDeck();
   const bank = currentBank();
   const summary = getLearningSummary(deck, state.progress);
   const weakCount = getWeakQuestions(deck, state.progress).length;
+  const bookmarkCount = bookmarkedQuestions(deck).length;
   const dueCount = getDueQuestions(deck, state.progress).length;
   const newCount = getNewQuestions(deck, state.progress).length;
   const eligibleCount = getExamEligibleQuestions(examDeck).length;
@@ -734,6 +839,8 @@ function renderPracticeHub() {
             }</button>
             <button class="secondary" type="button" data-action="learn-new" ${newCount === 0 ? "disabled" : ""}>New only</button>
             <button class="secondary" type="button" data-action="review-weak" ${weakCount === 0 ? "disabled" : ""}>Weak only</button>
+            <button class="secondary" type="button" data-action="mistakes-only" ${weakCount === 0 ? "disabled" : ""}>Mistakes only</button>
+            <button class="secondary" type="button" data-action="bookmarked-only" ${bookmarkCount === 0 ? "disabled" : ""}>Bookmarked</button>
             <button class="secondary" type="button" data-action="shuffle-subject">Shuffle all</button>
           </div>
         </article>
@@ -907,6 +1014,7 @@ function renderTrainer() {
   const answerRevealMode = showsAnswersDuringSession();
   const checked = answerRevealMode && state.session.revealed;
   const examDone = state.session.submitted;
+  const bookmarked = Boolean(state.progress[question.id]?.bookmarked);
   const score = scoreSession(state.session.questions, state.session.answers);
   const answered = answeredCount();
   const answerCount = question.correctAnswers.length;
@@ -930,6 +1038,9 @@ function renderTrainer() {
           <p>${deck.title} · ${state.session.index + 1}/${state.session.questions.length} · ${answered} answered</p>
         </div>
         ${timed ? `<div class="timer-pill ${overTime ? "overtime" : ""}">${formatTimer(remaining)}</div>` : ""}
+        <button class="secondary bookmark-button ${bookmarked ? "active" : ""}" type="button" data-bookmark-id="${escapeAttr(question.id)}">${
+          bookmarked ? "Saved" : "Save"
+        }</button>
         ${sessionMode === "exam" ? `<button class="secondary" type="button" data-action="submit-exam" ${answered === 0 ? "disabled" : ""}>Finish</button>` : ""}
       </header>
 
@@ -1172,6 +1283,7 @@ function renderStats() {
         <div><span>Backup</span><strong>${storage.backupOk ? "Ready" : "Missing"}</strong></div>
         <div><span>Session</span><strong>${storage.sessionOk ? "Resumable" : "None"}</strong></div>
       </section>
+      ${renderReadinessPanel()}
       <div class="stats-list">
         ${decks
           .filter((deck) => deck.type !== "all")
@@ -1192,6 +1304,42 @@ function renderStats() {
       </div>
     </section>
   `;
+}
+
+function renderReadinessPanel() {
+  const targets = ["midterm-1", "midterm-2", "practice-final", "final-exam"]
+    .map((logicalId) => decks.find((deck) => deck.logicalId === logicalId))
+    .filter(Boolean);
+
+  return `
+    <section class="readiness-panel">
+      <h2 class="section-title">Readiness</h2>
+      <div class="readiness-grid">
+        ${targets
+          .map((deck) => {
+            const score = readinessScore(deck);
+            const summary = getLearningSummary(deck, state.progress);
+            return `
+              <article class="readiness-card">
+                <span>${deck.title}</span>
+                <strong>${score}%</strong>
+                <small>${summary.seen}/${deck.count} seen · ${summary.percent}% accuracy · ${summary.masteryPercent}% mastered</small>
+                <span class="progress-track"><i style="width: ${score}%"></i></span>
+              </article>
+            `;
+          })
+          .join("")}
+      </div>
+    </section>
+  `;
+}
+
+function readinessScore(deck) {
+  const summary = getLearningSummary(deck, state.progress);
+  const coverage = deck.count ? summary.seen / deck.count : 0;
+  const accuracy = summary.attempts ? summary.correct / summary.attempts : 0;
+  const mastery = summary.masteryPercent / 100;
+  return Math.round((coverage * 0.45 + accuracy * 0.35 + mastery * 0.2) * 100);
 }
 
 function storageSummary() {
@@ -1272,6 +1420,24 @@ function wireEvents() {
     button.addEventListener("click", () => selectBank(button.dataset.bank));
   });
 
+  app.querySelectorAll("[data-search-input]").forEach((input) => {
+    input.addEventListener("input", () => {
+      state.searchQuery = input.value;
+      render();
+      const restored = app.querySelector("[data-search-input]");
+      restored?.focus();
+      restored?.setSelectionRange(restored.value.length, restored.value.length);
+    });
+  });
+
+  app.querySelectorAll("[data-question-id]").forEach((button) => {
+    button.addEventListener("click", () => startQuestion(decodeAttr(button.dataset.questionId ?? "")));
+  });
+
+  app.querySelectorAll("[data-bookmark-id]").forEach((button) => {
+    button.addEventListener("click", () => toggleBookmark(decodeAttr(button.dataset.bookmarkId ?? "")));
+  });
+
   app.querySelectorAll("[data-option]").forEach((button) => {
     button.addEventListener("click", () => toggleAnswer(decodeAttr(button.dataset.option ?? "")));
   });
@@ -1300,6 +1466,8 @@ function wireEvents() {
       if (action === "review-due") startDueReview();
       if (action === "review-weak") startWeakReview();
       if (action === "learn-new") startNewCards();
+      if (action === "mistakes-only") startMistakesPractice();
+      if (action === "bookmarked-only") startBookmarkedPractice();
       if (action === "shuffle-subject") startSubjectShuffle();
       if (action === "practice-exam") startPracticeExam();
       if (action === "real-exam") startRealExam();

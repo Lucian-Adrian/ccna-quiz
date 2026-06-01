@@ -236,6 +236,19 @@ h1 {
   color: var(--ink);
 }
 
+.compact-button {
+  min-height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 13px;
+}
+
+.bookmark-button.active {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: #fff;
+}
+
 .eyebrow {
   color: var(--muted);
   font-size: 12px;
@@ -393,6 +406,74 @@ h1 {
   border-bottom: 1px solid var(--line);
   background: #fff;
   margin-bottom: 24px;
+}
+
+.search-panel {
+  padding: 0 0 22px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 22px;
+}
+
+.search-panel label,
+.search-panel span {
+  display: block;
+}
+
+.search-panel label > span {
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.search-panel input {
+  width: 100%;
+  min-height: 46px;
+  border: 1px solid var(--line-strong);
+  border-radius: 13px;
+  background: #fff;
+  color: var(--ink);
+  padding: 0 14px;
+  font: inherit;
+  font-weight: 650;
+}
+
+.search-results {
+  display: grid;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.search-result {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.search-result strong,
+.search-result small {
+  display: block;
+}
+
+.search-result strong {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.search-result small {
+  margin-top: 4px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.search-actions {
+  display: flex;
+  gap: 8px;
 }
 
 .selected-line strong,
@@ -1055,6 +1136,53 @@ pre {
   margin-bottom: 10px;
 }
 
+.readiness-panel {
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 10px;
+}
+
+.readiness-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.readiness-card {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: #fff;
+}
+
+.readiness-card span,
+.readiness-card strong,
+.readiness-card small {
+  display: block;
+}
+
+.readiness-card span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 820;
+}
+
+.readiness-card strong {
+  margin-top: 8px;
+  font-size: 30px;
+  line-height: 1;
+  font-weight: 840;
+}
+
+.readiness-card small {
+  margin-top: 8px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 700;
+}
+
 .storage-grid div {
   min-height: 70px;
   padding: 14px 0;
@@ -1161,6 +1289,7 @@ pre {
     font-size: 13px;
   }
 
+  .question-top .bookmark-button,
   .question-top > .secondary {
     grid-column: 1 / -1;
     width: 100%;
@@ -1312,6 +1441,19 @@ pre {
   .stat-grid {
     grid-template-columns: repeat(2, 1fr);
     margin-bottom: 22px;
+  }
+
+  .search-result {
+    grid-template-columns: 1fr;
+  }
+
+  .search-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .readiness-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .selected-line {

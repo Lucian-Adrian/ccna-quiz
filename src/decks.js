@@ -446,6 +446,7 @@ export function scheduleProgress(entry = {}, correct, now = Date.now()) {
     : 0;
 
   return {
+    ...entry,
     seen: (entry.seen ?? 0) + 1,
     correct: (entry.correct ?? 0) + (correct ? 1 : 0),
     wrong: (entry.wrong ?? 0) + (correct ? 0 : 1),
