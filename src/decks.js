@@ -28,6 +28,8 @@ function isInfraFinalSource(source) {
 }
 
 export function normalizeQuestion(rawQuestion, source) {
+  if (shouldSkipQuestion(rawQuestion)) return null;
+
   const matchingPairs = inferMatchingPairs(rawQuestion);
   const correctAnswers =
     matchingPairs.length > 0
@@ -60,6 +62,10 @@ export function buildBeginnerExplanation(rawQuestion, source, correctAnswers, ma
   const question = cleanupText(rawQuestion.question ?? "");
   const correct = correctAnswers.map(cleanupText).filter(Boolean);
   const options = (rawQuestion.options ?? []).map(cleanupText).filter(Boolean);
+  const detailedExplanation = buildDetailedExplanation(rawQuestion, correct, options, matchingPairs);
+
+  if (detailedExplanation) return detailedExplanation;
+
   const original = cleanupText(rawQuestion.explanation ?? "");
   const wrongOptions = options.filter((option) => !correct.some((answer) => normalizeAnswer(answer) === normalizeAnswer(option)));
   const concepts = conceptNotes(`${question} ${correct.join(" ")}`);
@@ -101,6 +107,79 @@ export function buildBeginnerExplanation(rawQuestion, source, correctAnswers, ma
   }
 
   return sections.join("\n\n");
+}
+
+function shouldSkipQuestion(rawQuestion) {
+  const question = cleanupText(rawQuestion.question ?? "");
+
+  return (
+    rawQuestion.is_matching &&
+    /three devices are on three different subnets/i.test(question) &&
+    !/Device\s*3\s*:\s*IP address/i.test(question)
+  );
+}
+
+function buildDetailedExplanation(rawQuestion, correctAnswers, options, matchingPairs) {
+  const question = cleanupText(rawQuestion.question ?? "");
+
+  if (/What type of address is 198\.133\.219\.162\?/i.test(question)) {
+    return [
+      "Beginner explanation:",
+      "Correct answer: public",
+      "Reasoning: classify the IPv4 address by checking whether it falls inside a special-use range. 198.133.219.162 is not in the private ranges 10.0.0.0/8, 172.16.0.0 through 172.31.255.255, or 192.168.0.0/16. It is also not link-local, loopback, or multicast. That leaves a normal globally routable unicast address, which CCNA questions call a public address.",
+      "Why link-local is wrong: IPv4 link-local addresses use 169.254.0.0/16. A device commonly self-assigns one of these when DHCP fails. 198.133.219.162 does not start with 169.254.",
+      "Why loopback is wrong: IPv4 loopback addresses are in 127.0.0.0/8, commonly 127.0.0.1. They point back to the local host itself. 198.133.219.162 is not in that range.",
+      "Why multicast is wrong: IPv4 multicast is 224.0.0.0 through 239.255.255.255. The first octet here is 198, so it is outside the multicast range.",
+      "Theory to remember: first check the famous special ranges. Private means 10/8, 172.16/12, or 192.168/16. Link-local means 169.254/16. Loopback means 127/8. Multicast means 224-239 in the first octet. If the address is a normal unicast address and not private or special, it is public.",
+    ].join("\n\n");
+  }
+
+  if (/What does the IP address 192\.168\.1\.15\/29 represent\?/i.test(question)) {
+    return [
+      "Beginner explanation:",
+      "Correct answer: broadcast address",
+      "Reasoning: a /29 prefix leaves 3 host bits because 32 - 29 = 3. Three host bits create blocks of 8 addresses, so the block size is 8. In the last octet the /29 subnet ranges are .0-.7, .8-.15, .16-.23, and so on.",
+      "Now place 192.168.1.15 into the correct block. It belongs to the 192.168.1.8 through 192.168.1.15 subnet. The first address in that block, 192.168.1.8, is the network or subnetwork address. The last address, 192.168.1.15, is the broadcast address; usable host addresses are only 192.168.1.9 through 192.168.1.14.",
+      "Why subnetwork address is wrong: the subnetwork address is the first address of the subnet. For this /29 block that is 192.168.1.8, not 192.168.1.15.",
+      "Why unicast address is wrong: a unicast host address must be assignable to one device. The broadcast address is reserved and cannot be assigned to a host.",
+      "Why multicast address is wrong: multicast IPv4 addresses are 224.0.0.0 through 239.255.255.255. 192.168.1.15 is not in that range.",
+      "Theory to remember: for subnet questions, find the block size from the number of host bits. Then identify the first address, last address, and usable range. First equals network address, last equals broadcast address, middle addresses are usable unicast host addresses.",
+    ].join("\n\n");
+  }
+
+  if (/three devices are on three different subnets/i.test(question) && matchingPairs.length > 0) {
+    return buildSubnetMatchingExplanation(question, matchingPairs);
+  }
+
+  return "";
+}
+
+function buildSubnetMatchingExplanation(question, matchingPairs) {
+  const devices = [...question.matchAll(/Device\s*(\d+)\s*:\s*IP address\s*([0-9.]+)\s*\/\s*(\d+)\s*on subnet\s*(\d+)/gi)].map(
+    ([, deviceNumber, ipAddress, prefixText, subnetNumber]) => ({
+      deviceNumber,
+      ipAddress,
+      prefixLength: Number(prefixText),
+      subnetNumber,
+      subnet: calculateIpv4Subnet(ipAddress, Number(prefixText)),
+    }),
+  );
+  const calculations = devices
+    .filter((device) => device.subnet)
+    .map((device) => {
+      const hostBits = 32 - device.prefixLength;
+      const blockSize = 2 ** hostBits;
+      return `Device ${device.deviceNumber} is on subnet ${device.subnetNumber}: ${device.ipAddress}/${device.prefixLength}. A /${device.prefixLength} leaves ${hostBits} host bits, so the block size is ${blockSize}. The address falls in ${device.subnet.network} through ${device.subnet.broadcast}. Therefore subnet ${device.subnetNumber} network number is ${device.subnet.network}, and subnet ${device.subnetNumber} broadcast address is ${device.subnet.broadcast}.`;
+    });
+
+  return [
+    "Beginner explanation:",
+    "Correct matches:",
+    matchingPairs.map((pair) => `${pair.left} -> ${pair.right}`).join("\n"),
+    "Reasoning:",
+    calculations.join("\n\n"),
+    "Theory to remember: the network address is the first address in the subnet block, and the broadcast address is the last address in that block. For these CCNA subnet questions, the fast method is: calculate host bits, convert that to block size, find the block that contains the device IP, then take the first and last addresses of that block.",
+  ].join("\n\n");
 }
 
 function cleanupText(value) {
@@ -161,8 +240,10 @@ export function inferMatchingPairs(rawQuestion) {
   const pairRows = rawQuestion.correct_answers?.length ? rawQuestion.correct_answers : rawQuestion.options ?? [];
   const hasChoiceAnswers = (rawQuestion.options ?? []).length > 0 || (rawQuestion.correct_answers ?? []).length > 0;
   const looksLikeMatching = rawQuestion.is_matching || /match|place the options/i.test(questionText);
+  const subnetPairs = inferSubnetMatchingPairs(rawQuestion);
   const pairsFromRows = parseMatchingRows(pairRows);
 
+  if (looksLikeMatching && subnetPairs.length > 0) return subnetPairs;
   if (looksLikeMatching && pairsFromRows.length > 0) return pairsFromRows;
   if (hasChoiceAnswers || !looksLikeMatching) return [];
   if (!Array.isArray(table) || table.length < 2) return [];
@@ -172,6 +253,46 @@ export function inferMatchingPairs(rawQuestion) {
     left: String(left),
     right: String(right),
   }));
+}
+
+function inferSubnetMatchingPairs(rawQuestion) {
+  const question = cleanupText(rawQuestion.question ?? "");
+  if (!/three devices are on three different subnets/i.test(question)) return [];
+
+  const devices = [...question.matchAll(/Device\s*(\d+)\s*:\s*IP address\s*([0-9.]+)\s*\/\s*(\d+)\s*on subnet\s*(\d+)/gi)];
+  if (devices.length < 3) return [];
+
+  return devices.flatMap((device) => {
+    const [, , ipAddress, prefixText, subnetNumber] = device;
+    const subnet = calculateIpv4Subnet(ipAddress, Number(prefixText));
+
+    if (!subnet) return [];
+
+    return [
+      { left: `Subnet ${subnetNumber} network number`, right: subnet.network },
+      { left: `Subnet ${subnetNumber} broadcast address`, right: subnet.broadcast },
+    ];
+  });
+}
+
+function calculateIpv4Subnet(ipAddress, prefixLength) {
+  const octets = ipAddress.split(".").map((part) => Number(part));
+  if (octets.length !== 4 || octets.some((octet) => !Number.isInteger(octet) || octet < 0 || octet > 255)) return null;
+  if (!Number.isInteger(prefixLength) || prefixLength < 0 || prefixLength > 32) return null;
+
+  const ipInt = octets.reduce((value, octet) => ((value << 8) | octet) >>> 0, 0);
+  const mask = prefixLength === 0 ? 0 : (0xffffffff << (32 - prefixLength)) >>> 0;
+  const network = (ipInt & mask) >>> 0;
+  const broadcast = (network | (~mask >>> 0)) >>> 0;
+
+  return {
+    network: intToIpv4(network),
+    broadcast: intToIpv4(broadcast),
+  };
+}
+
+function intToIpv4(value) {
+  return [24, 16, 8, 0].map((shift) => (value >>> shift) & 255).join(".");
 }
 
 function parseMatchingRows(rows) {
@@ -197,12 +318,17 @@ export function splitMatchingImages(question) {
   const hasMatching = (question.matchingPairs?.length ?? 0) > 0;
 
   if (!hasMatching) return { exhibitImages: imageUrls, answerImages: [] };
+  if (imageUrls.every(isAnswerSheetUrl)) return { exhibitImages: [], answerImages: imageUrls };
   if (imageUrls.length <= 1) return { exhibitImages: [], answerImages: imageUrls };
 
   return {
     exhibitImages: imageUrls.slice(0, 1),
     answerImages: imageUrls.slice(1),
   };
+}
+
+function isAnswerSheetUrl(url) {
+  return /answer|exam-answers/i.test(String(url));
 }
 
 export function createModuleDecks(moduleSources, options = {}) {
@@ -216,7 +342,7 @@ export function createModuleDecks(moduleSources, options = {}) {
       bankId: options.bankId ?? "itexam",
       bankTitle: options.bankTitle ?? "",
     };
-    const questions = (moduleSources[group.id] ?? []).map((question) => normalizeQuestion(question, source));
+    const questions = (moduleSources[group.id] ?? []).map((question) => normalizeQuestion(question, source)).filter(Boolean);
 
     return {
       ...group,
@@ -258,7 +384,7 @@ export function createDecks(moduleSources, options = {}) {
       bankId: options.bankId ?? "itexam",
       bankTitle: options.bankTitle ?? "",
     };
-    const questions = (options.finalSources?.[finalGroup.id] ?? []).map((question) => normalizeQuestion(question, source));
+    const questions = (options.finalSources?.[finalGroup.id] ?? []).map((question) => normalizeQuestion(question, source)).filter(Boolean);
 
     return {
       ...finalGroup,

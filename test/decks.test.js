@@ -204,6 +204,85 @@ test("hydrates infra matching rows into column matching", () => {
   });
 });
 
+test("hydrates infra subnet matching fragments into one answerable dropdown question", () => {
+  const partialPrompt =
+    "Three devices are on three different subnets. Match the network address and the broadcast address with each subnet where these devices are located.\n\nDevice 1: IP address 192.168.10.77/28 on subnet 1";
+  const fullPrompt =
+    "Three devices are on three different subnets. Match the network address and the broadcast address with each subnet where these devices are located.\n\nDevice 1: IP address 192.168.10.77/28 on subnet 1\n\nDevice 2: IP address192.168.10.17/30 on subnet 2\n\nDevice 3: IP address 192.168.10.35/29 on subnet 3";
+  const imageUrls = [
+    "https://infraexam.com/wp-content/uploads/2026/03/CCNA1-Introduction-to-Networks-Practice-Final-Exam-Answers-004.png",
+    "https://infraexam.com/wp-content/uploads/2026/03/CCNA1-Introduction-to-Networks-Practice-Final-Exam-Answers-004-1024x622.png",
+  ];
+  const decks = createDecks(moduleSources, {
+    bankId: "infra",
+    deckPrefix: "infra",
+    sourcePrefix: "infra",
+    finalSources: {
+      "practice-final": [
+        { number: 35, question: partialPrompt, options: [], correct_answers: [], image_urls: imageUrls, is_matching: true },
+        { number: 38, question: fullPrompt, options: [], correct_answers: [], image_urls: imageUrls, is_matching: true },
+      ],
+    },
+  });
+  const questions = decks.find((deck) => deck.logicalId === "practice-final").questions;
+  const [question] = questions;
+
+  assert.equal(questions.length, 1);
+  assert.deepEqual(question.options, []);
+  assert.deepEqual(question.matchingPairs, [
+    { left: "Subnet 1 network number", right: "192.168.10.64" },
+    { left: "Subnet 1 broadcast address", right: "192.168.10.79" },
+    { left: "Subnet 2 network number", right: "192.168.10.16" },
+    { left: "Subnet 2 broadcast address", right: "192.168.10.19" },
+    { left: "Subnet 3 network number", right: "192.168.10.32" },
+    { left: "Subnet 3 broadcast address", right: "192.168.10.39" },
+  ]);
+  assert.deepEqual(splitMatchingImages(question), {
+    exhibitImages: [],
+    answerImages: imageUrls,
+  });
+  assert.match(question.explanation, /Device 1 is on subnet 1/);
+  assert.match(question.explanation, /192\.168\.10\.64 through 192\.168\.10\.79/);
+});
+
+test("adds detailed beginner explanations for IP address classification and /29 broadcast questions", () => {
+  const decks = createDecks(moduleSources, {
+    bankId: "infra",
+    deckPrefix: "infra",
+    sourcePrefix: "infra",
+    finalSources: {
+      "practice-final": [
+        {
+          number: 33,
+          question: "What type of address is 198.133.219.162?",
+          options: ["public", "link-local", "loopback", "multicast"],
+          correct_answers: ["public"],
+          explanation: "",
+        },
+        {
+          number: 39,
+          question: "What does the IP address 192.168.1.15/29 represent?",
+          options: ["subnetwork address", "multicast address", "unicast address", "broadcast address"],
+          correct_answers: ["broadcast address"],
+          explanation: "",
+        },
+      ],
+    },
+  });
+  const questions = decks.find((deck) => deck.logicalId === "practice-final").questions;
+  const publicQuestion = questions.find((question) => question.question.includes("198.133.219.162"));
+  const broadcastQuestion = questions.find((question) => question.question.includes("192.168.1.15/29"));
+
+  assert.match(publicQuestion.explanation, /not in the private ranges 10\.0\.0\.0\/8/);
+  assert.match(publicQuestion.explanation, /169\.254\.0\.0\/16/);
+  assert.match(publicQuestion.explanation, /224\.0\.0\.0 through 239\.255\.255\.255/);
+  assert.doesNotMatch(publicQuestion.explanation, /first identify exactly/);
+  assert.match(broadcastQuestion.explanation, /block size is 8/);
+  assert.match(broadcastQuestion.explanation, /192\.168\.1\.8 through 192\.168\.1\.15/);
+  assert.match(broadcastQuestion.explanation, /usable host addresses are only 192\.168\.1\.9 through 192\.168\.1\.14/);
+  assert.doesNotMatch(broadcastQuestion.explanation, /first identify exactly/);
+});
+
 test("splits matching images into exhibit and answer assets", () => {
   assert.deepEqual(
     splitMatchingImages({
